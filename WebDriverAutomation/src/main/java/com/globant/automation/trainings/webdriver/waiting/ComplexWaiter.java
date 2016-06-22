@@ -1,6 +1,8 @@
 package com.globant.automation.trainings.webdriver.waiting;
 
 
+import com.globant.automation.trainings.webdriver.waiting.functions.TriFunction;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -68,5 +70,18 @@ public class ComplexWaiter<T> {
     public ComplexWaiter<T> and(T thing) {
         thingsToWaitOn.add(thing);
         return this;
+    }
+
+    public <K, R> R until(final TriFunction<T, K, R> triFunction, final K argument) {
+        try {
+            R r = thingsToWaitOn.parallelStream().map(t -> waiterFor(t).until(new Function<T, R>() {
+                public R apply(T input) {
+                    return triFunction.apply(t, argument);
+                }
+            })).findFirst().orElseThrow(() -> new NoSuchElementException(argument.toString()));
+            return r;
+        } finally {
+            thingsToWaitOn.clear();
+        }
     }
 }

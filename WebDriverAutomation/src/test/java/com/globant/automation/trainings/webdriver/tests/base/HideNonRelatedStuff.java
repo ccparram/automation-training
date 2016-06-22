@@ -1,13 +1,20 @@
 package com.globant.automation.trainings.webdriver.tests.base;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import static java.lang.System.out;
-import static org.mockito.Mockito.when;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.Arrays.asList;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Juan Krzemien on 6/16/2016.
@@ -19,27 +26,41 @@ public class HideNonRelatedStuff {
     @Mock
     protected WebElement anElement;
 
-    private volatile boolean displayed;
+    @Mock
+    protected WebElement anotherElement;
+
+    @Mock
+    protected WebDriver aDriver;
+
+    protected By anId = By.id("anId");
+
+    protected By anXPath = By.xpath("anXPath");
+
+    protected List<WebElement> manyElements;
 
     @Before
     public void setUp() {
-        launchVisibilitySwitcherThread();
-        when(anElement.isDisplayed()).thenAnswer(i -> {
-            out.println("isDisplayed(): " + displayed);
-            return displayed;
-        });
+        this.manyElements = asList(anElement, anElement);
+
+        WebDriver.Timeouts timeouts = mock(WebDriver.Timeouts.class);
+        WebDriver.Options options = mock(WebDriver.Options.class);
+
+        when(aDriver.manage()).thenReturn(options);
+        when(options.timeouts()).thenReturn(timeouts);
+        when(timeouts.implicitlyWait(anyLong(), any(TimeUnit.class))).thenReturn(null);
+
+        when(aDriver.getCurrentUrl()).thenReturn("", "", "", "about:blank");
+
+        // Simulates around 4 seconds of delay due to wait pooling...
+        when(anElement.isDisplayed()).thenReturn(false, false, false, true);
+        when(anotherElement.isDisplayed()).thenReturn(false, false, false, true);
+        when(aDriver.findElement(anId)).thenReturn(null, null, null, anElement);
+        when(aDriver.findElement(anXPath)).thenReturn(null);
     }
 
-    private void launchVisibilitySwitcherThread() {
-        new Thread(() -> {
-            try {
-                displayed = false;
-                // Simulate delay in element rendering...
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                // Ignored
-            }
-            displayed = true;
-        }).start();
+    @After
+    public void tearDown() {
+        reset(anElement, anotherElement, aDriver);
     }
+
 }

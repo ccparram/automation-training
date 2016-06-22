@@ -1,10 +1,10 @@
 package com.globant.automation.trainings.webdriver.waiting;
 
+import com.globant.automation.trainings.webdriver.waiting.functions.TriFunction;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.FluentWait;
 
 import static java.lang.String.format;
@@ -18,37 +18,35 @@ public class SimpleWaiter {
 
     private int timeOut = 30;
 
-    public SimpleWaiter withTimeOut(int timeOutSeconds) {
+    public SimpleWaiter withTimeOut(final int timeOutSeconds) {
         this.timeOut = timeOutSeconds;
         return this;
     }
 
-    public <T> T waitUntil(T waitOn, Predicate<T> predicate) {
-        try {
-            new FluentWait<>(waitOn)
-                    .withTimeout(timeOut, SECONDS)
-                    .pollingEvery(1, SECONDS)
-                    .ignoring(StaleElementReferenceException.class)
-                    .ignoring(NoSuchElementException.class)
-                    .until(predicate);
-        } catch (TimeoutException toe) {
-            String newMessage = format("%s while waiting on %s", toe.getMessage(), waitOn.toString());
-            throw new TimeoutException(newMessage);
-        }
+    public <T> T waitUntil(final T waitOn, final Predicate<T> predicate) {
+        getWaiter(waitOn).until(predicate);
         return waitOn;
     }
 
-    public <F, T> T waitUntil(F waitOn, Function<F, T> function) {
-        try {
-            return new FluentWait<>(waitOn)
-                    .withTimeout(timeOut, SECONDS)
-                    .pollingEvery(1, SECONDS)
-                    .ignoring(StaleElementReferenceException.class)
-                    .ignoring(NoSuchElementException.class)
-                    .until(function);
-        } catch (TimeoutException toe) {
-            String newMessage = format("%s while waiting on %s", toe.getMessage(), waitOn.toString());
-            throw new TimeoutException(newMessage);
-        }
+    public <F, T> T waitUntil(final F waitOn, final Function<F, T> function) {
+        return getWaiter(waitOn).until(function);
     }
+
+    public <T, K, R> R waitUntil(final T waitOn, final TriFunction<T, K, R> triFunction, final K argument) {
+        return getWaiter(waitOn).until(new Function<T, R>() {
+            public R apply(T input) {
+                return triFunction.apply(waitOn, argument);
+            }
+        });
+    }
+
+    private <T> FluentWait<T> getWaiter(final T waitOn) {
+        return new FluentWait<>(waitOn)
+                .withTimeout(timeOut, SECONDS)
+                .pollingEvery(1, SECONDS)
+                .ignoring(StaleElementReferenceException.class)
+                .ignoring(NoSuchElementException.class)
+                .withMessage(format("Timed out after %s seconds while waiting on %s", timeOut, waitOn.toString()));
+    }
+
 }
