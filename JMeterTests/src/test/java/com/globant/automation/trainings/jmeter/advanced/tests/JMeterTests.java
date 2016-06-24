@@ -28,15 +28,25 @@ import static org.apache.jmeter.testelement.TestElement.GUI_CLASS;
 import static org.apache.jmeter.testelement.TestElement.TEST_CLASS;
 import static org.apache.jmeter.util.JMeterUtils.*;
 
+/**
+ * Simple example showing how to model a JMeter's JMX file as a JUnit test.
+ * <p>
+ * Created by jkrzemien on 13/06/2016.
+ */
 public class JMeterTests {
 
-    private static final String jmeter = JMeterTests.class.getResource("/jmeter.properties").getFile();
-    private static final Path jmeterPath = getDefault().getPath(jmeter.substring(1));
+    private static final String JMETER = JMeterTests.class.getResource("/jmeter.properties").getFile();
+    private static final Path JMETER_PATH = getDefault().getPath(JMETER.substring(1));
+    private static final String OUTPUT_JMX_FILE = "example.jmx";
+    private static final String OUTPUT_JTL_FILE = "example.jtl";
+    private static final String PROXY_HOST = "proxy.corp.globant.com";
+    private static final String PROXY_PORT = "3128";
+    private static final String TARGET = "google.com";
 
     @Before
     public void setUp() throws IOException {
-        setJMeterHome(jmeterPath.getParent().toString());
-        loadJMeterProperties(jmeterPath.toFile().getPath());
+        setJMeterHome(JMETER_PATH.getParent().toString());
+        loadJMeterProperties(JMETER_PATH.toFile().getPath());
         loadProperties();
         initLogging(); // Comment this line out for extra logging i.e. DEBUG level
         initLocale();
@@ -44,30 +54,24 @@ public class JMeterTests {
 
     @Test
     public void jmeterInsides() throws IOException {
-        //JMeter Engine
-        StandardJMeterEngine jmeter = new StandardJMeterEngine();
-
-        // JMeter Test Plan, basically JOrphan HashTree
-        HashTree testPlanTree = new HashTree();
-
-        // First HTTP Sampler - open example.com
-        HTTPSampler examplecomSampler = new HTTPSampler();
-        examplecomSampler.setDomain("google.com");
-        examplecomSampler.setPort(80);
-        examplecomSampler.setPath("/");
-        examplecomSampler.setMethod("GET");
-        examplecomSampler.setName("Open google.com");
+        // A HTTP Sampler - opens TARGET
+        HTTPSampler httpSampler = new HTTPSampler();
+        httpSampler.setDomain(TARGET);
+        httpSampler.setPort(80);
+        httpSampler.setPath("/");
+        httpSampler.setMethod("GET");
+        httpSampler.setName("Open " + TARGET);
 
         /**
          * If you are not planning on loading the generated JMX files from JMeter, you don't need
          * to set properties for JMeter's GUI elements.
          */
-        examplecomSampler.setProperty(TEST_CLASS, HTTPSampler.class.getName());
-        examplecomSampler.setProperty(GUI_CLASS, HttpTestSampleGui.class.getName());
+        httpSampler.setProperty(TEST_CLASS, HTTPSampler.class.getName());
+        httpSampler.setProperty(GUI_CLASS, HttpTestSampleGui.class.getName());
 
         // Just because being in this network sucks...
-        examplecomSampler.setProperty("HTTPSampler.proxyHost", "proxy.corp.globant.com");
-        examplecomSampler.setProperty("HTTPSampler.proxyPort", "3128");
+        httpSampler.setProperty(HTTPSampler.PROXYHOST, PROXY_HOST);
+        httpSampler.setProperty(HTTPSampler.PROXYPORT, PROXY_PORT);
 
         // Loop Controller
         LoopController loopController = new LoopController();
@@ -92,36 +96,35 @@ public class JMeterTests {
         threadGroup.setProperty(GUI_CLASS, ThreadGroupGui.class.getName());
 
         // Test Plan
-        TestPlan testPlan = new TestPlan("Create JMeter Script From Java Code");
+        TestPlan testPlan = new TestPlan("A JMeter Test Plan From Java Code");
 
         // Again, not *really* needed...
         testPlan.setProperty(TEST_CLASS, TestPlan.class.getName());
         testPlan.setProperty(GUI_CLASS, TestPlanGui.class.getName());
         testPlan.setUserDefinedVariables((Arguments) new ArgumentsPanel().createTestElement());
 
+        // JMeter Test Plan, basically JOrphan HashTree
+        HashTree testPlanTree = new HashTree();
         // Construct Test Plan from previously initialized elements
         testPlanTree.add(testPlan);
         HashTree threadGroupHashTree = testPlanTree.add(testPlan, threadGroup);
-        threadGroupHashTree.add(examplecomSampler);
+        threadGroupHashTree.add(httpSampler);
 
         // Optional: save generated test plan to JMeter's .jmx file format.
         // Just for completion's sake...
-        SaveService.saveTree(testPlanTree, new FileOutputStream("example.jmx"));
+        SaveService.saveTree(testPlanTree, new FileOutputStream(OUTPUT_JMX_FILE));
 
         // Add Summarizer output to get test progress in stdout
-        Summariser summer = null;
-        String summariserName = getPropDefault("summariser.name", "summary");
-        if (summariserName.length() > 0) {
-            summer = new Summariser(summariserName);
-        }
+        Summariser summariser = new Summariser("Summary");
 
         // Store execution results into a .jtl file
-        String logFile = "example.jtl";
-        ResultCollector logger = new ResultCollector(summer);
-        logger.setFilename(logFile);
+        ResultCollector logger = new ResultCollector(summariser);
+        logger.setFilename(OUTPUT_JTL_FILE);
         testPlanTree.add(testPlanTree.getArray()[0], logger);
 
         // Run Test Plan
+        //JMeter Engine
+        StandardJMeterEngine jmeter = new StandardJMeterEngine();
         jmeter.configure(testPlanTree);
         jmeter.run();
     }

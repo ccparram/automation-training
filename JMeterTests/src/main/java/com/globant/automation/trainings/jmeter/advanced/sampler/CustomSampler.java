@@ -16,6 +16,9 @@ import org.apache.jmeter.testbeans.TestBean;
  * need to synchronize access to instance variables.
  * <p>
  * However, access to class fields must be synchronized.
+ *
+ * Created by jkrzemien on 13/06/2016.
+ *
  */
 public class CustomSampler extends AbstractSampler implements TestBean {
 
