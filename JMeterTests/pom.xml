@@ -10,7 +10,7 @@
         <version>1.0</version>
     </parent>
 
-    <artifactId>JmeterTests</artifactId>
+    <artifactId>JMeterTests</artifactId>
     <version>1.0</version>
 
     <dependencies>

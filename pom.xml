@@ -45,7 +45,8 @@
     <modules>
         <module>WebDriverAutomation</module>
         <module>JavaConcurrency</module>
-        <module>JmeterTests</module>
+        <module>JMeterTests</module>
+        <module>Frameworks</module>
     </modules>
 
 </project>
