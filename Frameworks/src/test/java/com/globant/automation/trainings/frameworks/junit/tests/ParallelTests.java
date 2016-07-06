@@ -78,7 +78,7 @@ public class ParallelTests {
     @Test
     public void testSimple() throws Exception {
         out.println(format("Thread %s - Running test using %s", currentThread().getId(), capabilities));
-        sleep(2500);
+        sleep(1000);
         out.println("Done");
     }
 

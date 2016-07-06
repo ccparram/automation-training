@@ -1,0 +1,17 @@
+webdriver:
+  implicitTimeOut: 30
+  pageLoadTimeout: 30
+  scriptTimeout: 30
+  appiumRemoteURL: "http://127.0.0.1:4723/wd/hub"
+  useListener: true
+
+drivers:
+  CHROME:
+    path: "/path/to/chromedriver(.exe)"
+  FIREFOX:
+
+
+proxy:
+  enabled: false
+  host: ""
+  port: 0

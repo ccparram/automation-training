@@ -9,7 +9,11 @@ import java.util.concurrent.Executors;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
- * Created by Juan Krzemien on 6/27/2016.
+ * This class is supposed to be used from JUnit's RunWith annotation.
+ * Adds support for parallel test runs (default is 5).
+ * Extends JUnit's Parameterized class, so you still get the parameterized tests :)
+ *
+ * @author Juan Krzemien
  */
 public class Parallelism extends Parameterized {
 
@@ -17,7 +21,7 @@ public class Parallelism extends Parameterized {
         private final ExecutorService executor;
 
         ThreadPoolScheduler() {
-            String threads = System.getProperty("junit.parallel.threads", "16");
+            String threads = System.getProperty("junit.parallel.threads", "5");
             int numThreads = Integer.parseInt(threads);
             executor = Executors.newFixedThreadPool(numThreads);
         }
