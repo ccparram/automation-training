@@ -57,6 +57,7 @@
         <module>JavaConcurrency</module>
         <module>JMeterTests</module>
         <module>Frameworks</module>
+        <module>ServiceAutomation</module>
     </modules>
 
 </project>
