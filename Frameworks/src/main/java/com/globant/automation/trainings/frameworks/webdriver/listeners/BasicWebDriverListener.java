@@ -1,20 +1,23 @@
 package com.globant.automation.trainings.frameworks.webdriver.listeners;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.events.WebDriverEventListener;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
+import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.io.FileUtils.copyFile;
 import static org.openqa.selenium.OutputType.FILE;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Example of a basic WebDriver listener
- *
+ * <p>
  * Just logs operations and takes screenshots upon exceptions
  *
  * @author Juan Krzemien
@@ -108,7 +111,7 @@ public class BasicWebDriverListener implements WebDriverEventListener {
         if (driver instanceof TakesScreenshot) {
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(FILE);
             try {
-                copyFile(scrFile, new File("screenshot" + new Date().toString() + ".png"));
+                copyFile(scrFile, new File("screenshot-" + currentTimeMillis() + ".png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
