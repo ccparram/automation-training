@@ -2,7 +2,6 @@ package com.globant.automation.trainings.frameworks.webdriver.config;
 
 import com.globant.automation.trainings.frameworks.webdriver.config.interfaces.IProxy;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
@@ -10,8 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  *
  * @author Juan Krzemien
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.ALWAYS)
-@JsonPropertyOrder({"enabled", "host", "port"})
+@JsonSerialize
 class Proxy implements IProxy {
 
     @JsonProperty

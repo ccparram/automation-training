@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 
+import static java.lang.Boolean.parseBoolean;
 import static java.lang.System.currentTimeMillis;
+import static java.lang.System.getProperty;
 import static org.apache.commons.io.FileUtils.copyFile;
 import static org.openqa.selenium.OutputType.FILE;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -24,6 +26,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class BasicWebDriverListener implements WebDriverEventListener {
 
+    private final boolean debugMode = parseBoolean(getProperty("DEBUG_MODE", "false"));
     private static final Logger LOG = getLogger(BasicWebDriverListener.class);
 
     @Override
@@ -73,27 +76,37 @@ public class BasicWebDriverListener implements WebDriverEventListener {
 
     @Override
     public void beforeChangeValueOf(WebElement webElement, WebDriver driver) {
-        LOG.info("Attempting to change value of " + webElement + "...");
+        if (debugMode) {
+            LOG.info("Attempting to change value of " + webElement + "...");
+        }
     }
 
     @Override
     public void beforeClickOn(WebElement webElement, WebDriver driver) {
-        LOG.info("Attempting to click " + webElement + "...");
+        if (debugMode) {
+            LOG.info("Attempting to click " + webElement + "...");
+        }
     }
 
     @Override
     public void beforeFindBy(By locator, WebElement webElement, WebDriver driver) {
-        LOG.info("Attempting to identify element with locator " + locator + "...");
+        if (debugMode) {
+            LOG.info("Attempting to identify element with locator " + locator + "...");
+        }
     }
 
     @Override
     public void beforeNavigateBack(WebDriver driver) {
-        LOG.info("Attempting to navigate back to previous page...");
+        if (debugMode) {
+            LOG.info("Attempting to navigate back to previous page...");
+        }
     }
 
     @Override
     public void beforeNavigateForward(WebDriver driver) {
-        LOG.info("Attempting to navigate forward to next page...");
+        if (debugMode) {
+            LOG.info("Attempting to navigate forward to next page...");
+        }
     }
 
     @Override
@@ -103,19 +116,23 @@ public class BasicWebDriverListener implements WebDriverEventListener {
 
     @Override
     public void beforeScript(String script, WebDriver driver) {
-        LOG.info("Attempting to execute Javascript...");
+        if (debugMode) {
+            LOG.info("Attempting to execute Javascript...");
+        }
     }
 
     @Override
     public void onException(Throwable throwable, WebDriver driver) {
-        if (driver instanceof TakesScreenshot) {
-            File scrFile = ((TakesScreenshot) driver).getScreenshotAs(FILE);
-            try {
-                copyFile(scrFile, new File("screenshot-" + currentTimeMillis() + ".png"));
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (debugMode) {
+            if (driver instanceof TakesScreenshot) {
+                File scrFile = ((TakesScreenshot) driver).getScreenshotAs(FILE);
+                try {
+                    copyFile(scrFile, new File("screenshot-" + currentTimeMillis() + ".png"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+            LOG.error("An exception occurred! Exception was: " + throwable.getMessage());
         }
-        LOG.error("An exception occurred! Exception was: " + throwable.getMessage(), throwable);
     }
 }

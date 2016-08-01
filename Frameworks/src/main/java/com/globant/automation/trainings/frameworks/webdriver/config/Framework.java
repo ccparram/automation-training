@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import java.io.InputStream;
 import java.util.Set;
 
-import static com.globant.automation.trainings.frameworks.webdriver.enums.Browser.CHROME;
-import static com.globant.automation.trainings.frameworks.webdriver.enums.Browser.IE;
 import static java.lang.Thread.currentThread;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -24,7 +22,6 @@ public enum Framework implements IConfig {
 
     CONFIGURATION;
 
-    private final Logger log = getLogger(Framework.class);
     private final IConfig config;
     private static final String CONFIG_FILE = "config.yml";
 
@@ -35,17 +32,10 @@ public enum Framework implements IConfig {
         try {
             configuration = om.readValue(configFile, Config.class);
         } catch (Exception e) {
+            Logger log = getLogger(Framework.class);
             log.error("Error parsing framework config!. Re-check!", e);
         }
         this.config = configuration;
-        if (config != null) {
-            if (config.AvailableDrivers().contains(CHROME)) {
-                System.setProperty("webdriver.chrome.driver", config.Driver(CHROME).getPath());
-            }
-            if (config.AvailableDrivers().contains(IE)) {
-                System.setProperty("webdriver.ie.driver", config.Driver(IE).getPath());
-            }
-        }
     }
 
     @Override

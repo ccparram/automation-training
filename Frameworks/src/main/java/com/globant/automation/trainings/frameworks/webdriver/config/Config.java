@@ -7,6 +7,7 @@ import com.globant.automation.trainings.frameworks.webdriver.config.interfaces.I
 import com.globant.automation.trainings.frameworks.webdriver.config.interfaces.IProxy;
 import com.globant.automation.trainings.frameworks.webdriver.enums.Browser;
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,9 @@ class Config implements IConfig {
 
     @JsonProperty
     private Proxy proxy = new Proxy();
+
+    Config() throws MalformedURLException {
+    }
 
     @Override
     public WebDriver WebDriver() {

@@ -10,8 +10,6 @@ import java.util.Map;
  */
 public interface IDriver {
 
-    String getPath();
-
     Map<String, Object> getCapabilities();
 
     List<String> getArguments();

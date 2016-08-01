@@ -4,16 +4,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.globant.automation.trainings.frameworks.webdriver.config.interfaces.IWebDriverConfig;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
- *
- *
  * @author Juan Krzemien
  */
 @JsonSerialize
 class WebDriver implements IWebDriverConfig {
 
     @JsonProperty
-    private int implicitTimeOut = 30;
+    private int explicitTimeOut = 30;
+
+    @JsonProperty
+    private int implicitTimeOut = 1;
 
     @JsonProperty
     private int pageLoadTimeout = 30;
@@ -22,10 +26,21 @@ class WebDriver implements IWebDriverConfig {
     private int scriptTimeout = 30;
 
     @JsonProperty
-    private String appiumRemoteURL = "http://127.0.0.1:4723/wd/hub";
+    private int pollingEveryMs = 500;
+
+    @JsonProperty
+    private URL remoteURL = new URL("http://localhost:4444/wd/hub");
 
     @JsonProperty
     private boolean useListener = true;
+
+    WebDriver() throws MalformedURLException {
+    }
+
+    @Override
+    public int getExplicitTimeOut() {
+        return explicitTimeOut;
+    }
 
     @Override
     public int getImplicitTimeOut() {
@@ -43,8 +58,13 @@ class WebDriver implements IWebDriverConfig {
     }
 
     @Override
-    public String getAppiumRemoteURL() {
-        return appiumRemoteURL;
+    public int getPollingEveryMs() {
+        return pollingEveryMs;
+    }
+
+    @Override
+    public URL getRemoteURL() {
+        return remoteURL;
     }
 
     @Override

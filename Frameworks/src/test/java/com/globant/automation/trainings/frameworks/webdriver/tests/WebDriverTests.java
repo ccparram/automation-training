@@ -1,6 +1,7 @@
-package com.globant.automation.trainings.frameworks.webdriver;
+package com.globant.automation.trainings.frameworks.webdriver.tests;
 
-import com.globant.automation.trainings.frameworks.webdriver.tests.JUnit4WebDriverTest;
+import com.globant.automation.trainings.frameworks.webdriver.pages.GoogleHomePage;
+import com.globant.automation.trainings.frameworks.webdriver.test.JUnit4WebDriverTest;
 import org.junit.Test;
 
 /**

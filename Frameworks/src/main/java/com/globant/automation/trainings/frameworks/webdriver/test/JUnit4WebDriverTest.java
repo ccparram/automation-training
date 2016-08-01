@@ -1,7 +1,9 @@
-package com.globant.automation.trainings.frameworks.webdriver.tests;
+package com.globant.automation.trainings.frameworks.webdriver.test;
 
 import com.globant.automation.trainings.frameworks.junit.Parallelism;
 import com.globant.automation.trainings.frameworks.webdriver.enums.Browser;
+import com.globant.automation.trainings.frameworks.webdriver.factories.Drivers;
+import com.globant.automation.trainings.frameworks.webdriver.test.pageobject.PageObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;

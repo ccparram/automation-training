@@ -1,7 +1,6 @@
-package com.globant.automation.trainings.frameworks.webdriver.tests;
+package com.globant.automation.trainings.frameworks.webdriver.factories;
 
 import com.globant.automation.trainings.frameworks.webdriver.enums.Browser;
-import com.globant.automation.trainings.frameworks.webdriver.factory.WebDriverStrategyFactory;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -9,18 +8,21 @@ import org.openqa.selenium.WebDriver;
  *
  * @author Juan Krzemien
  */
-enum Drivers {
+public enum Drivers {
 
     INSTANCES;
 
     private static ThreadLocal<WebDriver> driverPerThread = new ThreadLocal<>();
-    private WebDriverStrategyFactory factory = new WebDriverStrategyFactory();
+    private static ThreadLocal<Browser> browserPerThread = new ThreadLocal<>();
+
+    private final WebDriverStrategyFactory factory = new WebDriverStrategyFactory();
 
     public WebDriver create(Browser desiredBrowser) {
         WebDriver instance = driverPerThread.get();
         if (instance == null) {
             instance = factory.getDriverFor(desiredBrowser);
             driverPerThread.set(instance);
+            browserPerThread.set(desiredBrowser);
         }
         return instance;
     }
@@ -29,12 +31,17 @@ enum Drivers {
         return driverPerThread.get();
     }
 
+    public Browser getBrowserType() {
+        return browserPerThread.get();
+    }
+
     public void destroy() {
         WebDriver instance = driverPerThread.get();
         if (instance != null) {
             instance.quit();
         }
         driverPerThread.remove();
+        browserPerThread.remove();
     }
 
 }
