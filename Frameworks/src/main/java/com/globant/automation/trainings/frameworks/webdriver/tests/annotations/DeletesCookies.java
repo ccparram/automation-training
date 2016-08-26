@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.frameworks.webdriver.test.pageobject;
+package com.globant.automation.trainings.frameworks.webdriver.tests.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,10 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by Juan Krzemien on 7/26/2016.
+ * Created by Juan Krzemien on 7/22/2016.
  */
-@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GetterForField {
-    String value();
+@Target({ElementType.TYPE})
+public @interface DeletesCookies {
 }

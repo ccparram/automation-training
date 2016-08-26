@@ -38,6 +38,22 @@ public class ThreadSafetyIssues extends HideNonRelatedStuff {
         this.taskRetrieveUniqueNumbers = () -> range(0, MAX_NUMBERS_TO_RETRIEVE).forEach(i -> storageForThreads.add(generator.getNextInt()));
     }
 
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                // Safe collections
+                {new UnsafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()}, // Unsafe generator
+                {new SafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()},
+                {new AnotherSafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()},
+                {new UnsafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()}, // Unsafe generator
+                {new SafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()},
+                {new AnotherSafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()},
+                {new UnsafeIntGenerator(), new Vector<>(), new Vector<>()}, // Unsafe generator
+                {new SafeIntGenerator(), new Vector<>(), new Vector<>()},
+                {new AnotherSafeIntGenerator(), new Vector<>(), new Vector<>()}
+        });
+    }
+
     /**
      * Loop for MAX_RUN_TIME_SECONDS seconds doing:
      * - Clear structures
@@ -70,22 +86,6 @@ public class ThreadSafetyIssues extends HideNonRelatedStuff {
             out.println(format("Awww snap! I started to behave erratically on attempt #%s...Good times I'm not in a production environment!", loopNumber));
             throw ae;
         }
-    }
-
-    @Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-                // Safe collections
-                {new UnsafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()}, // Unsafe generator
-                {new SafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()},
-                {new AnotherSafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()},
-                {new UnsafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()}, // Unsafe generator
-                {new SafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()},
-                {new AnotherSafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()},
-                {new UnsafeIntGenerator(), new Vector<>(), new Vector<>()}, // Unsafe generator
-                {new SafeIntGenerator(), new Vector<>(), new Vector<>()},
-                {new AnotherSafeIntGenerator(), new Vector<>(), new Vector<>()}
-        });
     }
 }
 

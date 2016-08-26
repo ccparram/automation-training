@@ -7,9 +7,13 @@ import com.globant.automation.trainings.frameworks.webdriver.config.interfaces.I
 import com.globant.automation.trainings.frameworks.webdriver.config.interfaces.IProxy;
 import com.globant.automation.trainings.frameworks.webdriver.config.interfaces.IWebDriverConfig;
 import com.globant.automation.trainings.frameworks.webdriver.enums.Browser;
+import com.globant.automation.trainings.frameworks.webdriver.utils.Environment;
 import org.slf4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Set;
 
 import static java.lang.Thread.currentThread;
@@ -22,8 +26,25 @@ public enum Framework implements IConfig {
 
     CONFIGURATION;
 
-    private final IConfig config;
     private static final String CONFIG_FILE = "config.yml";
+
+    static {
+        // Define WebDriver's driver download directory once!
+        File tmpDir = new File("/tmp"); // Linux
+        if (Environment.isWindows()) {
+            tmpDir = new File("C:/Temp");
+        }
+        if (!tmpDir.exists()) {
+            try {
+                Files.createDirectory(tmpDir.toPath());
+            } catch (IOException e) {
+                getLogger(Browser.class).error(e.getMessage());
+            }
+        }
+        System.setProperty("wdm.targetPath", tmpDir.getAbsolutePath());
+    }
+
+    private final IConfig config;
 
     Framework() {
         ObjectMapper om = new ObjectMapper(new YAMLFactory());

@@ -1,9 +1,7 @@
-package com.globant.automation.trainings.frameworks.webdriver.test;
+package com.globant.automation.trainings.frameworks.webdriver.tests;
 
 import com.globant.automation.trainings.frameworks.junit.Parallelism;
 import com.globant.automation.trainings.frameworks.webdriver.enums.Browser;
-import com.globant.automation.trainings.frameworks.webdriver.factories.Drivers;
-import com.globant.automation.trainings.frameworks.webdriver.test.pageobject.PageObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -15,9 +13,7 @@ import java.util.Set;
 import static com.globant.automation.trainings.frameworks.webdriver.config.Framework.CONFIGURATION;
 
 /**
- * This class is the entry point for JUnit tests to the framework.
- * When extending this class, you MUST define a public static method
- * annotated with @Parameters.
+ * This sample class is the entry point for JUnit tests to the framework.
  *
  * @author Juan Krzemien
  */
@@ -34,12 +30,12 @@ public abstract class JUnit4WebDriverTest<T extends PageObject> extends GenericW
 
     @Before
     public void setUp() {
-        Drivers.INSTANCES.create(currentBrowser);
+        Drivers.INSTANCE.create(currentBrowser);
     }
 
     @After
     public void tearDown() {
-        Drivers.INSTANCES.destroy();
+        Drivers.INSTANCE.destroy();
     }
 }
 

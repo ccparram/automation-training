@@ -80,19 +80,19 @@ public class CustomSampler extends AbstractSampler implements TestBean {
         return getPropertyAsString("This is an example of sampler data");
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
     public String getFilename() {
         return filename;
     }
 
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getVariableName() {
         return variableName;
+    }
+
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
     }
 }

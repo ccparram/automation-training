@@ -7,7 +7,8 @@ public class Environment {
     private static final String OS = getProperty("os.name").toLowerCase();
     private static final String ARCH = getProperty("os.arch", "");
 
-    private Environment() {}
+    private Environment() {
+    }
 
     public static boolean isWindows() {
         return OS.contains("win");

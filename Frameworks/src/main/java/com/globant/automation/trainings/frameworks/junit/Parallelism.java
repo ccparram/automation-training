@@ -17,6 +17,11 @@ import static java.util.concurrent.TimeUnit.MINUTES;
  */
 public class Parallelism extends Parameterized {
 
+    public Parallelism(Class<?> clazz) throws Throwable {
+        super(clazz);
+        setScheduler(new ThreadPoolScheduler());
+    }
+
     private static class ThreadPoolScheduler implements RunnerScheduler {
         private final ExecutorService executor;
 
@@ -40,10 +45,5 @@ public class Parallelism extends Parameterized {
         public void schedule(Runnable childStatement) {
             executor.submit(childStatement);
         }
-    }
-
-    public Parallelism(Class<?> clazz) throws Throwable {
-        super(clazz);
-        setScheduler(new ThreadPoolScheduler());
     }
 }

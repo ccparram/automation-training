@@ -12,15 +12,22 @@ import java.util.Map;
 /**
  * @author Juan Krzemien
  */
-
 @JsonSerialize
 class Driver implements IDriver {
+
+    @JsonProperty
+    private String driverServerPath = "";
 
     @JsonProperty
     private Map<String, Object> capabilities = new HashMap<>();
 
     @JsonProperty
     private List<String> arguments = new ArrayList<>();
+
+    @Override
+    public String getDriverServerPath() {
+        return driverServerPath;
+    }
 
     @Override
     public Map<String, Object> getCapabilities() {

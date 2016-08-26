@@ -1,11 +1,10 @@
 package com.globant.automation.trainings.frameworks.webdriver.enums;
 
+import com.globant.automation.trainings.frameworks.webdriver.config.Framework;
 import com.globant.automation.trainings.frameworks.webdriver.utils.Environment;
-import io.github.bonigarcia.wdm.Architecture;
-import io.github.bonigarcia.wdm.ChromeDriverManager;
-import io.github.bonigarcia.wdm.EdgeDriverManager;
-import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
+import io.github.bonigarcia.wdm.*;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
@@ -15,6 +14,17 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  */
 public enum Browser {
 
+    MARIONETTE {
+        @Override
+        public Capabilities getCapabilities() {
+            if (!Framework.CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
+                MarionetteDriverManager.getInstance().setup(architecture, DriverVersion.LATEST.toString());
+            }
+            DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+            capabilities.setCapability("marionette", true);
+            return capabilities;
+        }
+    },
     FIREFOX {
         @Override
         public Capabilities getCapabilities() {
@@ -24,26 +34,37 @@ public enum Browser {
     CHROME {
         @Override
         public Capabilities getCapabilities() {
-            ChromeDriverManager.getInstance().setup(architecture);
-            return DesiredCapabilities.chrome();
+            if (!Framework.CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
+                ChromeDriverManager.getInstance().setup(architecture, DriverVersion.LATEST.toString());
+            }
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments(Framework.CONFIGURATION.Driver(this).getArguments());
+            DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+            capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+            return capabilities;
         }
     },
     IE {
         @Override
         public Capabilities getCapabilities() {
-            InternetExplorerDriverManager.getInstance().setup(architecture);
+            if (!Framework.CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
+                // Override architecture for IE. 64 bits version is known to misbehave...
+                InternetExplorerDriverManager.getInstance().setup(Architecture.x32, DriverVersion.LATEST.toString());
+            }
             return DesiredCapabilities.internetExplorer();
         }
     },
     EDGE {
         @Override
         public Capabilities getCapabilities() {
-            /**
-             * FIXME: EdgeDriverManager fails to download the correct Edge driver
-             * Microsoft changed the download URL/page so now this Manager crap with its hardcoded HtmlUnit
-             * mini-script looks in the wrong place...I don't want the Insiders old version...
-             */
-            EdgeDriverManager.getInstance().setup();
+            if (!Framework.CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
+                /**
+                 * FIXME: EdgeDriverManager fails to download the correct Edge driver
+                 * Microsoft changed the download URL/page so now this Manager crap with its hardcoded HtmlUnit
+                 * mini-script looks in the wrong place...I don't want the Insiders old version...
+                 */
+                EdgeDriverManager.getInstance().setup();
+            }
             return DesiredCapabilities.edge();
         }
     },
@@ -51,6 +72,24 @@ public enum Browser {
         @Override
         public Capabilities getCapabilities() {
             return DesiredCapabilities.safari();
+        }
+    },
+    ANDROID {
+        @Override
+        public Capabilities getCapabilities() {
+            return DesiredCapabilities.android();
+        }
+    },
+    IPHONE {
+        @Override
+        public Capabilities getCapabilities() {
+            return DesiredCapabilities.iphone();
+        }
+    },
+    IPAD {
+        @Override
+        public Capabilities getCapabilities() {
+            return DesiredCapabilities.ipad();
         }
     },
     APPIUM {

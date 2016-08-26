@@ -3,8 +3,6 @@ package com.globant.automation.trainings.frameworks.webdriver.config.interfaces;
 import java.net.URL;
 
 /**
- *
- *
  * @author Juan Krzemien
  */
 public interface IWebDriverConfig {
@@ -20,6 +18,8 @@ public interface IWebDriverConfig {
     int getPollingEveryMs();
 
     URL getRemoteURL();
+
+    boolean isUseSeleniumGrid();
 
     boolean isUseListener();
 }

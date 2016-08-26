@@ -1,8 +1,7 @@
-package com.globant.automation.trainings.frameworks.webdriver.test;
+package com.globant.automation.trainings.frameworks.webdriver.tests;
 
 import com.globant.automation.trainings.frameworks.webdriver.config.Framework;
-import com.globant.automation.trainings.frameworks.webdriver.factories.SeleniumServerStandAlone;
-import com.globant.automation.trainings.frameworks.webdriver.test.pageobject.PageObject;
+import com.globant.automation.trainings.frameworks.webdriver.selenium.SeleniumServerStandAlone;
 import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -17,4 +16,5 @@ public abstract class GenericWebDriverTest<T extends PageObject> {
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(SeleniumServerStandAlone.INSTANCE::shutdown));
     }
+
 }

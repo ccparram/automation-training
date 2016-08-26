@@ -32,6 +32,9 @@ class WebDriver implements IWebDriverConfig {
     private URL remoteURL = new URL("http://localhost:4444/wd/hub");
 
     @JsonProperty
+    private boolean useSeleniumGrid = false;
+
+    @JsonProperty
     private boolean useListener = true;
 
     WebDriver() throws MalformedURLException {
@@ -65,6 +68,11 @@ class WebDriver implements IWebDriverConfig {
     @Override
     public URL getRemoteURL() {
         return remoteURL;
+    }
+
+    @Override
+    public boolean isUseSeleniumGrid() {
+        return useSeleniumGrid;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.globant.automation.trainings.frameworks.webdriver.pages;
 
-import com.globant.automation.trainings.frameworks.webdriver.test.pageobject.PageObject;
+import com.globant.automation.trainings.frameworks.webdriver.tests.PageObject;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -10,9 +10,7 @@ import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElements;
 
 /**
- * Sample Page Object for Google's Results Page
- *
- * @author Juan Krzemien
+ * Created by jkrzemien on 06/07/2016.
  */
 public class GoogleSearchResults extends PageObject {
 
@@ -20,12 +18,7 @@ public class GoogleSearchResults extends PageObject {
     private List<WebElement> results;
 
     public List<String> getResultsTexts() {
+        waitFor(visibilityOfAllElements(results));
         return results.stream().map(WebElement::getText).collect(toList());
-    }
-
-    @Override
-    public boolean isVisible() {
-        doWait(visibilityOfAllElements(results));
-        return true;
     }
 }

@@ -1,5 +1,6 @@
-package com.globant.automation.trainings.frameworks.webdriver.factories;
+package com.globant.automation.trainings.frameworks.webdriver.selenium;
 
+import com.globant.automation.trainings.frameworks.webdriver.config.Framework;
 import org.openqa.selenium.server.SeleniumServer;
 import org.slf4j.Logger;
 
@@ -23,6 +24,11 @@ public enum SeleniumServerStandAlone {
     private SeleniumServer server;
 
     SeleniumServerStandAlone() {
+        if (Framework.CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
+            log.info("Using Selenium Grid...");
+            return;
+        }
+        log.info("Launching local Selenium Stand Alone Server...");
         try {
             Map<String, Object> options = new HashMap<String, Object>() {
                 {
@@ -32,14 +38,15 @@ public enum SeleniumServerStandAlone {
             this.server = new SeleniumServer(options);
             server.start();
         } catch (BindException be) {
-            log.error("Already running. Will reuse...");
+            log.error("Selenium Server seems be to already running on port TCP 4444. Will reuse...");
         } catch (Exception e) {
             log.error("Failed to start the server", e);
         }
     }
 
     public void shutdown() {
-        log.info("Shutting down Selenium Server...");
+        if (Framework.CONFIGURATION.WebDriver().isUseSeleniumGrid()) return;
+        log.info("Shutting down local Selenium Stand Alone Server...");
         server.stop();
         log.info("Done");
     }

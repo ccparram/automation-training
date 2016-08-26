@@ -14,8 +14,6 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
- *
- *
  * @author Juan Krzemien
  */
 @ManagedResource(objectName = "client:service=ComponentModeSwitcherMBean", description = "Switch between component's operation modes")

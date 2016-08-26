@@ -42,6 +42,21 @@ public class IncorrectCollectionUsage extends HideNonRelatedStuff {
         });
     }
 
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                // Safe generators
+                {new SafeIntGenerator(), new ArrayList<>(), new ArrayList<>()},
+                {new AnotherSafeIntGenerator(), new ArrayList<>(), new ArrayList<>()},
+                {new SafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()},
+                {new AnotherSafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()},
+                {new SafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()},
+                {new AnotherSafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()},
+                {new SafeIntGenerator(), new Vector<>(), new Vector<>()},
+                {new AnotherSafeIntGenerator(), new Vector<>(), new Vector<>()}
+        });
+    }
+
     /**
      * Loop for MAX_RUN_TIME_SECONDS seconds doing:
      * - Clear structures
@@ -73,21 +88,6 @@ public class IncorrectCollectionUsage extends HideNonRelatedStuff {
             out.println(format("Awww snap! I started to behave erratically on attempt #%s...Good times I'm not in a production environment!", loopNumber));
             throw ae;
         }
-    }
-
-    @Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-                // Safe generators
-                {new SafeIntGenerator(), new ArrayList<>(), new ArrayList<>()},
-                {new AnotherSafeIntGenerator(), new ArrayList<>(), new ArrayList<>()},
-                {new SafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()},
-                {new AnotherSafeIntGenerator(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>()},
-                {new SafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()},
-                {new AnotherSafeIntGenerator(), new ConcurrentSkipListSet<>(), new ConcurrentSkipListSet<>()},
-                {new SafeIntGenerator(), new Vector<>(), new Vector<>()},
-                {new AnotherSafeIntGenerator(), new Vector<>(), new Vector<>()}
-        });
     }
 }
 

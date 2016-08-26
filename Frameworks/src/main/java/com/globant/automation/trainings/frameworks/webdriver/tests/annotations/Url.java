@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.frameworks.webdriver.annotations;
+package com.globant.automation.trainings.frameworks.webdriver.tests.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

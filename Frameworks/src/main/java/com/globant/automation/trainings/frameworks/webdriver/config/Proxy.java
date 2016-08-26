@@ -1,12 +1,10 @@
 package com.globant.automation.trainings.frameworks.webdriver.config;
 
-import com.globant.automation.trainings.frameworks.webdriver.config.interfaces.IProxy;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.globant.automation.trainings.frameworks.webdriver.config.interfaces.IProxy;
 
 /**
- *
- *
  * @author Juan Krzemien
  */
 @JsonSerialize

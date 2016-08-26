@@ -26,12 +26,14 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class BasicWebDriverListener implements WebDriverEventListener {
 
-    private final boolean debugMode = parseBoolean(getProperty("DEBUG_MODE", "false"));
     private static final Logger LOG = getLogger(BasicWebDriverListener.class);
+    private final boolean debugMode = parseBoolean(getProperty("DEBUG_MODE", "false"));
 
     @Override
     public void afterChangeValueOf(WebElement webElement, WebDriver driver) {
-        LOG.info("Changed value for element " + webElement);
+        if (debugMode) {
+            LOG.info("Changed value for element " + webElement);
+        }
     }
 
     @Override
@@ -41,7 +43,9 @@ public class BasicWebDriverListener implements WebDriverEventListener {
 
     @Override
     public void afterFindBy(By locator, WebElement webElement, WebDriver driver) {
-        LOG.info("Element identified with locator " + locator);
+        if (debugMode) {
+            LOG.info("Element identified with locator " + locator);
+        }
     }
 
     @Override
@@ -56,12 +60,12 @@ public class BasicWebDriverListener implements WebDriverEventListener {
 
     @Override
     public void beforeNavigateRefresh(WebDriver driver) {
-        LOG.info("Before refreshing...");
+        LOG.info("Refreshing page...");
     }
 
     @Override
     public void afterNavigateRefresh(WebDriver driver) {
-        LOG.info("After refresh...");
+        LOG.info("Page refreshed");
     }
 
     @Override
@@ -71,7 +75,9 @@ public class BasicWebDriverListener implements WebDriverEventListener {
 
     @Override
     public void afterScript(String script, WebDriver driver) {
-        LOG.info("Javascript snippet executed successfully!");
+        if (debugMode) {
+            LOG.info("Javascript snippet executed: " + script);
+        }
     }
 
     @Override
@@ -111,28 +117,26 @@ public class BasicWebDriverListener implements WebDriverEventListener {
 
     @Override
     public void beforeNavigateTo(String url, WebDriver driver) {
-        LOG.info("Attempting to navigate to URL: " + url);
+        LOG.info("Navigating to URL: " + url);
     }
 
     @Override
     public void beforeScript(String script, WebDriver driver) {
         if (debugMode) {
-            LOG.info("Attempting to execute Javascript...");
+            LOG.info("Attempting to execute Javascript: " + script);
         }
     }
 
     @Override
     public void onException(Throwable throwable, WebDriver driver) {
-        if (debugMode) {
-            if (driver instanceof TakesScreenshot) {
-                File scrFile = ((TakesScreenshot) driver).getScreenshotAs(FILE);
-                try {
-                    copyFile(scrFile, new File("screenshot-" + currentTimeMillis() + ".png"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        if (driver instanceof TakesScreenshot) {
+            File scrFile = ((TakesScreenshot) driver).getScreenshotAs(FILE);
+            try {
+                copyFile(scrFile, new File("screenshot-" + currentTimeMillis() + ".png"));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            LOG.error("An exception occurred! Exception was: " + throwable.getMessage());
         }
+        LOG.error("An exception occurred! Exception was: " + throwable.getMessage(), throwable);
     }
 }
