@@ -17,6 +17,8 @@ import static java.util.concurrent.TimeUnit.MINUTES;
  */
 public class Parallelism extends Parameterized {
 
+    private static final int TIMEOUT_MINUTES = 10;
+
     public Parallelism(Class<?> clazz) throws Throwable {
         super(clazz);
         setScheduler(new ThreadPoolScheduler());
@@ -35,7 +37,7 @@ public class Parallelism extends Parameterized {
         public void finished() {
             executor.shutdown();
             try {
-                executor.awaitTermination(10, MINUTES);
+                executor.awaitTermination(TIMEOUT_MINUTES, MINUTES);
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }

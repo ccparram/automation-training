@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.testng.Assert;
 
 /**
- * Created by Juan Krzemien on 7/21/2016.
+ * @author Juan Krzemien
  */
 public class Retries {
 

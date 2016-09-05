@@ -8,7 +8,7 @@ import com.globant.automation.trainings.tests.concurrency.threadSafety.interface
 class AnotherSafeIntGenerator implements IIntGenerator {
     private Integer i = 0;
 
-    synchronized public Integer getNextInt() {
+    public synchronized Integer getNextInt() {
         return ++i;
     }
 

@@ -10,7 +10,7 @@ import org.junit.Test;
 import java.util.Date;
 
 /**
- * Created by Juan Krzemien on 7/14/2016.
+ * @author Juan Krzemien
  */
 public class OrmStandAlone {
 

@@ -29,7 +29,9 @@ public class RetryRule implements TestRule {
                     } catch (Throwable t) {
                         if (retryCount.get() > 0 && description.getAnnotation(Retry.class) != null) {
                             err.println(format("%s FAILED with %s, %d retries remaining", description.getDisplayName(), t.getClass().getSimpleName(), retryCount.get()));
-                        } else throw t;
+                        } else {
+                            throw t;
+                        }
                     }
                 }
             }

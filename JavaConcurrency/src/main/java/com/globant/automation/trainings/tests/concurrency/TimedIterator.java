@@ -12,18 +12,19 @@ import static java.lang.System.nanoTime;
  */
 public class TimedIterator implements Spliterator<Long> {
 
-    private final long start;
     private final long end;
     private final AtomicLong counter = new AtomicLong(1);
 
     public TimedIterator(Duration duration) {
-        this.start = nanoTime();
+        long start = nanoTime();
         this.end = start + duration.toNanos();
     }
 
     @Override
     public boolean tryAdvance(Consumer<? super Long> action) {
-        if (nanoTime() > end) return false;
+        if (nanoTime() > end) {
+            return false;
+        }
         action.accept(counter.getAndIncrement());
         return true;
     }

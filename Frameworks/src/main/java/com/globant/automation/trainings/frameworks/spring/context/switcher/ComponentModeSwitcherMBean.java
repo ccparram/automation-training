@@ -53,8 +53,9 @@ public class ComponentModeSwitcherMBean implements ApplicationListener<ContextRe
     }
 
     private void setProfileAndRefreshContext(String profile) {
-        if (profile.equals(currentState))
+        if (profile.equals(currentState)) {
             return;
+        }
 
         /**
          * Restricts this class actions to pre-production environments only
