@@ -30,6 +30,15 @@ public class ParallelTests {
     private Capabilities capabilities;
     private long timeStart;
 
+    public ParallelTests(String platform, String browserName, String browserVersion) {
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("platform", platform);
+        capabilities.setCapability("browser", browserName);
+        capabilities.setCapability("browserVersion", browserVersion);
+        capabilities.setCapability("name", "Parallel test");
+        this.capabilities = capabilities;
+    }
+
     @Parameterized.Parameters(name = "Capability {0} {1} {2}")
     public static LinkedList<String[]> getEnvironments() throws Exception {
         LinkedList<String[]> env = new LinkedList<>();
@@ -58,15 +67,6 @@ public class ParallelTests {
         //add more browsers here
 
         return env;
-    }
-
-    public ParallelTests(String platform, String browserName, String browserVersion) {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("platform", platform);
-        capabilities.setCapability("browser", browserName);
-        capabilities.setCapability("browserVersion", browserVersion);
-        capabilities.setCapability("name", "Parallel test");
-        this.capabilities = capabilities;
     }
 
     @Before

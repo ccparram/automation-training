@@ -5,6 +5,8 @@ import org.junit.runners.model.RunnerScheduler;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
@@ -30,7 +32,7 @@ public class Parallelism extends Parameterized {
         ThreadPoolScheduler() {
             String threads = System.getProperty("junit.parallel.threads", "5");
             int numThreads = Integer.parseInt(threads);
-            executor = Executors.newFixedThreadPool(numThreads);
+            this.executor = Executors.newFixedThreadPool(numThreads, new TestThreadPool());
         }
 
         @Override
@@ -46,6 +48,15 @@ public class Parallelism extends Parameterized {
         @Override
         public void schedule(Runnable childStatement) {
             executor.submit(childStatement);
+        }
+
+        static class TestThreadPool implements ThreadFactory {
+            private static final AtomicInteger poolNumber = new AtomicInteger(1);
+
+            @Override
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "TestPool-Thread-" + poolNumber.getAndIncrement());
+            }
         }
     }
 }

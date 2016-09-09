@@ -1,7 +1,9 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.tests;
 
 import com.globant.automation.trainings.frameworks.junit.Parallelism;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.enums.Browser;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.Messages;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.PageObject;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.webdriver.Browser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -11,6 +13,7 @@ import org.junit.runners.Parameterized.Parameter;
 import java.util.Set;
 
 import static com.globant.automation.trainings.frameworks.webdriver.webframework.config.Framework.CONFIGURATION;
+import static com.globant.automation.trainings.frameworks.webdriver.webframework.events.EventBus.FRAMEWORK;
 
 /**
  * This sample class is the entry point for JUnit tests to the framework.
@@ -30,12 +33,12 @@ public abstract class JUnit4WebDriverTest<T extends PageObject> extends GenericW
 
     @Before
     public void setUp() {
-        Drivers.INSTANCE.create(currentBrowser);
+        FRAMEWORK.post(Messages.Test.START(currentBrowser));
     }
 
     @After
     public void tearDown() {
-        Drivers.INSTANCE.destroy();
+        FRAMEWORK.post(Messages.Test.FINISH(currentBrowser));
     }
 }
 

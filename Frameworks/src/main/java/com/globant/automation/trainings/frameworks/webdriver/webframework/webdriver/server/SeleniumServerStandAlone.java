@@ -1,7 +1,8 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.selenium;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.webdriver.server;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.logging.Logging;
 import org.openqa.grid.internal.utils.configuration.StandaloneConfiguration;
 import org.openqa.selenium.remote.server.SeleniumServer;
 import org.slf4j.LoggerFactory;
@@ -10,31 +11,29 @@ import java.net.BindException;
 import java.util.logging.LogManager;
 
 import static com.globant.automation.trainings.frameworks.webdriver.webframework.config.Framework.CONFIGURATION;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Launches a single instance of Selenium Server programmatically
  *
  * @author Juan Krzemien
  */
-
-public enum SeleniumServerStandAlone {
+public enum SeleniumServerStandAlone implements Logging {
 
     INSTANCE;
 
-    private final org.slf4j.Logger log = getLogger(SeleniumServerStandAlone.class);
     private SeleniumServer server;
 
     SeleniumServerStandAlone() {
         if (CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
-            log.info("Using Selenium Grid...");
+            getLogger().info("Using Selenium Grid...");
             return;
         }
-        log.info("Launching local Selenium Stand Alone Server...");
+        getLogger().info("Launching local Selenium Stand Alone Server...\n");
         try {
             StandaloneConfiguration options = new StandaloneConfiguration();
             options.debug = CONFIGURATION.isDebugMode();
             if (!options.debug) {
+                // Turn off verbose logging from Selenium Server...(default is ON)
                 ((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(Level.OFF);
                 LogManager.getLogManager().getLogger("").setLevel(java.util.logging.Level.OFF);
             }
@@ -42,10 +41,10 @@ public enum SeleniumServerStandAlone {
             server.boot();
         } catch (Throwable t) {
             if (t.getCause() instanceof BindException) {
-                log.error("Already running. Will reuse...");
+                getLogger().error("Already running. Will reuse...");
                 return;
             }
-            log.error("Failed to start the server", t);
+            getLogger().error("Failed to start the server", t);
         }
     }
 
@@ -53,9 +52,13 @@ public enum SeleniumServerStandAlone {
         if (CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
             return;
         }
-        log.info("Shutting down local Selenium Stand Alone Server...");
-        server.stop();
-        log.info("Done");
+        getLogger().info("Shutting down local Selenium Stand Alone Server...");
+        try {
+            server.stop();
+        } catch (RuntimeException ignored) {
+            // Depending on when shutdown() is called, JVM may be already killing the thread
+        }
+        getLogger().info("Done");
     }
 }
 

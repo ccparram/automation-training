@@ -1,7 +1,6 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -20,10 +19,6 @@ import static java.util.stream.Collectors.toList;
  */
 abstract class PageCommon extends WebDriverOperations {
 
-    PageCommon() {
-        PageFactory.initElements(Drivers.INSTANCE.get(), this);
-    }
-
     protected List<WebElement> getOwnWebElements() {
         Field[] fields = getClass().getDeclaredFields();
         return stream(fields).filter(f -> f.getType().isAssignableFrom(WebElement.class)).map(f -> {
@@ -33,7 +28,7 @@ abstract class PageCommon extends WebDriverOperations {
                 f.setAccessible(false);
                 return we;
             } catch (IllegalAccessException e) {
-                LOG.error("Could not retrieve WebElements from Page Object!", e);
+                getLogger().error("Could not retrieve WebElements from Page Object!", e);
                 return null;
             }
         }).collect(toList());

@@ -1,4 +1,6 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.tests.language;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.language;
+
+import com.globant.automation.trainings.frameworks.webdriver.webframework.logging.Logging;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -14,7 +16,7 @@ import java.util.ResourceBundle;
  *
  * @author Juan Krzemien
  */
-public class AbstractUiText {
+public class AbstractUiText implements Logging {
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("UiText", Locale.getDefault());
 

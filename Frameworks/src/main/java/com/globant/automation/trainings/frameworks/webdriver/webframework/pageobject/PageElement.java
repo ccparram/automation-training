@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;

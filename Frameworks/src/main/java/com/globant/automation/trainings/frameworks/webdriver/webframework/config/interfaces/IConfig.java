@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.frameworks.webdriver.webframework.config.interfaces;
 
 
-import com.globant.automation.trainings.frameworks.webdriver.webframework.enums.Browser;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.webdriver.Browser;
 
 import java.util.Set;
 

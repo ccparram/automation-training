@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.config.interfaces.IConfig;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.config.interfaces.IDriver;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.config.interfaces.IProxy;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.enums.Browser;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.webdriver.Browser;
 
 import java.net.MalformedURLException;
 import java.util.HashMap;

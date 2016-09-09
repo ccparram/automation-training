@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.frameworks.webdriver.webframework;
 
 import com.globant.automation.trainings.frameworks.webdriver.webframework.pages.GoogleHomePage;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject.JUnit4WebDriverTest;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.tests.JUnit4WebDriverTest;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.utils.UiText;
 import org.junit.Test;
 

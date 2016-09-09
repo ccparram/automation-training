@@ -1,6 +1,6 @@
 package com.globant.automation.trainings.frameworks.webdriver.webframework.pages;
 
-import com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject.PageObject;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.PageObject;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 

@@ -1,5 +1,6 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.enums;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.webdriver;
 
+import com.globant.automation.trainings.frameworks.webdriver.webframework.logging.Logging;
 import io.github.bonigarcia.wdm.*;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -10,13 +11,14 @@ import static com.globant.automation.trainings.frameworks.webdriver.webframework
 import static io.github.bonigarcia.wdm.Architecture.x32;
 import static io.github.bonigarcia.wdm.Architecture.x64;
 import static io.github.bonigarcia.wdm.DriverVersion.LATEST;
+import static java.lang.String.format;
 
 /**
  * Enumeration that defines the browsers supported by this framework
  *
  * @author Juan Krzemien
  */
-public enum Browser {
+public enum Browser implements Logging {
 
     MARIONETTE {
         @Override
@@ -107,6 +109,11 @@ public enum Browser {
     };
 
     private static Architecture architecture = is64Bits() ? x64 : x32;
+
+    Browser() {
+        Drivers.INSTANCE.getClass();
+        getLogger().info(format("Initializing [%s] browser capabilities...", name()));
+    }
 
     public abstract Capabilities getCapabilities();
 

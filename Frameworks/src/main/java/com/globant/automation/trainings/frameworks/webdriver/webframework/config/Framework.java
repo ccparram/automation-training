@@ -6,9 +6,8 @@ import com.globant.automation.trainings.frameworks.webdriver.webframework.config
 import com.globant.automation.trainings.frameworks.webdriver.webframework.config.interfaces.IDriver;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.config.interfaces.IProxy;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.config.interfaces.IWebDriverConfig;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.enums.Browser;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.utils.Environment;
-import org.slf4j.Logger;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.logging.Logging;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.webdriver.Browser;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +15,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Set;
 
+import static com.globant.automation.trainings.frameworks.webdriver.webframework.utils.Environment.isWindows;
 import static java.lang.Thread.currentThread;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Global Framework's configuration entry point.
@@ -26,38 +25,44 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * @author Juan Krzemien
  */
-public enum Framework implements IConfig {
+public enum Framework implements IConfig, Logging {
 
     CONFIGURATION;
 
     private static final String CONFIG_FILE = "config.yml";
 
-    static {
+    private final IConfig config;
+
+    Framework() {
+        Thread.currentThread().setName("Framework-Thread");
+        getLogger().info("Initializing Framework configuration...");
+        setDriversDownloadDirectory();
+        this.config = readConfig();
+    }
+
+    private void setDriversDownloadDirectory() {
         // Define WebDriver's driver download directory once!
-        File tmpDir = Environment.isWindows() ? new File("C:/Temp") : new File("/tmp");
+        File tmpDir = isWindows() ? new File("C:/Temp") : new File("/tmp");
         if (!tmpDir.exists()) {
             try {
                 Files.createDirectory(tmpDir.toPath());
             } catch (IOException e) {
-                getLogger(Browser.class).error(e.getMessage());
+                getLogger().error(e.getMessage());
             }
         }
         System.setProperty("wdm.targetPath", tmpDir.getAbsolutePath());
     }
 
-    private final IConfig config;
-
-    Framework() {
+    private IConfig readConfig() {
         ObjectMapper om = new ObjectMapper(new YAMLFactory());
         IConfig configuration = null;
         InputStream configFile = currentThread().getContextClassLoader().getResourceAsStream(CONFIG_FILE);
         try {
             configuration = om.readValue(configFile, Config.class);
         } catch (Exception e) {
-            Logger log = getLogger(Framework.class);
-            log.error("Error parsing framework config!. Re-check!", e);
+            getLogger().error("Error parsing framework config!. Re-check!", e);
         }
-        this.config = configuration;
+        return configuration;
     }
 
     @Override

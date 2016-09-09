@@ -83,5 +83,10 @@
             <artifactId>webdrivermanager</artifactId>
             <version>1.4.7</version>
         </dependency>
+        <dependency>
+            <groupId>net.engio</groupId>
+            <artifactId>mbassador</artifactId>
+            <version>1.2.4.2</version>
+        </dependency>
     </dependencies>
 </project>

@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject.annotations;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,13 +1,15 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject;
 
-import com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject.annotations.DeletesCookies;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject.annotations.FocusFrames;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject.annotations.Url;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.Messages;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.annotations.DeletesCookies;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.annotations.FocusFrames;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.annotations.Url;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.globant.automation.trainings.frameworks.webdriver.webframework.events.EventBus.FRAMEWORK;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
@@ -22,11 +24,13 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsT
 public abstract class PageObject extends PageCommon {
 
     public PageObject() {
-        LOG.info(format("Creating new [%s] Page Object instance...", getClass().getSimpleName()));
+        getLogger().info(format("Creating new [%s] Page Object instance...", getClass().getSimpleName()));
+
+        FRAMEWORK.post(Messages.PageObject.CREATED(this));
 
         navigateIfDecorated();
 
-        LOG.info(format("[%s] Page Object instance created...", getClass().getSimpleName()));
+        getLogger().info(format("[%s] Page Object instance created...", getClass().getSimpleName()));
 
         focusFrameIfDecorated();
     }
@@ -40,13 +44,13 @@ public abstract class PageObject extends PageCommon {
         if (focusFrames != null) {
             String framePath = stream(focusFrames.value()).collect(joining(" -> "));
             switchTo().defaultContent();
-            LOG.info(format("Page Object [%s] is marked with @FocusFrames, switching frame focus: Default Context -> %s", getClass().getSimpleName(), framePath));
+            getLogger().info(format("Page Object [%s] is marked with @FocusFrames, switching frame focus: Default Context -> %s", getClass().getSimpleName(), framePath));
             for (String frame : focusFrames.value()) {
                 waitFor(frameToBeAvailableAndSwitchToIt(frame));
             }
         }
         /*else {
-            LOG.info(format("Switch to default content for Page Object [%s]...", getClass().getSimpleName()));
+            getLogger().info(format("Switch to default content for Page Object [%s]...", getClass().getSimpleName()));
             switchTo().defaultContent();
         }*/
     }
@@ -61,10 +65,10 @@ public abstract class PageObject extends PageCommon {
         return getClass().getName();
     }
 
-    private void deleteCookiesIfMarked() {
+    private void deleteCookiesIfDecorated() {
         DeletesCookies deletesCookies = getClass().getAnnotation(DeletesCookies.class);
         if (deletesCookies != null) {
-            LOG.info(format("Page Object [%s] is marked with @DeletesCookies, deleting...", getClass().getSimpleName()));
+            getLogger().info(format("Page Object [%s] is marked with @DeletesCookies, deleting...", getClass().getSimpleName()));
             getDriver().manage().deleteAllCookies();
         }
     }
@@ -72,19 +76,19 @@ public abstract class PageObject extends PageCommon {
     private void navigateIfDecorated() {
         String envUrl = System.getenv("SUT_URL");
         if (envUrl != null && !envUrl.isEmpty()) {
-            LOG.info(format("Environment variable SUT_URL present! Navigating to [%s]...", envUrl));
+            getLogger().info(format("Environment variable SUT_URL present! Navigating to [%s]...", envUrl));
             goToUrl(envUrl);
         } else {
             Url urlMark = getClass().getAnnotation(Url.class);
             if (urlMark != null) {
-                LOG.info(format("Page Object [%s] is marked with @Url, navigating to [%s]...", getClass().getSimpleName(), urlMark.value()));
+                getLogger().info(format("Page Object [%s] is marked with @Url, navigating to [%s]...", getClass().getSimpleName(), urlMark.value()));
                 goToUrl(urlMark.value());
             }
         }
     }
 
     protected void goToUrl(String url) {
-        deleteCookiesIfMarked();
+        deleteCookiesIfDecorated();
         getDriver().get(url);
     }
 

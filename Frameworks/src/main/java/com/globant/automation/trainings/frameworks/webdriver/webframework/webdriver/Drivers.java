@@ -1,7 +1,12 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.webdriver;
 
-import com.globant.automation.trainings.frameworks.webdriver.webframework.enums.Browser;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.interfaces.IPageObjectCreatedEvent;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.interfaces.ITestFinishedEvent;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.interfaces.ITestStartedEvent;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.listeners.BasicWebDriverListener;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.logging.Logging;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.PageObject;
+import net.engio.mbassy.listener.Handler;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -11,6 +16,8 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import java.util.Map;
 
 import static com.globant.automation.trainings.frameworks.webdriver.webframework.config.Framework.CONFIGURATION;
+import static com.globant.automation.trainings.frameworks.webdriver.webframework.events.EventBus.FRAMEWORK;
+import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.remote.CapabilityType.PROXY;
 
@@ -19,13 +26,23 @@ import static org.openqa.selenium.remote.CapabilityType.PROXY;
  *
  * @author Juan Krzemien
  */
-enum Drivers {
+enum Drivers implements Logging {
 
     INSTANCE;
 
     private static final ThreadLocal<WebDriver> DriverPerThread = new ThreadLocal<>();
-
     private final WebDriverStrategyFactory factory = new WebDriverStrategyFactory();
+
+    Drivers() {
+        getLogger().info("Initializing WebDriver Thread Manager...");
+        FRAMEWORK.suscribe(this);
+    }
+
+    @Handler
+    private WebDriver createBrowserEventHandler(ITestStartedEvent event) {
+        getLogger().info(format("Creating a [%s] browser instance...", event.getBrowser().name()));
+        return create(event.getBrowser());
+    }
 
     public WebDriver create(Browser desiredBrowser) {
         WebDriver instance = get();
@@ -36,8 +53,22 @@ enum Drivers {
         return instance;
     }
 
+    @Handler
+    private void injectDriverInPageObject(IPageObjectCreatedEvent event) {
+        PageObject po = event.getPageObject();
+        getLogger().info(format("Injecting WebDriver instance into Page Object [%s]...", po.getClass().getSimpleName()));
+        WebDriver driver = get();
+        po.setDriver(driver);
+    }
+
     public WebDriver get() {
         return DriverPerThread.get();
+    }
+
+    @Handler
+    private void destroyBrowserEventHandler(ITestFinishedEvent event) {
+        getLogger().info(format("Destroying [%s] browser instance...", event.getBrowser().name()));
+        destroy();
     }
 
     public void destroy() {
@@ -48,7 +79,7 @@ enum Drivers {
         DriverPerThread.remove();
     }
 
-    static class WebDriverStrategyFactory {
+    static class WebDriverStrategyFactory implements Logging {
 
         private WebDriver getDriverFor(Browser browser) {
 
@@ -60,6 +91,7 @@ enum Drivers {
 
             // Set proxy settings, if any
             if (CONFIGURATION.Proxy().isEnabled()) {
+                getLogger().info("Setting WebDriver proxy...");
 
                 String proxyCfg = CONFIGURATION.Proxy().getHost() + ":" + CONFIGURATION.Proxy().getPort();
 
@@ -75,9 +107,10 @@ enum Drivers {
         }
 
         private WebDriver getDriverFor(DesiredCapabilities capabilities) {
-            // Create driver
+            getLogger().info("Creating RemoteWebDriver instance...");
             WebDriver driver = new RemoteWebDriver(CONFIGURATION.WebDriver().getRemoteURL(), capabilities);
 
+            getLogger().info("Setting up WebDriver timeouts...");
             driver.manage().timeouts().implicitlyWait(CONFIGURATION.WebDriver().getImplicitTimeOut(), SECONDS);
             driver.manage().timeouts().pageLoadTimeout(CONFIGURATION.WebDriver().getPageLoadTimeout(), SECONDS);
             driver.manage().timeouts().setScriptTimeout(CONFIGURATION.WebDriver().getScriptTimeout(), SECONDS);
@@ -85,6 +118,7 @@ enum Drivers {
             driver.manage().window().maximize();
 
             if (CONFIGURATION.WebDriver().isUseListener()) {
+                getLogger().info("Setting up WebDriver listener...");
                 // Wrap the driver as an event firing one, and add basic listener
                 final EventFiringWebDriver eventDriver = new EventFiringWebDriver(driver);
                 eventDriver.register(new BasicWebDriverListener());

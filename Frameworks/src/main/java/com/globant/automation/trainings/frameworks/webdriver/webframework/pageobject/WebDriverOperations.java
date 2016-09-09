@@ -1,11 +1,12 @@
-package com.globant.automation.trainings.frameworks.webdriver.webframework.tests.pageobject;
+package com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject;
 
+import com.globant.automation.trainings.frameworks.webdriver.webframework.logging.Logging;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -15,7 +16,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * This package local class contains most operation that WebDriver can perform
@@ -23,29 +23,35 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * @author Juan Krzemien
  */
-class WebDriverOperations {
+class WebDriverOperations implements Logging {
 
-    protected static final Logger LOG = getLogger(PageObject.class);
+    private WebDriver driver;
 
-    private final WebDriver driver;
-
-    private final WebDriverWait wait;
+    private WebDriverWait wait;
 
     WebDriverOperations() {
-        this.driver = Drivers.INSTANCE.get();
-
-        wait = new WebDriverWait(driver, CONFIGURATION.WebDriver().getExplicitTimeOut());
-        wait.ignoring(NoSuchElementException.class);
-        wait.ignoring(StaleElementReferenceException.class);
-        wait.pollingEvery(CONFIGURATION.WebDriver().getPollingEveryMs(), MILLISECONDS);
     }
 
     protected WebDriver getDriver() {
         return driver;
     }
 
+    public void setDriver(WebDriver newDriver) {
+        this.driver = newDriver;
+
+        wait = new WebDriverWait(driver, CONFIGURATION.WebDriver().getExplicitTimeOut());
+        wait.ignoring(NoSuchElementException.class);
+        wait.ignoring(StaleElementReferenceException.class);
+        wait.pollingEvery(CONFIGURATION.WebDriver().getPollingEveryMs(), MILLISECONDS);
+
+        PageFactory.initElements(driver, this);
+    }
+
     /**
      * Invokes WebDriver's active waiting on an expected condition
+     * <p>
+     * This method was kept public since there is a chance of using this framework with
+     * Gherkin like test runners which *may* need access to wait feature from outside POMs.
      *
      * @param condition the {@link ExpectedCondition} to wait for. Choose from {@link org.openqa.selenium.support.ui.ExpectedConditions} or create your own.
      * @param <T>       Generic type on which to wait
@@ -56,13 +62,16 @@ class WebDriverOperations {
             return wait.until(condition);
         } catch (TimeoutException toe) {
             String currentUrl = driver.getCurrentUrl();
-            LOG.error(format("Error: %s\nCurrent URL: %s", toe.getMessage(), currentUrl), toe);
+            getLogger().error(format("Error: %s\nCurrent URL: %s", toe.getMessage(), currentUrl), toe);
             throw toe;
         }
     }
 
     /**
      * Allows to switch WebDriver focus to a specific window or frame
+     * <p>
+     * This method was kept public since there is a chance of using this framework with
+     * Gherkin like test runners which *may* need access to Switch context feature from outside POMs.
      *
      * @return {@link org.openqa.selenium.WebDriver.TargetLocator} object from WebDriver instance
      */
