@@ -17,7 +17,10 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Juan Krzemien
  */
-abstract class PageCommon extends WebDriverOperations {
+class PageCommon extends WebDriverOperations {
+
+    PageCommon() {
+    }
 
     protected List<WebElement> getOwnWebElements() {
         Field[] fields = getClass().getDeclaredFields();

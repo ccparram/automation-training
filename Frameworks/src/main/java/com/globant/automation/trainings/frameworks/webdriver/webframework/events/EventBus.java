@@ -1,8 +1,10 @@
 package com.globant.automation.trainings.frameworks.webdriver.webframework.events;
 
-import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.interfaces.IEvent;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.logging.Logging;
 import net.engio.mbassy.bus.MBassador;
+import net.engio.mbassy.bus.config.BusConfiguration;
+import net.engio.mbassy.bus.config.Feature;
+import net.engio.mbassy.bus.error.IPublicationErrorHandler;
 
 /**
  * @author Juan Krzemien
@@ -11,10 +13,15 @@ public enum EventBus implements Logging {
 
     FRAMEWORK;
 
-    private static final MBassador<? super IEvent> BUS = new MBassador<>();
+    private final MBassador<? super IEvent> BUS;
 
     EventBus() {
-        getLogger().info("Initializing Event Bus system...");
+        getLogger().info("Initializing internal Event Bus system...");
+        this.BUS = new MBassador<>(new BusConfiguration()
+                .addFeature(Feature.SyncPubSub.Default())
+                .addFeature(Feature.AsynchronousHandlerInvocation.Default())
+                .addFeature(Feature.AsynchronousMessageDispatch.Default())
+                .addPublicationErrorHandler(new IPublicationErrorHandler.ConsoleLogger()));
     }
 
     public void suscribe(Object listener) {

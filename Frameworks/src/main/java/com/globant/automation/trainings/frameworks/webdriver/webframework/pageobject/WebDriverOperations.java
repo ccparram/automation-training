@@ -44,6 +44,10 @@ class WebDriverOperations implements Logging {
         wait.ignoring(StaleElementReferenceException.class);
         wait.pollingEvery(CONFIGURATION.WebDriver().getPollingEveryMs(), MILLISECONDS);
 
+        initializePageObject();
+    }
+
+    protected void initializePageObject() {
         PageFactory.initElements(driver, this);
     }
 

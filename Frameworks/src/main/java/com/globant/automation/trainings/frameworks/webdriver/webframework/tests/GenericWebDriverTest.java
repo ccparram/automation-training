@@ -13,4 +13,7 @@ public abstract class GenericWebDriverTest<T extends PageObject> implements Logg
         Runtime.getRuntime().addShutdownHook(new Thread(SeleniumServerStandAlone.INSTANCE::shutdown, "SeleniumServer-Thread"));
     }
 
+    protected GenericWebDriverTest() {
+
+    }
 }

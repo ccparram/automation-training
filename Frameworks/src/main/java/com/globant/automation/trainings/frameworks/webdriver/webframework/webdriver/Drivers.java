@@ -1,12 +1,7 @@
 package com.globant.automation.trainings.frameworks.webdriver.webframework.webdriver;
 
-import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.interfaces.IPageObjectCreatedEvent;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.interfaces.ITestFinishedEvent;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.interfaces.ITestStartedEvent;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.listeners.BasicWebDriverListener;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.logging.Logging;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.PageObject;
-import net.engio.mbassy.listener.Handler;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -17,7 +12,6 @@ import java.util.Map;
 
 import static com.globant.automation.trainings.frameworks.webdriver.webframework.config.Framework.CONFIGURATION;
 import static com.globant.automation.trainings.frameworks.webdriver.webframework.events.EventBus.FRAMEWORK;
-import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.remote.CapabilityType.PROXY;
 
@@ -31,17 +25,12 @@ enum Drivers implements Logging {
     INSTANCE;
 
     private static final ThreadLocal<WebDriver> DriverPerThread = new ThreadLocal<>();
-    private final WebDriverStrategyFactory factory = new WebDriverStrategyFactory();
+    private static final WebDriverStrategyFactory factory = new WebDriverStrategyFactory();
 
     Drivers() {
         getLogger().info("Initializing WebDriver Thread Manager...");
         FRAMEWORK.suscribe(this);
-    }
-
-    @Handler
-    private WebDriver createBrowserEventHandler(ITestStartedEvent event) {
-        getLogger().info(format("Creating a [%s] browser instance...", event.getBrowser().name()));
-        return create(event.getBrowser());
+        DriverEventsHandler.INSTANCE.init();
     }
 
     public WebDriver create(Browser desiredBrowser) {
@@ -53,22 +42,8 @@ enum Drivers implements Logging {
         return instance;
     }
 
-    @Handler
-    private void injectDriverInPageObject(IPageObjectCreatedEvent event) {
-        PageObject po = event.getPageObject();
-        getLogger().info(format("Injecting WebDriver instance into Page Object [%s]...", po.getClass().getSimpleName()));
-        WebDriver driver = get();
-        po.setDriver(driver);
-    }
-
     public WebDriver get() {
         return DriverPerThread.get();
-    }
-
-    @Handler
-    private void destroyBrowserEventHandler(ITestFinishedEvent event) {
-        getLogger().info(format("Destroying [%s] browser instance...", event.getBrowser().name()));
-        destroy();
     }
 
     public void destroy() {

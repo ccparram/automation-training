@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.frameworks.webdriver.webframework.tests;
 
 import com.globant.automation.trainings.frameworks.junit.Parallelism;
-import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.Messages;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.events.Messages;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.PageObject;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.webdriver.Browser;
 import org.junit.After;

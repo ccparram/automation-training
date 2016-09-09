@@ -1,6 +1,6 @@
 package com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject;
 
-import com.globant.automation.trainings.frameworks.webdriver.webframework.events.messages.Messages;
+import com.globant.automation.trainings.frameworks.webdriver.webframework.events.Messages;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.annotations.DeletesCookies;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.annotations.FocusFrames;
 import com.globant.automation.trainings.frameworks.webdriver.webframework.pageobject.annotations.Url;
@@ -21,25 +21,27 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsT
  *
  * @author Juan Krzemien
  */
-public abstract class PageObject extends PageCommon {
+public class PageObject extends PageCommon {
 
-    public PageObject() {
+    protected PageObject() {
+
+        FRAMEWORK.post(Messages.PageObjects.CREATED(this));
+
         getLogger().info(format("Creating new [%s] Page Object instance...", getClass().getSimpleName()));
-
-        FRAMEWORK.post(Messages.PageObject.CREATED(this));
 
         navigateIfDecorated();
 
+        focusFrameIfDecorated();
+
         getLogger().info(format("[%s] Page Object instance created...", getClass().getSimpleName()));
 
-        focusFrameIfDecorated();
     }
 
     /**
      * If POM is marked with {@link FocusFrames}, processes annotation
      * values and switches WebDriver focus to the frames mentioned in the list, from first to last.
      */
-    protected void focusFrameIfDecorated() {
+    private void focusFrameIfDecorated() {
         FocusFrames focusFrames = getClass().getAnnotation(FocusFrames.class);
         if (focusFrames != null) {
             String framePath = stream(focusFrames.value()).collect(joining(" -> "));
