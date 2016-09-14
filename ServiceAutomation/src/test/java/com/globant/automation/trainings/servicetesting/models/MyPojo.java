@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.servicetesting.tests.models;
+package com.globant.automation.trainings.servicetesting.models;
 
 import javax.persistence.*;
 import java.util.Date;

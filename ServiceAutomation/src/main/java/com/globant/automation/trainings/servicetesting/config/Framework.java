@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 
 /**
@@ -40,7 +41,7 @@ public enum Framework implements IConfig, Logging {
         try {
             configuration = om.readValue(configFile, Config.class);
         } catch (Exception e) {
-            getLogger().error("Error parsing framework config!. Re-check!", e);
+            getLogger().error(format("Error parsing framework config file [%s]. Re-check!", CONFIG_FILE), e);
         }
         return configuration;
     }
