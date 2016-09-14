@@ -6,11 +6,12 @@
 
     <parent>
         <groupId>com.globant.automation.trainings</groupId>
-        <artifactId>JavaTrainings</artifactId>
+        <artifactId>java-trainings</artifactId>
         <version>1.0</version>
     </parent>
 
-    <artifactId>JMeterTests</artifactId>
+    <name>JMeter Java Tests</name>
+    <artifactId>jmeter-java-tests</artifactId>
     <version>1.0</version>
 
     <dependencies>
