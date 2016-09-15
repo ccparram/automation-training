@@ -2,18 +2,18 @@ package com.globant.automation.trainings.servicetesting.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Plan {
+/**
+ * @author Juan Krzemien
+ */
+public class Label {
+
+    @JsonProperty
+    public String url;
 
     @JsonProperty
     public String name;
 
     @JsonProperty
-    public Integer space;
-
-    @JsonProperty("private_repos")
-    public Integer privateRepos;
-
-    @JsonProperty
-    public Integer collaborators;
+    public String color;
 
 }

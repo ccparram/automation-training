@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author Juan Krzemien
  */
-public class Token {
+public class Key {
 
     @JsonProperty
-    public String token;
+    public Integer id;
+
+    @JsonProperty
+    public String key;
 
 }

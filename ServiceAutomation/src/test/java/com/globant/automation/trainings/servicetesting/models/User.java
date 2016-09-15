@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class User {
 
-    @JsonProperty("login")
+    @JsonProperty
     public String login;
 
-    @JsonProperty("id")
+    @JsonProperty
     public Integer id;
 
     @JsonProperty("avatar_url")
@@ -19,7 +19,7 @@ public class User {
     @JsonProperty("gravatar_id")
     public String gravatarId;
 
-    @JsonProperty("url")
+    @JsonProperty
     public String url;
 
     @JsonProperty("html_url")
@@ -52,31 +52,31 @@ public class User {
     @JsonProperty("received_events_url")
     public String receivedEventsUrl;
 
-    @JsonProperty("type")
+    @JsonProperty
     public String type;
 
     @JsonProperty("site_admin")
     public Boolean siteAdmin;
 
-    @JsonProperty("name")
+    @JsonProperty
     public String name;
 
-    @JsonProperty("company")
+    @JsonProperty
     public String company;
 
-    @JsonProperty("blog")
+    @JsonProperty
     public String blog;
 
-    @JsonProperty("location")
+    @JsonProperty
     public String location;
 
-    @JsonProperty("email")
+    @JsonProperty
     public String email;
 
-    @JsonProperty("hireable")
+    @JsonProperty
     public Boolean hireable;
 
-    @JsonProperty("bio")
+    @JsonProperty
     public String bio;
 
     @JsonProperty("public_repos")
@@ -85,10 +85,10 @@ public class User {
     @JsonProperty("public_gists")
     public Integer publicGists;
 
-    @JsonProperty("followers")
+    @JsonProperty
     public Integer followers;
 
-    @JsonProperty("following")
+    @JsonProperty
     public Integer following;
 
     @JsonProperty("created_at")
@@ -109,10 +109,10 @@ public class User {
     @JsonProperty("disk_usage")
     public Integer diskUsage;
 
-    @JsonProperty("collaborators")
+    @JsonProperty
     public Integer collaborators;
 
-    @JsonProperty("plan")
+    @JsonProperty
     public Plan plan;
 
 }
