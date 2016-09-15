@@ -1,10 +1,11 @@
 package com.globant.automation.trainings.servicetesting.standalone;
 
-import com.globant.automation.trainings.servicetesting.config.Framework;
-import com.globant.automation.trainings.servicetesting.logging.Logging;
+import com.globant.automation.trainings.servicetesting.standalone.config.Framework;
+import com.globant.automation.trainings.servicetesting.standalone.logging.Logging;
 import okhttp3.Authenticator;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
+import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -14,6 +15,11 @@ import java.lang.reflect.ParameterizedType;
 import java.net.URL;
 
 /**
+ * Simple base class for service tests classes to extend from.
+ *
+ * Define the API to test (Retrofit's interface) as the generic type
+ * for the class.
+ *
  * @author Juan Krzemien
  */
 public abstract class ServiceTestFor<T> implements Logging {
@@ -22,12 +28,23 @@ public abstract class ServiceTestFor<T> implements Logging {
 
     protected ServiceTestFor() {
         Class<T> serviceToTest = getApiType();
-        this.api = getRetrofit(getValidOkHttpClient()).create(serviceToTest);
+        this.api = getRetrofit().create(serviceToTest);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<T> getApiType() {
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        return (Class<T>) parameterizedType.getActualTypeArguments()[0];
     }
 
     protected abstract Authenticator setAuthenticator();
 
-    private OkHttpClient getValidOkHttpClient() {
+    /**
+     * Creates an instance of an HTTP client based on OkHttpClient.
+     *
+     * @return OkHttpClient instance
+     */
+    protected OkHttpClient getOkHttpClient() {
         Authenticator authenticator = setAuthenticator();
         if (authenticator != null) {
             return new OkHttpClient.Builder()
@@ -37,21 +54,43 @@ public abstract class ServiceTestFor<T> implements Logging {
         return new OkHttpClient();
     }
 
-    protected Retrofit getRetrofit(OkHttpClient client) {
+    /**
+     * Returns an instance ConverterFactory using Jackson for JSON marshalling
+     *
+     * @return Implementation of ConverterFactory using Jackson.
+     */
+    protected Converter.Factory getConverterFactory() {
+        return JacksonConverterFactory.create();
+    }
+
+    /**
+     * Given an HTTP client, create a Retrofit instance capable of invoking
+     * the interface methods defined in this class generic type.
+     * <p>
+     * Assumes:
+     * <p>
+     * API send/receive JSON payloads. Override respective method to change that.
+     * HTTP client to use is OkHttp 3. Override respective method to change that.
+     *
+     * @return new Retrofit instance
+     */
+    private Retrofit getRetrofit() {
         URL baseUrl = Framework.CONFIGURATION.getBaseUrl().orElseThrow(() -> new RuntimeException("Undefined base URL to test!"));
         return new Retrofit.Builder()
-                .client(client)
+                .client(getOkHttpClient())
                 .baseUrl(baseUrl.toString())
-                .addConverterFactory(JacksonConverterFactory.create())
+                .addConverterFactory(getConverterFactory())
                 .build();
     }
 
-    @SuppressWarnings("unchecked")
-    private Class<T> getApiType() {
-        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-        return (Class<T>) parameterizedType.getActualTypeArguments()[0];
-    }
-
+    /**
+     * Helper method to actually execute Retrofit calls.
+     * I don't like polluting tests with .execute() invocations or try/catch blocks.
+     *
+     * @param method Retrofit interface to call
+     * @param <K>    Retrofit interface return type
+     * @return Retrofit's Response of type K
+     */
     protected <K> Response<K> call(Call<K> method) {
         try {
             return method.execute();

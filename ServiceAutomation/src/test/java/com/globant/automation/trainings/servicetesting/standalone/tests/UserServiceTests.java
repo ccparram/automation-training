@@ -1,9 +1,9 @@
-package com.globant.automation.trainings.servicetesting.tests;
+package com.globant.automation.trainings.servicetesting.standalone.tests;
 
-import com.globant.automation.trainings.servicetesting.authenticators.BasicAuthenticator;
-import com.globant.automation.trainings.servicetesting.models.User;
+import com.globant.automation.trainings.servicetesting.standalone.authenticators.BasicAuthenticator;
+import com.globant.automation.trainings.servicetesting.standalone.models.User;
 import com.globant.automation.trainings.servicetesting.standalone.ServiceTestFor;
-import com.globant.automation.trainings.servicetesting.tests.api.github.UserApi;
+import com.globant.automation.trainings.servicetesting.standalone.tests.api.github.UserApi;
 import okhttp3.Authenticator;
 import org.junit.Test;
 import retrofit2.Response;

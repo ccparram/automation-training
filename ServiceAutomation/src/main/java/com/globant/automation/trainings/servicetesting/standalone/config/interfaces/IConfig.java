@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.servicetesting.config.interfaces;
+package com.globant.automation.trainings.servicetesting.standalone.config.interfaces;
 
 
 import java.net.URL;

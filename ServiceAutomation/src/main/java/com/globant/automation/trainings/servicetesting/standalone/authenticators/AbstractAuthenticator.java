@@ -1,6 +1,6 @@
-package com.globant.automation.trainings.servicetesting.authenticators;
+package com.globant.automation.trainings.servicetesting.standalone.authenticators;
 
-import com.globant.automation.trainings.servicetesting.logging.Logging;
+import com.globant.automation.trainings.servicetesting.standalone.logging.Logging;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;

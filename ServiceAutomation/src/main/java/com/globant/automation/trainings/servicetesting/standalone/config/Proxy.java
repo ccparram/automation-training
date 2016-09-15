@@ -1,8 +1,8 @@
-package com.globant.automation.trainings.servicetesting.config;
+package com.globant.automation.trainings.servicetesting.standalone.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.globant.automation.trainings.servicetesting.config.interfaces.IProxy;
+import com.globant.automation.trainings.servicetesting.standalone.config.interfaces.IProxy;
 
 /**
  * @author Juan Krzemien

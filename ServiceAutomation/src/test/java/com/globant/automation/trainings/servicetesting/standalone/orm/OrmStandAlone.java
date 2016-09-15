@@ -1,6 +1,6 @@
-package com.globant.automation.trainings.servicetesting.orm;
+package com.globant.automation.trainings.servicetesting.standalone.orm;
 
-import com.globant.automation.trainings.servicetesting.models.MyPojo;
+import com.globant.automation.trainings.servicetesting.standalone.models.MyPojo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

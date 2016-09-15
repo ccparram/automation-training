@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.servicetesting.models;
+package com.globant.automation.trainings.servicetesting.standalone.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

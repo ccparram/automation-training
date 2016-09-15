@@ -1,7 +1,7 @@
-package com.globant.automation.trainings.servicetesting.tests.api.github;
+package com.globant.automation.trainings.servicetesting.standalone.tests.api.github;
 
-import com.globant.automation.trainings.servicetesting.models.Key;
-import com.globant.automation.trainings.servicetesting.models.User;
+import com.globant.automation.trainings.servicetesting.standalone.models.Key;
+import com.globant.automation.trainings.servicetesting.standalone.models.User;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

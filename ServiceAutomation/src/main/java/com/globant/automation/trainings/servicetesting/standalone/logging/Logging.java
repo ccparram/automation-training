@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.servicetesting.logging;
+package com.globant.automation.trainings.servicetesting.standalone.logging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

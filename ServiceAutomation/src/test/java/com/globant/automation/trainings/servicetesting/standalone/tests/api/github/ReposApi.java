@@ -1,6 +1,6 @@
-package com.globant.automation.trainings.servicetesting.tests.api.github;
+package com.globant.automation.trainings.servicetesting.standalone.tests.api.github;
 
-import com.globant.automation.trainings.servicetesting.models.Label;
+import com.globant.automation.trainings.servicetesting.standalone.models.Label;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;

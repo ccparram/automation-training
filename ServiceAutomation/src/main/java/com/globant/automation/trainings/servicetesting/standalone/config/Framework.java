@@ -1,10 +1,10 @@
-package com.globant.automation.trainings.servicetesting.config;
+package com.globant.automation.trainings.servicetesting.standalone.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.globant.automation.trainings.servicetesting.config.interfaces.IConfig;
-import com.globant.automation.trainings.servicetesting.config.interfaces.IProxy;
-import com.globant.automation.trainings.servicetesting.logging.Logging;
+import com.globant.automation.trainings.servicetesting.standalone.config.interfaces.IConfig;
+import com.globant.automation.trainings.servicetesting.standalone.config.interfaces.IProxy;
+import com.globant.automation.trainings.servicetesting.standalone.logging.Logging;
 
 import java.io.InputStream;
 import java.net.URL;

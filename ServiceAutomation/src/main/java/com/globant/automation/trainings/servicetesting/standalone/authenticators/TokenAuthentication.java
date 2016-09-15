@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.servicetesting.authenticators;
+package com.globant.automation.trainings.servicetesting.standalone.authenticators;
 
 import okhttp3.Request;
 import okhttp3.Response;
