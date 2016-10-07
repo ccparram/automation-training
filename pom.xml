@@ -55,6 +55,7 @@
         <module>ServiceAutomation</module>
         <module>WebAutomation</module>
         <module>TestRunners</module>
+        <module>Arquillian-Demo</module>
     </modules>
 
 </project>

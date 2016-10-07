@@ -3,6 +3,7 @@ package com.globant.automation.trainings.servicetesting.tests.spring;
 import com.globant.automation.trainings.servicetesting.api.github.ReposApi;
 import com.globant.automation.trainings.servicetesting.models.Label;
 import com.globant.automation.trainings.servicetesting.spring.SpringServiceTestFor;
+import com.globant.automation.trainings.servicetesting.tests.spring.context.TestContext;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import retrofit2.Response;

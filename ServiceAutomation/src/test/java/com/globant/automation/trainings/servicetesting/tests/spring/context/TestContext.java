@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.servicetesting.tests.spring;
+package com.globant.automation.trainings.servicetesting.tests.spring.context;
 
 import com.globant.automation.trainings.servicetesting.authenticators.TokenAuthentication;
 import com.globant.automation.trainings.servicetesting.spring.AbstractTestContext;
