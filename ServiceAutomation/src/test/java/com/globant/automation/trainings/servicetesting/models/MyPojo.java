@@ -4,7 +4,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by Juan Krzemien on 7/14/2016.
+ * No getters/setters for brevity
+ * @author Juan Krzemien
  */
 @Entity
 @Table(name = "POJOS")

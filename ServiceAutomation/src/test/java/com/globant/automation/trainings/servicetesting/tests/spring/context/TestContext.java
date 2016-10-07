@@ -1,11 +1,14 @@
 package com.globant.automation.trainings.servicetesting.tests.spring.context;
 
 import com.globant.automation.trainings.servicetesting.authenticators.TokenAuthentication;
+import com.globant.automation.trainings.servicetesting.models.Label;
 import com.globant.automation.trainings.servicetesting.spring.AbstractTestContext;
 import okhttp3.Authenticator;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -13,6 +16,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 /**
  * @author Juan Krzemien
  */
+@EntityScan(basePackageClasses = Label.class)
+@EnableJpaRepositories
 public class TestContext extends AbstractTestContext {
 
     @Value("${baseUrl}")

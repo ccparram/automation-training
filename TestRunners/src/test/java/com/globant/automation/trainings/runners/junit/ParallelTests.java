@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.util.LinkedList;
 
@@ -33,14 +33,13 @@ public class ParallelTests {
         this.version = browserVersion;
     }
 
-    @Parameterized.Parameters(name = "Capability {0} {1} {2}")
+    @Parameters(name = "Capability {0} {1} {2}")
     public static LinkedList<String[]> getEnvironments() throws Exception {
         return new LinkedList<String[]>() {
             {
                 add(new String[]{"chrome", "50"});
                 add(new String[]{"firefox", "latest"});
                 add(new String[]{"ie", "9"});
-                //add more browsers here
             }
         };
     }

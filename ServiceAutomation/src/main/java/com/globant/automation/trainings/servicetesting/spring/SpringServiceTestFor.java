@@ -3,7 +3,6 @@ package com.globant.automation.trainings.servicetesting.spring;
 import com.globant.automation.trainings.servicetesting.logging.Logging;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -16,7 +15,6 @@ import java.lang.reflect.ParameterizedType;
  * @author Juan Krzemien
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@Import(Properties.class)
 public abstract class SpringServiceTestFor<T> implements Logging {
 
     @Autowired
