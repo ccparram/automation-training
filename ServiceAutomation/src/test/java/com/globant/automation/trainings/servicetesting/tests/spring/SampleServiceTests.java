@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 public class SampleServiceTests extends SpringServiceTestFor<ReposApi> {
 
     @Autowired
-    LabelsRepository pojoRepository;
+    private LabelsRepository pojoRepository;
 
     @Test
     public void attemptToCreateLabels() throws IOException {
