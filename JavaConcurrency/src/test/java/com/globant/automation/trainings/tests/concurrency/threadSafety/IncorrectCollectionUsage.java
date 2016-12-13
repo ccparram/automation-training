@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.lang.String.format;
-import static java.lang.System.out;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertFalse;
 
@@ -36,13 +35,13 @@ public class IncorrectCollectionUsage extends HideNonRelatedStuff {
             try {
                 storageForThreads.add(generator.getNextInt());
             } catch (ArrayIndexOutOfBoundsException e) {
-                out.println(format("[Data structure %s issue] Could not grow as fast as threads needed to...", collectionName));
+                getLogger().info(format("[Data structure %s issue] Could not grow as fast as threads needed to...", collectionName));
                 throw e;
             }
         });
     }
 
-    @Parameters
+    @Parameters(name = "Combination: {0} {1} {2}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 // Safe generators
@@ -79,13 +78,13 @@ public class IncorrectCollectionUsage extends HideNonRelatedStuff {
     }
 
     private void printStats(Long loopNumber) {
-        out.println(format("%s/%s - Attempt #%s", generatorName, collectionName, loopNumber));
-        out.println(format("Integers retrieved by Main: %s", storageForMainThread));
-        out.println(format("Integers retrieved by Threads: %s", storageForThreads));
+        getLogger().info(format("%s/%s - Attempt #%s", generatorName, collectionName, loopNumber));
+        getLogger().info(format("Integers retrieved by Main: %s", storageForMainThread));
+        getLogger().info(format("Integers retrieved by Threads: %s", storageForThreads));
         try {
             assertFalse(format("[Data structure %s issue] Some elements are NULL!", collectionName), storageForThreads.parallelStream().anyMatch(Objects::isNull));
         } catch (AssertionError ae) {
-            out.println(format("Awww snap! I started to behave erratically on attempt #%s...Good times I'm not in a production environment!", loopNumber));
+            getLogger().info(format("Awww snap! I started to behave erratically on attempt #%s...Good times I'm not in a production environment!", loopNumber));
             throw ae;
         }
     }

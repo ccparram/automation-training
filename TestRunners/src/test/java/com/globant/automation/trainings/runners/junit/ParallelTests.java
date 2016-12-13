@@ -1,5 +1,6 @@
 package com.globant.automation.trainings.runners.junit;
 
+import com.globant.automation.trainings.runners.logging.Logging;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +11,6 @@ import java.util.LinkedList;
 
 import static java.lang.String.format;
 import static java.lang.System.nanoTime;
-import static java.lang.System.out;
 import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -21,7 +21,7 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
  */
 
 @RunWith(Parallelism.class)
-public class ParallelTests {
+public class ParallelTests implements Logging {
 
     private final String browser;
     private final String version;
@@ -33,7 +33,7 @@ public class ParallelTests {
         this.version = browserVersion;
     }
 
-    @Parameters(name = "Capability {0} {1} {2}")
+    @Parameters(name = "Capability for {0} {1}")
     public static LinkedList<String[]> getEnvironments() throws Exception {
         return new LinkedList<String[]>() {
             {
@@ -46,19 +46,19 @@ public class ParallelTests {
 
     @Before
     public void setUp() throws Exception {
-        out.println("About to run tests in parallel...");
+        getLogger().info("About to run tests in parallel...");
         this.timeStart = nanoTime();
     }
 
     @Test
     public void testSimple() throws Exception {
-        out.println(String.format("Thread %s - Running test using %s / %s", currentThread().getId(), browser, version));
+        getLogger().info(format("Thread %s - Running test using %s / %s", currentThread().getId(), browser, version));
         sleep(1000);
-        out.println("Done");
+        getLogger().info("Done");
     }
 
     @After
     public void tearDown() throws Exception {
-        out.println(format("Ran tests in parallel in %s ms", MILLISECONDS.convert(nanoTime() - timeStart, NANOSECONDS)));
+        getLogger().info(format("Ran tests in parallel in %s ms", MILLISECONDS.convert(nanoTime() - timeStart, NANOSECONDS)));
     }
 }

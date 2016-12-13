@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.net.URL;
 
+import static java.lang.String.format;
+
 /**
  * Simple base class for service tests classes to extend from.
  *
@@ -93,9 +95,10 @@ public abstract class ServiceTestFor<T> implements Logging {
      */
     protected <K> Response<K> call(Call<K> method) {
         try {
+            getLogger().info(format("Invoking API: %s", method.request().toString()));
             return method.execute();
         } catch (IOException e) {
-            getLogger().error("Could not perform service call!", e);
+            getLogger().error(format("Could not perform service call for: %s", method.request().toString()), e);
         }
         return null;
     }

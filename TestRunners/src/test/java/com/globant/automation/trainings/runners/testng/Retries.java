@@ -1,5 +1,6 @@
 package com.globant.automation.trainings.runners.testng;
 
+import com.globant.automation.trainings.runners.logging.Logging;
 import com.globant.automation.trainings.runners.testng.retry.RetryAnalyzer;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
@@ -15,7 +16,7 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Juan Krzemien
  */
-public class Retries {
+public class Retries implements Logging {
 
     @DataProvider(name = "UsernameProvider")
     public Object[][] createData1() {
@@ -41,11 +42,13 @@ public class Retries {
 
     @Test(dataProvider = "UsernameProvider")
     public void parameterizedTest(String username) {
-        assertEquals(username, "Ruso");
+        getLogger().info("Look at me! I'm parameter: " + username);
+        assertEquals(username, "Ruso", "While comparing user names:");
     }
 
     @Test(retryAnalyzer = RetryAnalyzer.class)
     public void testToRetry() {
-        assertEquals(1, 0);
+        getLogger().info("I say 0 equals 1! It must be equal! This is my example! You can't tell me what to do...");
+        assertEquals(1, 0, "I'm gonna force math here:");
     }
 }

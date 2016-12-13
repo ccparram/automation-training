@@ -5,12 +5,17 @@ import com.globant.automation.trainings.tests.concurrency.threadSafety.interface
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by Juan Krzemien on 6/17/2016.
+ * @author Juan Krzemien
  */
 class SafeIntGenerator implements IIntGenerator {
     private final AtomicInteger i = new AtomicInteger(0);
 
     public Integer getNextInt() {
         return i.incrementAndGet();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

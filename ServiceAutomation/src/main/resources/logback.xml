@@ -7,7 +7,8 @@
         </layout>
     </appender>
 
-    <logger name="com.globant.automation.trainings.frameworks.webdriver.webframework" level="INFO"/>
+    <logger name="org.hibernate" level="INFO"/>
+    <logger name="org.springframework" level="INFO"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

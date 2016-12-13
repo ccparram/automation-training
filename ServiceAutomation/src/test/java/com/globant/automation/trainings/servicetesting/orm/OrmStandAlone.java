@@ -18,12 +18,7 @@ public class OrmStandAlone {
             .addAnnotatedClass(MyPojo.class)
             .buildSessionFactory();
 
-    private static final ThreadLocal<Session> sessions = new ThreadLocal<Session>() {
-        @Override
-        protected Session initialValue() {
-            return sessionFactory.openSession();
-        }
-    };
+    private static final ThreadLocal<Session> sessions = ThreadLocal.withInitial(sessionFactory::openSession);
 
     @Test
     public void testSimple2() throws Exception {

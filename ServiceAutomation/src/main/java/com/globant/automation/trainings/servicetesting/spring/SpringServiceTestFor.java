@@ -11,6 +11,8 @@ import retrofit2.Retrofit;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 
+import static java.lang.String.format;
+
 /**
  * @author Juan Krzemien
  */
@@ -36,9 +38,10 @@ public abstract class SpringServiceTestFor<T> implements Logging {
      */
     protected <K> Response<K> call(Call<K> method) {
         try {
+            getLogger().info(format("Invoking API: %s", method.request().toString()));
             return method.execute();
         } catch (IOException e) {
-            getLogger().error("Could not perform service call!", e);
+            getLogger().error(format("Could not perform service call for: %s", method.request().toString()), e);
         }
         return null;
     }

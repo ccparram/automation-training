@@ -1,14 +1,15 @@
 package com.globant.automation.trainings.tests.concurrency.threadSafety;
 
+import com.globant.automation.trainings.tests.concurrency.logging.Logging;
 import com.globant.automation.trainings.tests.concurrency.threadSafety.interfaces.IIntGenerator;
 
 import java.time.Duration;
 import java.util.Collection;
 
 /**
- * Created by Juan Krzemien on 6/18/2016.
+ * @author Juan Krzemien
  */
-public class HideNonRelatedStuff {
+public class HideNonRelatedStuff implements Logging {
 
     final Collection<Integer> storageForMainThread;
     final Collection<Integer> storageForThreads;
