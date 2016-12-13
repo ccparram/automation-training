@@ -9,6 +9,8 @@ import java.util.Locale;
 import static java.lang.String.format;
 
 /**
+ * Example of a class that allows to look up a string literal for different locales (languages) with a single keyword.
+ *
  * @author Juan Krzemien
  */
 public class UiText extends AbstractUiText {
