@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
  *
  * @author Juan Krzemien
  */
-public class AbstractUiText implements Logging {
+public abstract class AbstractUiText implements Logging {
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("UiText", Locale.getDefault());
 

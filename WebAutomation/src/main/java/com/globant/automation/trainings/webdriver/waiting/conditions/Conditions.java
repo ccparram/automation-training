@@ -21,9 +21,9 @@ public class Conditions {
 
     public static class Page {
 
-        public static final Predicate<JavascriptExecutor> Loaded = js -> (boolean) js.executeScript("return typeof document != 'undefined' && document.readyState == 'complete';");
+        public static final Predicate<JavascriptExecutor> Loaded = js -> (boolean) (js != null ? js.executeScript("return typeof document != 'undefined' && document.readyState == 'complete';") : false);
 
-        public static final Predicate<JavascriptExecutor> NoAjaxPending = js -> (Long) js.executeScript("return typeof $ != 'undefined' ? $.active : 0;") == 0;
+        public static final Predicate<JavascriptExecutor> NoAjaxPending = js -> (Long) (js != null ? js.executeScript("return typeof $ != 'undefined' ? $.active : 0;") : 0) == 0;
 
     }
 
@@ -59,7 +59,7 @@ public class Conditions {
 
             public static final Predicate<WebElement> Visible = WebElement::isDisplayed;
 
-            public static final Predicate<WebElement> NotVisible = e -> !e.isDisplayed();
+            public static final Predicate<WebElement> NotVisible = e -> !(e != null && e.isDisplayed());
 
         }
 
@@ -67,7 +67,7 @@ public class Conditions {
 
             public static final Predicate<WebElement> Enabled = WebElement::isEnabled;
 
-            public static final Predicate<WebElement> NotEnabled = webElement -> !webElement.isEnabled();
+            public static final Predicate<WebElement> NotEnabled = webElement -> !(webElement != null && webElement.isEnabled());
 
         }
 
@@ -77,17 +77,17 @@ public class Conditions {
 
         public static class Visibility {
 
-            public static final Predicate<List<WebElement>> Visible = i -> i.stream().allMatch(WebElement::isDisplayed);
+            public static final Predicate<List<WebElement>> Visible = i -> i != null && i.stream().allMatch(WebElement::isDisplayed);
 
-            public static final Predicate<List<WebElement>> NotVisible = i -> i.stream().noneMatch(WebElement::isDisplayed);
+            public static final Predicate<List<WebElement>> NotVisible = i -> i != null && i.stream().noneMatch(WebElement::isDisplayed);
 
         }
 
         public static class Status {
 
-            public static final Predicate<List<WebElement>> Enabled = i -> i.stream().allMatch(WebElement::isEnabled);
+            public static final Predicate<List<WebElement>> Enabled = i -> i != null && i.stream().allMatch(WebElement::isEnabled);
 
-            public static final Predicate<List<WebElement>> NotEnabled = i -> i.stream().noneMatch(WebElement::isEnabled);
+            public static final Predicate<List<WebElement>> NotEnabled = i -> i != null && i.stream().noneMatch(WebElement::isEnabled);
 
         }
 
