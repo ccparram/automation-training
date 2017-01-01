@@ -7,8 +7,8 @@ import com.globant.automation.trainings.webframework.webdriver.Browser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.util.Set;
 
@@ -26,7 +26,7 @@ public abstract class JUnit4WebDriverTest<T extends PageObject> extends GenericW
     @Parameter
     public Browser currentBrowser;
 
-    @Parameterized.Parameters(name = "Browser {0}")
+    @Parameters(name = "Browser {0}")
     public static Set<Browser> getBrowsers() {
         return CONFIGURATION.AvailableDrivers();
     }
