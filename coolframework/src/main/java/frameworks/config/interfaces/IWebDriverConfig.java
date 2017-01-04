@@ -1,7 +1,5 @@
 package frameworks.config.interfaces;
 
-import java.net.URL;
-
 /**
  * @author Juan Krzemien
  */
@@ -47,7 +45,7 @@ public interface IWebDriverConfig {
      *
      * @return WebDriver implementation's target URL
      */
-    URL getRemoteURL();
+    String getRemoteURL();
 
     /**
      * Flag that defines if local Selenium Server should be deployed or not.

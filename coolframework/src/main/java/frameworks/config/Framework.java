@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.Thread.currentThread;
@@ -62,7 +63,7 @@ public enum Framework implements IConfig, Logging {
         } catch (Exception e) {
             getLogger().error("Error parsing framework config!. Re-check!", e);
         }
-        return configuration;
+        return Optional.ofNullable(configuration).orElse(new Config());
     }
 
     @Override

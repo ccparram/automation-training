@@ -18,6 +18,7 @@ import static java.util.jar.Pack200.Packer.LATEST;
  *
  * @author Juan Krzemien
  */
+
 public enum Browser implements Logging {
 
     MARIONETTE {

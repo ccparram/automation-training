@@ -7,7 +7,6 @@ import frameworks.config.interfaces.IDriver;
 import frameworks.config.interfaces.IProxy;
 import frameworks.web.Browser;
 
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +33,7 @@ class Config implements IConfig {
     @JsonProperty
     private Proxy proxy = new Proxy();
 
-    Config() throws MalformedURLException {
+    Config() {
     }
 
     @Override

@@ -1,15 +1,19 @@
 package frameworks.web;
 
-import jodd.petite.meta.PetiteInject;
 import org.openqa.selenium.WebDriver;
+import org.picocontainer.annotations.Inject;
 
 /**
  * @author Juan Krzemien
  */
 public abstract class BasePageObject {
 
-    @PetiteInject
+    @Inject
     private WebDriver webDriver;
 
-
+    public void dispose() {
+        if (webDriver != null) {
+            webDriver.quit();
+        }
+    }
 }

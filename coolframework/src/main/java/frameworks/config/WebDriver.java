@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import frameworks.config.interfaces.IWebDriverConfig;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /**
  * @author Juan Krzemien
  */
@@ -32,16 +29,13 @@ class WebDriver implements IWebDriverConfig {
     private int pollingEveryMs = DEFAULT_POOLING_INTERVAL;
 
     @JsonProperty
-    private URL remoteURL = new URL("http://localhost:4444/wd/hub");
+    private String remoteURL = "http://localhost:4444/wd/hub";
 
     @JsonProperty
     private boolean useSeleniumGrid = false;
 
     @JsonProperty
     private boolean useListener = true;
-
-    WebDriver() throws MalformedURLException {
-    }
 
     @Override
     public int getExplicitTimeOut() {
@@ -69,7 +63,7 @@ class WebDriver implements IWebDriverConfig {
     }
 
     @Override
-    public URL getRemoteURL() {
+    public String getRemoteURL() {
         return remoteURL;
     }
 

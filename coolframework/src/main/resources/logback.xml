@@ -7,6 +7,7 @@
         </layout>
     </appender>
 
+    <logger name="frameworks" level="INFO"/>
     <logger name="org.reflections" level="INFO"/>
     <logger name="io.github.bonigarcia.wdm" level="INFO"/>
 

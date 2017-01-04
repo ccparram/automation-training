@@ -2,15 +2,16 @@ package frameworks.web;
 
 import frameworks.listeners.BasicWebDriverListener;
 import frameworks.logging.Logging;
-import jodd.petite.meta.PetiteBean;
-import jodd.petite.meta.PetiteProvider;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.picocontainer.injectors.ProviderAdapter;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 import static frameworks.config.Framework.CONFIGURATION;
@@ -20,11 +21,13 @@ import static org.openqa.selenium.remote.CapabilityType.PROXY;
 /**
  * @author Juan Krzemien
  */
-@PetiteBean
-public class WebDriverProvider implements Logging {
+public class WebDriverProvider extends ProviderAdapter implements Logging {
 
-    @PetiteProvider
-    public WebDriver getDriverFor(Browser browser) {
+    public WebDriver provide() throws MalformedURLException {
+        return getDriverFor(Browser.CHROME);
+    }
+
+    public WebDriver getDriverFor(Browser browser) throws MalformedURLException {
 
         DesiredCapabilities capabilities = new DesiredCapabilities(browser.getCapabilities());
 
@@ -49,9 +52,9 @@ public class WebDriverProvider implements Logging {
         return getDriverFor(capabilities);
     }
 
-    private WebDriver getDriverFor(Capabilities capabilities) {
+    private WebDriver getDriverFor(Capabilities capabilities) throws MalformedURLException {
         getLogger().info("Creating RemoteWebDriver instance...");
-        WebDriver driver = new RemoteWebDriver(CONFIGURATION.WebDriver().getRemoteURL(), capabilities);
+        WebDriver driver = new RemoteWebDriver(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
 
         getLogger().info("Setting up WebDriver timeouts...");
         driver.manage().timeouts().implicitlyWait(CONFIGURATION.WebDriver().getImplicitTimeOut(), SECONDS);
