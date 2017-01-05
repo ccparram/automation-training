@@ -1,5 +1,6 @@
 package frameworks.runner;
 
+import frameworks.container.BrowserQueue;
 import frameworks.logging.Logging;
 import frameworks.tests.BaseTest;
 import frameworks.web.Browser;
@@ -9,9 +10,6 @@ import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
 import org.junit.runners.parameterized.TestWithParameters;
 
-import java.lang.reflect.Field;
-
-import static frameworks.container.BrowserQueue.BROWSER_QUEUE;
 import static frameworks.container.Container.CONTAINER;
 
 /**
@@ -19,29 +17,21 @@ import static frameworks.container.Container.CONTAINER;
  */
 public class ContainerAwareRunnerFactory implements ParametersRunnerFactory, Logging {
 
+    private BrowserQueue browserQueue = new BrowserQueue();
+
     public Runner createRunnerForTestWithParameters(TestWithParameters test) throws InitializationError {
         return new BlockJUnit4ClassRunnerWithParameters(test) {
             @Override
             public Object createTest() throws Exception {
-                Object testInstance = super.createTest();
-                autoWireTest(testInstance);
-                return testInstance;
+                return autoWireTest(super.createTest());
             }
         };
     }
 
     private Object autoWireTest(Object test) throws Exception {
         Class<?> cls = validateAndExtractBaseTestClass(test);
-        BROWSER_QUEUE.put((Browser) cls.getDeclaredField("currentBrowser").get(test));
-        Field f = cls.getDeclaredField("initialPage");
-        Object bean = CONTAINER.getComponent(f.getType());
-        try {
-            f.setAccessible(true);
-            f.set(test, bean);
-        } catch (IllegalAccessException e) {
-            getLogger().error(e.getLocalizedMessage(), e);
-        }
-        return test;
+        browserQueue.put((Browser) cls.getDeclaredField("currentBrowser").get(test));
+        return CONTAINER.inject(test);
     }
 
     private Class<?> validateAndExtractBaseTestClass(Object test) {

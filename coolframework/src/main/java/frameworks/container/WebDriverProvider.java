@@ -1,15 +1,18 @@
-package frameworks.web;
+package frameworks.container;
 
-import frameworks.container.BrowserQueue;
 import frameworks.listeners.BasicWebDriverListener;
 import frameworks.logging.Logging;
+import frameworks.web.Browser;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.picocontainer.injectors.ProviderAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,10 +25,15 @@ import static org.openqa.selenium.remote.CapabilityType.PROXY;
 /**
  * @author Juan Krzemien
  */
-public class WebDriverProvider extends ProviderAdapter implements Logging {
+@Lazy
+@Component
+public class WebDriverProvider extends AbstractFactoryBean<WebDriver> implements Logging {
 
-    public WebDriver provide() throws MalformedURLException, InterruptedException {
-        return getDriverFor(BrowserQueue.BROWSER_QUEUE.get());
+    private BrowserQueue browserQueue;
+
+    @Autowired
+    WebDriverProvider(BrowserQueue browserQueue) {
+        this.browserQueue = browserQueue;
     }
 
     private WebDriver getDriverFor(Browser browser) throws MalformedURLException {
@@ -72,5 +80,15 @@ public class WebDriverProvider extends ProviderAdapter implements Logging {
         }
 
         return driver;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return WebDriver.class;
+    }
+
+    @Override
+    protected WebDriver createInstance() throws Exception {
+        return getDriverFor(browserQueue.get());
     }
 }

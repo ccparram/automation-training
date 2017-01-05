@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Parameterized.UseParametersRunnerFactory;
-import org.picocontainer.annotations.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
@@ -25,7 +25,7 @@ public abstract class BaseTest<T extends BasePageObject> {
     @Parameter
     public Browser currentBrowser;
 
-    @Inject // Not working right now
+    @Autowired
     private T initialPage;
 
     @Parameters(name = "Browser {0}")

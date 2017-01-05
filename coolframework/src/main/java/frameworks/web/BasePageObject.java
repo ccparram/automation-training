@@ -1,14 +1,14 @@
 package frameworks.web;
 
 import org.openqa.selenium.WebDriver;
-import org.picocontainer.annotations.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Juan Krzemien
  */
 public abstract class BasePageObject {
 
-    @Inject
+    @Autowired
     private WebDriver webDriver;
 
     protected abstract String getPageUrl();

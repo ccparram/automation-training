@@ -1,14 +1,9 @@
 package frameworks.container;
 
-import frameworks.annotations.Bean;
 import frameworks.logging.Logging;
-import frameworks.web.BasePageObject;
-import org.picocontainer.DefaultPicoContainer;
-import org.picocontainer.injectors.ProviderAdapter;
-import org.reflections.Reflections;
-
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import static java.lang.String.format;
 
@@ -19,40 +14,30 @@ public enum Container implements Logging {
 
     CONTAINER;
 
-    private final DefaultPicoContainer container = new DefaultPicoContainer();
-
-    private final AtomicInteger count = new AtomicInteger();
+    private final AnnotationConfigApplicationContext container;
 
     Container() {
-        Reflections reflections = new Reflections();
-        registerProviders(reflections.getSubTypesOf(ProviderAdapter.class));
-        registerBeans(reflections.getSubTypesOf(BasePageObject.class));
-        registerBeans(reflections.getTypesAnnotatedWith(Bean.class));
-        getLogger().info(format("Registered %s beans...", count.get()));
+        this.container = new AnnotationConfigApplicationContext(Context.class);
+        getLogger().info(format("Registered %s beans...", container.getBeanDefinitionCount()));
     }
 
-    private void registerProviders(Set<Class<? extends ProviderAdapter>> providers) {
-        providers.forEach(p -> {
-            getLogger().info(format("Detected [%s]...", p.getName()));
-            try {
-                container.addAdapter(p.newInstance());
-                count.incrementAndGet();
-            } catch (InstantiationException | IllegalAccessException e) {
-                getLogger().error(e.getLocalizedMessage(), e);
-            }
-        });
+    public Object inject(Object object) {
+        container.getAutowireCapableBeanFactory().autowireBean(object);
+        return object;
     }
 
-
-    private void registerBeans(Set<?> beans) {
-        beans.forEach(b -> {
-            getLogger().info(format("Detected [%s]...", b));
-            container.addComponent(b);
-            count.incrementAndGet();
-        });
+    public void dispose() {
+        container.destroy();
     }
 
-    public Object getComponent(Class<?> type) {
-        return container.getComponent(type);
+    public Container with(Class<?> clazz) {
+        container.scan(clazz.getPackage().getName());
+        return this;
+    }
+
+    @Configuration
+    @ComponentScan("frameworks")
+    static class Context {
+
     }
 }

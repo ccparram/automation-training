@@ -1,6 +1,9 @@
 package frameworks.container;
 
+import frameworks.logging.Logging;
 import frameworks.web.Browser;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -8,20 +11,27 @@ import java.util.concurrent.BlockingQueue;
 /**
  * @author Juan Krzemien
  */
-public enum BrowserQueue {
+@Lazy
+@Component
+public class BrowserQueue implements Logging {
 
-    BROWSER_QUEUE;
+    private static final int MAX_BROWSERS = 15;
+    private static final ThreadLocal<BlockingQueue<Browser>> queue = ThreadLocal.withInitial(() -> new ArrayBlockingQueue<>(MAX_BROWSERS));
 
-    public static final int MAX_BROWSERS = 15;
-
-    private final ThreadLocal<BlockingQueue<Browser>> queue = ThreadLocal.withInitial(() -> new ArrayBlockingQueue<>(MAX_BROWSERS));
-
-
-    public void put(Browser browser) throws InterruptedException {
-        queue.get().put(browser);
+    public void put(Browser browser) {
+        try {
+            queue.get().put(browser);
+        } catch (InterruptedException e) {
+            getLogger().error(e.getLocalizedMessage(), e);
+        }
     }
 
-    public Browser get() throws InterruptedException {
-        return queue.get().take();
+    public Browser get() {
+        try {
+            return queue.get().take();
+        } catch (InterruptedException e) {
+            getLogger().error(e.getLocalizedMessage(), e);
+        }
+        return Browser.CHROME;
     }
 }
