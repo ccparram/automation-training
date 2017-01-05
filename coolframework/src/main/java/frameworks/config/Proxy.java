@@ -2,13 +2,12 @@ package frameworks.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import frameworks.config.interfaces.IProxy;
 
 /**
  * @author Juan Krzemien
  */
 @JsonSerialize
-class Proxy implements IProxy {
+public class Proxy {
 
     @JsonProperty
     private boolean enabled = false;

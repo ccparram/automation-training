@@ -2,10 +2,6 @@ package frameworks.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import frameworks.config.interfaces.IConfig;
-import frameworks.config.interfaces.IDriver;
-import frameworks.config.interfaces.IProxy;
-import frameworks.config.interfaces.IWebDriverConfig;
 import frameworks.logging.Logging;
 import frameworks.utils.Environment;
 import frameworks.web.Browser;
@@ -26,13 +22,13 @@ import static java.lang.Thread.currentThread;
  *
  * @author Juan Krzemien
  */
-public enum Framework implements IConfig, Logging {
+public enum Framework implements Logging {
 
     CONFIGURATION;
 
     private static final String CONFIG_FILE = "config.yml";
 
-    private final IConfig config;
+    private final Config config;
 
     Framework() {
         Thread.currentThread().setName("Framework-Thread");
@@ -54,9 +50,9 @@ public enum Framework implements IConfig, Logging {
         System.setProperty("wdm.targetPath", tmpDir.getAbsolutePath());
     }
 
-    private IConfig readConfig() {
+    private Config readConfig() {
         ObjectMapper om = new ObjectMapper(new YAMLFactory());
-        IConfig configuration = null;
+        Config configuration = null;
         InputStream configFile = currentThread().getContextClassLoader().getResourceAsStream(CONFIG_FILE);
         try {
             configuration = om.readValue(configFile, Config.class);
@@ -66,27 +62,22 @@ public enum Framework implements IConfig, Logging {
         return Optional.ofNullable(configuration).orElse(new Config());
     }
 
-    @Override
     public boolean isDebugMode() {
         return config.isDebugMode();
     }
 
-    @Override
-    public IWebDriverConfig WebDriver() {
+    public WebDriver WebDriver() {
         return config.WebDriver();
     }
 
-    @Override
-    public IDriver Driver(Browser browser) {
+    public Driver Driver(Browser browser) {
         return config.Driver(browser);
     }
 
-    @Override
-    public IProxy Proxy() {
+    public Proxy Proxy() {
         return config.Proxy();
     }
 
-    @Override
     public Set<Browser> AvailableDrivers() {
         return config.AvailableDrivers();
     }

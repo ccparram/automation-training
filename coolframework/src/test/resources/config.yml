@@ -14,18 +14,18 @@ drivers:
     arguments:
       - no-sandbox
 
-#  IE:
-#    capabilities:
-#      #pageLoadStrategy: "eager"
-#      initialBrowserUrl: "about:blank"
-#      ie.ensureCleanSession: true
-#      #ie.validateCookieDocumentType: false
-#      #requireWindowFocus: true
-#      nativeEvents: false
-#      #ignoreProtectedModeSettings: true
-#      #unexpectedAlertBehaviour: "accept"
-#      disable-popup-blocking: true
-#      #enablePersistentHover: true
+  IE:
+    capabilities:
+      #pageLoadStrategy: "eager"
+      initialBrowserUrl: "about:blank"
+      ie.ensureCleanSession: true
+      #ie.validateCookieDocumentType: false
+      #requireWindowFocus: true
+      nativeEvents: false
+      #ignoreProtectedModeSettings: true
+      #unexpectedAlertBehaviour: "accept"
+      disable-popup-blocking: true
+      #enablePersistentHover: true
 
 #  EDGE:
 #    capabilities:

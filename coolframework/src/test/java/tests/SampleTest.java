@@ -1,49 +1,17 @@
 package tests;
 
-import frameworks.annotations.PageObject;
-import frameworks.runner.AutomationFramework;
-import frameworks.runner.ContainerAwareRunnerFactory;
-import org.junit.After;
+import frameworks.tests.BaseTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
-import org.junit.runners.Parameterized.UseParametersRunnerFactory;
 import tests.pages.SamplePage;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * @author Juan Krzemien
- */
-
-@RunWith(AutomationFramework.class)
-@UseParametersRunnerFactory(ContainerAwareRunnerFactory.class)
-public class SampleTest {
-
-    @PageObject
-    SamplePage samplePage;
-
-    @Parameters
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-                {},
-                {},
-                {},
-                {},
-                {},
-                {}
-        });
-    }
+public class SampleTest extends BaseTest<SamplePage> {
 
     @Test
     public void test1() {
-        assertNotNull("Instance not injected", samplePage);
+        assertNotNull("Instance not injected", getInitialPage());
+        getInitialPage().navigate();
     }
 
-    @After
-    public void tearDown() {
-        samplePage.dispose();
-    }
 }

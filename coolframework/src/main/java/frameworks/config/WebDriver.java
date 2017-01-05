@@ -2,13 +2,12 @@ package frameworks.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import frameworks.config.interfaces.IWebDriverConfig;
 
 /**
  * @author Juan Krzemien
  */
 @JsonSerialize
-class WebDriver implements IWebDriverConfig {
+public class WebDriver {
 
     private static final int DEFAULT_TIMEOUT = 30;
     private static final int DEFAULT_POOLING_INTERVAL = 500;
@@ -37,42 +36,34 @@ class WebDriver implements IWebDriverConfig {
     @JsonProperty
     private boolean useListener = true;
 
-    @Override
     public int getExplicitTimeOut() {
         return explicitTimeOut;
     }
 
-    @Override
     public int getImplicitTimeOut() {
         return implicitTimeOut;
     }
 
-    @Override
     public long getPageLoadTimeout() {
         return pageLoadTimeout;
     }
 
-    @Override
     public long getScriptTimeout() {
         return scriptTimeout;
     }
 
-    @Override
     public int getPollingEveryMs() {
         return pollingEveryMs;
     }
 
-    @Override
     public String getRemoteURL() {
         return remoteURL;
     }
 
-    @Override
     public boolean isUseSeleniumGrid() {
         return useSeleniumGrid;
     }
 
-    @Override
     public boolean isUseListener() {
         return useListener;
     }

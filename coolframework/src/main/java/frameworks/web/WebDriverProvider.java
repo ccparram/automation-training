@@ -1,5 +1,6 @@
 package frameworks.web;
 
+import frameworks.container.BrowserQueue;
 import frameworks.listeners.BasicWebDriverListener;
 import frameworks.logging.Logging;
 import org.openqa.selenium.Capabilities;
@@ -23,11 +24,11 @@ import static org.openqa.selenium.remote.CapabilityType.PROXY;
  */
 public class WebDriverProvider extends ProviderAdapter implements Logging {
 
-    public WebDriver provide() throws MalformedURLException {
-        return getDriverFor(Browser.CHROME);
+    public WebDriver provide() throws MalformedURLException, InterruptedException {
+        return getDriverFor(BrowserQueue.BROWSER_QUEUE.get());
     }
 
-    public WebDriver getDriverFor(Browser browser) throws MalformedURLException {
+    private WebDriver getDriverFor(Browser browser) throws MalformedURLException {
 
         DesiredCapabilities capabilities = new DesiredCapabilities(browser.getCapabilities());
 
@@ -41,12 +42,11 @@ public class WebDriverProvider extends ProviderAdapter implements Logging {
 
             String proxyCfg = CONFIGURATION.Proxy().getHost() + ":" + CONFIGURATION.Proxy().getPort();
 
-            Proxy proxy = new Proxy();
-            proxy.setHttpProxy(proxyCfg)
+            capabilities.setCapability(PROXY, new Proxy()
+                    .setHttpProxy(proxyCfg)
                     .setFtpProxy(proxyCfg)
-                    .setSslProxy(proxyCfg);
-
-            capabilities.setCapability(PROXY, proxy);
+                    .setSslProxy(proxyCfg)
+            );
         }
 
         return getDriverFor(capabilities);

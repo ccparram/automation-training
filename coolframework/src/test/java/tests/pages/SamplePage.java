@@ -7,4 +7,10 @@ import frameworks.web.BasePageObject;
  */
 
 public class SamplePage extends BasePageObject {
+
+    @Override
+    protected String getPageUrl() {
+        return "http://www.nyaa.se/?cats=1_37&filter=2";
+    }
+
 }

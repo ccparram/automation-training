@@ -2,9 +2,6 @@ package frameworks.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import frameworks.config.interfaces.IConfig;
-import frameworks.config.interfaces.IDriver;
-import frameworks.config.interfaces.IProxy;
 import frameworks.web.Browser;
 
 import java.util.HashMap;
@@ -19,7 +16,7 @@ import static java.lang.System.getProperty;
  * @author Juan Krzemien
  */
 @JsonSerialize
-class Config implements IConfig {
+class Config {
 
     @JsonProperty
     private boolean isDebugMode = false;
@@ -36,23 +33,19 @@ class Config implements IConfig {
     Config() {
     }
 
-    @Override
     public boolean isDebugMode() {
         return parseBoolean(getProperty("DEBUG_MODE", valueOf(isDebugMode)));
     }
 
-    @Override
     public WebDriver WebDriver() {
         return webdriver;
     }
 
-    @Override
-    public IDriver Driver(Browser browser) {
+    public Driver Driver(Browser browser) {
         return drivers.computeIfAbsent(browser, k -> new Driver());
     }
 
-    @Override
-    public IProxy Proxy() {
+    public Proxy Proxy() {
         return proxy;
     }
 
