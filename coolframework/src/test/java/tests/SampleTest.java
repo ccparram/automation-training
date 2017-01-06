@@ -14,4 +14,28 @@ public class SampleTest extends BaseTest<SamplePage> {
         getInitialPage().navigate();
     }
 
+    @Test
+    public void test2() {
+        assertNotNull("Instance not injected", getInitialPage());
+        getInitialPage().navigate();
+    }
+
+    @Test
+    public void test3() {
+        assertNotNull("Instance not injected", getInitialPage());
+        getInitialPage().navigate();
+    }
+
+    @Test
+    public void test4() {
+        assertNotNull("Instance not injected", getInitialPage());
+        getInitialPage().navigate();
+    }
+
+    @Test
+    public void test5() {
+        assertNotNull("Instance not injected", getInitialPage());
+        getInitialPage().navigate();
+    }
+
 }

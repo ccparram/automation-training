@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.Map;
 
 import static frameworks.config.Framework.CONFIGURATION;
+import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.remote.CapabilityType.PROXY;
 
@@ -32,11 +33,12 @@ public class WebDriverProvider extends AbstractFactoryBean<WebDriver> implements
     private BrowserQueue browserQueue;
 
     @Autowired
-    WebDriverProvider(BrowserQueue browserQueue) {
+    public WebDriverProvider(BrowserQueue browserQueue) {
         this.browserQueue = browserQueue;
     }
 
     private WebDriver getDriverFor(Browser browser) throws MalformedURLException {
+        currentThread().setName(browser + "-Thread");
 
         DesiredCapabilities capabilities = new DesiredCapabilities(browser.getCapabilities());
 

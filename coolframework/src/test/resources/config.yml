@@ -27,9 +27,9 @@ drivers:
       disable-popup-blocking: true
       #enablePersistentHover: true
 
-#  EDGE:
-#    capabilities:
-#      initialBrowserUrl: "about:blank"
+  EDGE:
+    capabilities:
+      initialBrowserUrl: "about:blank"
 
 # USE ONLY WITH FIREFOX VERSION 47 OR ABOVE
 #  MARIONETTE:
