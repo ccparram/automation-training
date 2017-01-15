@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.tests.concurrency.threadSafety.interfaces;
 
 /**
- * Created by Juan Krzemien on 6/17/2016.
+ * @author Juan Krzemien
  */
 public interface IIntGenerator {
     Integer getNextInt();

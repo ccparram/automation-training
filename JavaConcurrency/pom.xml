@@ -6,11 +6,12 @@
 
     <parent>
         <groupId>com.globant.automation.trainings</groupId>
-        <artifactId>JavaTrainings</artifactId>
+        <artifactId>java-trainings</artifactId>
         <version>1.0</version>
     </parent>
 
-    <artifactId>JavaConcurrency</artifactId>
+    <name>Java Concurrency</name>
+    <artifactId>java-concurrency</artifactId>
     <version>1.0</version>
 
     <properties>

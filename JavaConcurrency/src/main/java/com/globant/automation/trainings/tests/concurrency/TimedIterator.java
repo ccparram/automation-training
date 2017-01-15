@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import static java.lang.System.nanoTime;
 
 /**
- * Created by Juan Krzemien on 6/18/2016.
+ * @author Juan Krzemien
  */
 public class TimedIterator implements Spliterator<Long> {
 

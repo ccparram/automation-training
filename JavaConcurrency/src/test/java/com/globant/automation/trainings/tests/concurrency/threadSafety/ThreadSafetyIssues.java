@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.lang.String.format;
-import static java.lang.System.out;
 import static java.util.stream.IntStream.range;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +37,7 @@ public class ThreadSafetyIssues extends HideNonRelatedStuff {
         this.taskRetrieveUniqueNumbers = () -> range(0, MAX_NUMBERS_TO_RETRIEVE).forEach(i -> storageForThreads.add(generator.getNextInt()));
     }
 
-    @Parameters
+    @Parameters(name = "Combination: {0} {1} {2}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 // Safe collections
@@ -76,14 +75,14 @@ public class ThreadSafetyIssues extends HideNonRelatedStuff {
     }
 
     private void printStats(Long loopNumber) {
-        out.println(format("%s/%s - Attempt #%s", generatorName, collectionName, loopNumber));
-        out.println(format("Integers retrieved by Main: %s", storageForMainThread));
-        out.println(format("Integers retrieved by Threads: %s", storageForThreads));
+        getLogger().info(format("%s/%s - Attempt #%s", generatorName, collectionName, loopNumber));
+        getLogger().info(format("Integers retrieved by Main: %s", storageForMainThread));
+        getLogger().info(format("Integers retrieved by Threads: %s", storageForThreads));
         try {
             assertEquals(format("[%s Thread Safety issue] There should be no elements repeated", generatorName), storageForThreads.size(), storageForThreads.parallelStream().distinct().count());
             assertTrue(format("[%s Thread Safety issue] Storages should not share numbers", generatorName), storageForMainThread.parallelStream().allMatch(i -> !storageForThreads.contains(i)));
         } catch (AssertionError ae) {
-            out.println(format("Awww snap! I started to behave erratically on attempt #%s...Good times I'm not in a production environment!", loopNumber));
+            getLogger().info(format("Awww snap! I started to behave erratically on attempt #%s...Good times I'm not in a production environment!", loopNumber));
             throw ae;
         }
     }

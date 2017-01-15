@@ -20,3 +20,5 @@ hs_err_pid*
 # Compile/build folders
 target/
 bin/
+
+*.db
