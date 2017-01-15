@@ -22,7 +22,7 @@ import static java.lang.Thread.currentThread;
  *
  * @author Juan Krzemien
  */
-public enum Framework implements Logging {
+public enum Framework implements Logging, Config {
 
     CONFIGURATION;
 
@@ -55,29 +55,34 @@ public enum Framework implements Logging {
         Config configuration = null;
         InputStream configFile = currentThread().getContextClassLoader().getResourceAsStream(CONFIG_FILE);
         try {
-            configuration = om.readValue(configFile, Config.class);
+            configuration = om.readValue(configFile, ConfigImpl.class);
         } catch (Exception e) {
             getLogger().error("Error parsing framework config!. Re-check!", e);
         }
-        return Optional.ofNullable(configuration).orElse(new Config());
+        return Optional.ofNullable(configuration).orElse(new ConfigImpl());
     }
 
+    @Override
     public boolean isDebugMode() {
         return config.isDebugMode();
     }
 
+    @Override
     public WebDriver WebDriver() {
         return config.WebDriver();
     }
 
+    @Override
     public Driver Driver(Browser browser) {
         return config.Driver(browser);
     }
 
+    @Override
     public Proxy Proxy() {
         return config.Proxy();
     }
 
+    @Override
     public Set<Browser> AvailableDrivers() {
         return config.AvailableDrivers();
     }

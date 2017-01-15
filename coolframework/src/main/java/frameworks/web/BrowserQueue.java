@@ -1,7 +1,6 @@
-package frameworks.container;
+package frameworks.web;
 
 import frameworks.logging.Logging;
-import frameworks.web.Browser;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 

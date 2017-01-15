@@ -1,4 +1,4 @@
-package frameworks.container;
+package frameworks;
 
 import frameworks.logging.Logging;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

@@ -1,8 +1,7 @@
-package frameworks.container;
+package frameworks.web;
 
 import frameworks.listeners.BasicWebDriverListener;
 import frameworks.logging.Logging;
-import frameworks.web.Browser;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;

@@ -1,8 +1,8 @@
 package frameworks.runner;
 
-import frameworks.container.Container;
+import frameworks.Container;
 import frameworks.logging.Logging;
-import frameworks.web.server.SeleniumServerStandAlone;
+import frameworks.web.SeleniumServerStandAlone;
 
 public class AutomationFramework extends Parallelism implements Logging {
 

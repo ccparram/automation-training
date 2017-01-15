@@ -1,6 +1,6 @@
 package frameworks.runner;
 
-import frameworks.container.BrowserQueue;
+import frameworks.web.BrowserQueue;
 import frameworks.logging.Logging;
 import frameworks.tests.BaseTest;
 import frameworks.web.Browser;
@@ -10,7 +10,7 @@ import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
 import org.junit.runners.parameterized.TestWithParameters;
 
-import static frameworks.container.Container.CONTAINER;
+import static frameworks.Container.CONTAINER;
 
 /**
  * @author Juan Krzemien

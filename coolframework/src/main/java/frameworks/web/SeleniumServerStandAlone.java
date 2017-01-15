@@ -1,4 +1,4 @@
-package frameworks.web.server;
+package frameworks.web;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;

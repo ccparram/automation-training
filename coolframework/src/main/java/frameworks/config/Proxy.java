@@ -1,33 +1,13 @@
 package frameworks.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 /**
  * @author Juan Krzemien
  */
-@JsonSerialize
-public class Proxy {
+public interface Proxy {
 
-    @JsonProperty
-    private boolean enabled = false;
+    boolean isEnabled();
 
-    @JsonProperty
-    private String host = "";
+    String getHost();
 
-    @JsonProperty
-    private int port = 0;
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
+    int getPort();
 }

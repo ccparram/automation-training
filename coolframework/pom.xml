@@ -7,11 +7,19 @@
         <groupId>com.globant.automation.trainings</groupId>
         <version>1.0</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>cool-framework</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-ant-task</artifactId>
+            <version>1.2.2</version>
+            <type>pom</type>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
