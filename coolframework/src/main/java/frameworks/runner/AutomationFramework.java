@@ -12,7 +12,7 @@ public class AutomationFramework extends Parallelism implements Logging {
 
     public AutomationFramework(Class<?> clazz) throws Throwable {
         super(clazz);
-        Runtime.getRuntime().addShutdownHook(new Thread(Container.CONTAINER.with(clazz)::dispose));
+        Runtime.getRuntime().addShutdownHook(new Thread(Container.CONTAINER.with(clazz)::destroy));
     }
 
 }

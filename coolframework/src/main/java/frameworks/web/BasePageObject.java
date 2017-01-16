@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class BasePageObject {
 
     @Autowired
-    private WebDriver webDriver;
+    private WebDriverProvider webDriverProvider;
 
     protected abstract String getPageUrl();
 
     protected WebDriver getDriver() {
-        return webDriver;
+        return webDriverProvider.get();
     }
 
     public void navigate() {
@@ -22,8 +22,6 @@ public abstract class BasePageObject {
     }
 
     public void dispose() {
-        if (webDriver != null) {
-            webDriver.quit();
-        }
+        webDriverProvider.dispose();
     }
 }

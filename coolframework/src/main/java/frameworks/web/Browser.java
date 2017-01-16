@@ -4,6 +4,7 @@ import frameworks.logging.Logging;
 import frameworks.utils.Environment;
 import io.github.bonigarcia.wdm.*;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -19,18 +20,14 @@ import static java.util.jar.Pack200.Packer.LATEST;
  * @author Juan Krzemien
  */
 
-public enum Browser implements Logging {
+public enum Browser implements Logging, HasCapabilities {
 
     MARIONETTE {
         @Override
-        protected void setupDriver() {
+        public Capabilities getCapabilities() {
             if (!CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
                 FirefoxDriverManager.getInstance().setup(architecture, LATEST);
             }
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
             DesiredCapabilities capabilities = DesiredCapabilities.firefox();
             capabilities.setCapability("marionette", true);
             return capabilities;
@@ -38,27 +35,19 @@ public enum Browser implements Logging {
     },
     FIREFOX {
         @Override
-        protected void setupDriver() {
+        public Capabilities getCapabilities() {
             if (!CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
                 FirefoxDriverManager.getInstance().setup(architecture, LATEST);
             }
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
             return DesiredCapabilities.firefox();
         }
     },
     CHROME {
         @Override
-        protected void setupDriver() {
+        public Capabilities getCapabilities() {
             if (!CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
                 ChromeDriverManager.getInstance().setup(architecture, LATEST);
             }
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
             DesiredCapabilities capabilities = DesiredCapabilities.chrome();
             ChromeOptions options = new ChromeOptions();
             options.addArguments(CONFIGURATION.Driver(this).getArguments());
@@ -68,88 +57,56 @@ public enum Browser implements Logging {
     },
     IE {
         @Override
-        protected void setupDriver() {
+        public Capabilities getCapabilities() {
             if (!CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
                 // Override architecture for IE. 64 bits version is known to misbehave...
                 InternetExplorerDriverManager.getInstance().setup(x32, LATEST);
             }
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
             return DesiredCapabilities.internetExplorer();
         }
     },
     EDGE {
         @Override
-        protected void setupDriver() {
+        public Capabilities getCapabilities() {
             if (!CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
                 EdgeDriverManager.getInstance().setup(architecture, LATEST);
             }
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
             return DesiredCapabilities.edge();
         }
     },
     SAFARI {
         @Override
-        protected void setupDriver() {
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
+        public Capabilities getCapabilities() {
             return DesiredCapabilities.safari();
         }
     },
     ANDROID {
         @Override
-        protected void setupDriver() {
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
+        public Capabilities getCapabilities() {
             return DesiredCapabilities.android();
         }
     },
     IPHONE {
         @Override
-        protected void setupDriver() {
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
+        public Capabilities getCapabilities() {
             return DesiredCapabilities.iphone();
         }
     },
     IPAD {
         @Override
-        protected void setupDriver() {
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
+        public Capabilities getCapabilities() {
             return DesiredCapabilities.ipad();
         }
     },
     APPIUM {
         @Override
-        protected void setupDriver() {
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
+        public Capabilities getCapabilities() {
             return new DesiredCapabilities();
         }
     },
     SAUCE_LABS {
         @Override
-        protected void setupDriver() {
-        }
-
-        @Override
-        protected Capabilities defineCapabilities() {
+        public Capabilities getCapabilities() {
             return new DesiredCapabilities();
         }
     };
@@ -159,14 +116,5 @@ public enum Browser implements Logging {
     Browser() {
         getLogger().info(format("Initializing [%s] browser capabilities...", name()));
     }
-
-    public Capabilities getCapabilities() {
-        setupDriver();
-        return defineCapabilities();
-    }
-
-    protected abstract void setupDriver();
-
-    protected abstract Capabilities defineCapabilities();
 
 }

@@ -2,14 +2,11 @@ package frameworks.web;
 
 import frameworks.listeners.BasicWebDriverListener;
 import frameworks.logging.Logging;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -27,24 +24,61 @@ import static org.openqa.selenium.remote.CapabilityType.PROXY;
  */
 @Lazy
 @Component
-public class WebDriverProvider extends AbstractFactoryBean<WebDriver> implements Logging {
+public class WebDriverProvider implements Logging {
 
-    private BrowserQueue browserQueue;
+    private final BrowserQueue browserQueue;
+    private ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
 
-    @Autowired
     public WebDriverProvider(BrowserQueue browserQueue) {
         this.browserQueue = browserQueue;
     }
 
-    private WebDriver getDriverFor(Browser browser) throws MalformedURLException {
-        currentThread().setName(browser + "-Thread");
+    public WebDriver get() {
 
+        WebDriver driver = driverThreadLocal.get();
+
+        if (driver == null) {
+
+            try {
+                Browser browser = browserQueue.take();
+
+                currentThread().setName(browser.name() + "-Thread");
+
+                driver = createDriver(getDriverCapabilities(browser));
+
+            } catch (InterruptedException | MalformedURLException e) {
+                e.printStackTrace();
+            }
+            driverThreadLocal.set(driver);
+        }
+
+        return driver;
+    }
+
+    private DesiredCapabilities getDriverCapabilities(Browser browser) {
         DesiredCapabilities capabilities = new DesiredCapabilities(browser.getCapabilities());
 
         Map<String, Object> driverConfig = CONFIGURATION.Driver(browser).getCapabilities();
 
         capabilities.merge(new DesiredCapabilities(driverConfig));
 
+        return capabilities;
+    }
+
+    private WebDriver createDriver(DesiredCapabilities capabilities) throws MalformedURLException {
+        setProxySettings(capabilities);
+        getLogger().info("Creating RemoteWebDriver instance...");
+        WebDriver driver = new RemoteWebDriver(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
+        getLogger().info("Setting up WebDriver timeouts...");
+        driver.manage().timeouts().implicitlyWait(CONFIGURATION.WebDriver().getImplicitTimeOut(), SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(CONFIGURATION.WebDriver().getPageLoadTimeout(), SECONDS);
+        driver.manage().timeouts().setScriptTimeout(CONFIGURATION.WebDriver().getScriptTimeout(), SECONDS);
+        driver.manage().window().maximize();
+        driver = setListeners(driver);
+        return driver;
+    }
+
+    private void setProxySettings(DesiredCapabilities capabilities) {
         // Set proxy settings, if any
         if (CONFIGURATION.Proxy().isEnabled()) {
             getLogger().info("Setting WebDriver proxy...");
@@ -57,21 +91,9 @@ public class WebDriverProvider extends AbstractFactoryBean<WebDriver> implements
                     .setSslProxy(proxyCfg)
             );
         }
-
-        return getDriverFor(capabilities);
     }
 
-    private WebDriver getDriverFor(Capabilities capabilities) throws MalformedURLException {
-        getLogger().info("Creating RemoteWebDriver instance...");
-        WebDriver driver = new RemoteWebDriver(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
-
-        getLogger().info("Setting up WebDriver timeouts...");
-        driver.manage().timeouts().implicitlyWait(CONFIGURATION.WebDriver().getImplicitTimeOut(), SECONDS);
-        driver.manage().timeouts().pageLoadTimeout(CONFIGURATION.WebDriver().getPageLoadTimeout(), SECONDS);
-        driver.manage().timeouts().setScriptTimeout(CONFIGURATION.WebDriver().getScriptTimeout(), SECONDS);
-
-        driver.manage().window().maximize();
-
+    private WebDriver setListeners(WebDriver driver) {
         if (CONFIGURATION.WebDriver().isUseListener()) {
             getLogger().info("Setting up WebDriver listener...");
             // Wrap the driver as an event firing one, and add basic listener
@@ -79,17 +101,14 @@ public class WebDriverProvider extends AbstractFactoryBean<WebDriver> implements
             eventDriver.register(new BasicWebDriverListener());
             driver = eventDriver;
         }
-
         return driver;
     }
 
-    @Override
-    public Class<?> getObjectType() {
-        return WebDriver.class;
-    }
-
-    @Override
-    protected WebDriver createInstance() throws Exception {
-        return getDriverFor(browserQueue.get());
+    public void dispose() {
+        WebDriver driver = driverThreadLocal.get();
+        if (driver != null) {
+            driver.quit();
+        }
+        driverThreadLocal.set(null);
     }
 }
