@@ -18,7 +18,7 @@ import static frameworks.config.Framework.CONFIGURATION;
  *
  * @author Juan Krzemien
  */
-public enum SeleniumServerStandAlone implements Logging {
+enum SeleniumServerStandAlone implements Logging {
 
     INSTANCE;
 
@@ -61,5 +61,6 @@ public enum SeleniumServerStandAlone implements Logging {
         }
         getLogger().info("Done");
     }
+
 }
 

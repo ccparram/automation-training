@@ -1,12 +1,10 @@
 package tests.pages;
 
-import frameworks.annotations.PageObject;
 import frameworks.web.BasePageObject;
 
 /**
  * @author Juan Krzemien
  */
-@PageObject
 public class SamplePage extends BasePageObject {
 
     @Override

@@ -7,65 +7,32 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 
 import static frameworks.config.Framework.CONFIGURATION;
-import static java.lang.Thread.currentThread;
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.remote.CapabilityType.PROXY;
 
 /**
  * @author Juan Krzemien
  */
-@Lazy
-@Component
-public class WebDriverProvider implements Logging {
+class WebDriverProvider implements Logging {
 
-    private final BrowserQueue browserQueue;
-    private ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
-
-    public WebDriverProvider(BrowserQueue browserQueue) {
-        this.browserQueue = browserQueue;
-    }
-
-    public WebDriver get() {
-
-        WebDriver driver = driverThreadLocal.get();
-
-        if (driver == null) {
-
-            try {
-                Browser browser = browserQueue.take();
-
-                currentThread().setName(browser.name() + "-Thread");
-
-                driver = createDriver(getDriverCapabilities(browser));
-
-            } catch (InterruptedException | MalformedURLException e) {
-                e.printStackTrace();
-            }
-            driverThreadLocal.set(driver);
-        }
-
-        return driver;
-    }
-
-    private DesiredCapabilities getDriverCapabilities(Browser browser) {
+    WebDriver createDriverWith(Browser browser) throws MalformedURLException {
+        browser.setupDriverServer();
         DesiredCapabilities capabilities = new DesiredCapabilities(browser.getCapabilities());
-
-        Map<String, Object> driverConfig = CONFIGURATION.Driver(browser).getCapabilities();
-
-        capabilities.merge(new DesiredCapabilities(driverConfig));
-
-        return capabilities;
+        Optional<Map<String, Object>> driverCapabilities = ofNullable(CONFIGURATION.Driver(browser).getCapabilities());
+        capabilities.merge(new DesiredCapabilities(driverCapabilities.orElse(emptyMap())));
+        return createDriverWith(capabilities);
     }
 
-    private WebDriver createDriver(DesiredCapabilities capabilities) throws MalformedURLException {
+    private WebDriver createDriverWith(DesiredCapabilities capabilities) throws MalformedURLException {
         setProxySettings(capabilities);
         getLogger().info("Creating RemoteWebDriver instance...");
         WebDriver driver = new RemoteWebDriver(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
@@ -104,11 +71,4 @@ public class WebDriverProvider implements Logging {
         return driver;
     }
 
-    public void dispose() {
-        WebDriver driver = driverThreadLocal.get();
-        if (driver != null) {
-            driver.quit();
-        }
-        driverThreadLocal.set(null);
-    }
 }

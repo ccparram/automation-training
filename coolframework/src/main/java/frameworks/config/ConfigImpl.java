@@ -12,6 +12,8 @@ import java.util.Set;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.valueOf;
 import static java.lang.System.getProperty;
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Juan Krzemien
@@ -46,7 +48,7 @@ class ConfigImpl implements Config {
 
     @Override
     public Driver Driver(Browser browser) {
-        return drivers.computeIfAbsent(browser, k -> new DriverImpl());
+        return ofNullable(drivers).orElse(emptyMap()).computeIfAbsent(browser, k -> new DriverImpl());
     }
 
     @Override

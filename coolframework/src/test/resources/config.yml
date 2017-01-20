@@ -7,41 +7,41 @@ webdriver:
   scriptTimeout: 30
   pollingEveryMs: 1000
   useSeleniumGrid: false
-  useListener: true
+  useListener: false
 
 drivers:
   CHROME:
     arguments:
       - no-sandbox
 
-  IE:
-    capabilities:
-      #pageLoadStrategy: "eager"
-      initialBrowserUrl: "about:blank"
-      ie.ensureCleanSession: true
-      #ie.validateCookieDocumentType: false
-      #requireWindowFocus: true
-      nativeEvents: false
-      #ignoreProtectedModeSettings: true
-      #unexpectedAlertBehaviour: "accept"
-      disable-popup-blocking: true
-      #enablePersistentHover: true
+#  IE:
+#    capabilities:
+#      #pageLoadStrategy: "eager"
+#      initialBrowserUrl: "about:blank"
+#      ie.ensureCleanSession: true
+#      #ie.validateCookieDocumentType: false
+#      #requireWindowFocus: true
+#      nativeEvents: false
+#      #ignoreProtectedModeSettings: true
+#      #unexpectedAlertBehaviour: "accept"
+#      disable-popup-blocking: true
+#      #enablePersistentHover: true
 
 #  EDGE:
 #    capabilities:
 #      initialBrowserUrl: "about:blank"
 
 # USE ONLY WITH FIREFOX VERSION 47 OR ABOVE
-#  MARIONETTE:
-#    capabilities:
-#        firefox_binary: "D:/Programas/Firefox/firefox.exe"
-#        webdriver.firefox.bin: "D:/Programas/Firefox/firefox.exe"
+  MARIONETTE:
+    capabilities:
+        #firefox_binary: "D:/Programas/Firefox/firefox.exe"
+        #webdriver.firefox.bin: "D:/Programas/Firefox/firefox.exe"
 
 # USE ONLY WITH FIREFOX VERSION 46 OR BELOW
 #  FIREFOX:
 #    capabilities:
 #      firefox_binary: "D:/Programas/Firefox/firefox.exe"
-#      #webdriver.load.strategy: "eager"
+#      webdriver.load.strategy: "eager"
 
 
 proxy:

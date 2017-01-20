@@ -1,11 +1,13 @@
 package frameworks.listeners;
 
 import frameworks.logging.Logging;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.events.WebDriverEventListener;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static java.lang.String.format;
@@ -102,5 +104,13 @@ public class BasicWebDriverListener implements WebDriverEventListener, Logging {
     @Override
     public void onException(Throwable throwable, WebDriver driver) {
         getLogger().debug("An exception occurred! Exception was: " + throwable.getMessage());
+        if (driver instanceof TakesScreenshot) {
+            File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            try {
+                FileUtils.copyFile(scrFile, new File("screenShot" + LocalDateTime.now() + ".png"));
+            } catch (IOException e) {
+                getLogger().error(e.getLocalizedMessage(), e);
+            }
+        }
     }
 }
