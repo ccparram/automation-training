@@ -1,4 +1,4 @@
-package frameworks.runner;
+package frameworks.web;
 
 import frameworks.logging.Logging;
 import frameworks.utils.Reflections;

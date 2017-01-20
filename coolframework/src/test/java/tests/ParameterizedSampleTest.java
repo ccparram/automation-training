@@ -1,6 +1,6 @@
 package tests;
 
-import frameworks.runner.InjectPageObjectsRunnerFactory;
+import frameworks.web.InjectPageObjectsRunnerFactory;
 import frameworks.web.ParametrizedWebDriverRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
