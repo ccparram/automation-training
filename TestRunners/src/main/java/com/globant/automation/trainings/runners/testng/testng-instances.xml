@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="SampleSuite" verbose="0" parallel="instances" thread-count="10">
+    <test name="InstancesSample">
+        <classes>
+            <class name="com.globant.automation.trainings.runners.testng.ThreadingInstances"/>
+        </classes>
+    </test>
+</suite>

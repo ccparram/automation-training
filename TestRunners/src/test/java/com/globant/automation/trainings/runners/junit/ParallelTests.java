@@ -20,7 +20,7 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
  * @author Juan Krzemien
  */
 
-@RunWith(Parallelism.class)
+@RunWith(ParametrizedParallelism.class)
 public class ParallelTests implements Logging {
 
     private final String browser;

@@ -14,9 +14,9 @@ import static java.util.Arrays.stream;
 /**
  * @author Juan Krzemien
  */
-public class InjectPageObjectsRunnerFactory implements ParametersRunnerFactory, Logging {
+public class InjectPageObjectsParametersRunnerFactory implements ParametersRunnerFactory, Logging {
 
-    public InjectPageObjectsRunnerFactory() {
+    public InjectPageObjectsParametersRunnerFactory() {
     }
 
     public Runner createRunnerForTestWithParameters(TestWithParameters test) throws InitializationError {

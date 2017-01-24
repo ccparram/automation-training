@@ -9,8 +9,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import java.io.IOException;
@@ -20,8 +20,7 @@ interface UserApi {
 
     @GET
     @Path("/user")
-    @Produces("text/plain")
-    User getAuthenticatedUser();
+    User getAuthenticatedUser(@HeaderParam("someHeader") String value);
 
 }
 
@@ -41,7 +40,7 @@ public class RestEasyCrap {
         ResteasyWebTarget target = client.target(API_GITHUB);
 
         UserApi userApi = target.proxy(UserApi.class);
-        User user = userApi.getAuthenticatedUser();
+        User user = userApi.getAuthenticatedUser("21321491028402184120948098024");
     }
 
     @Test
@@ -53,7 +52,7 @@ public class RestEasyCrap {
         ResteasyWebTarget target = client.target(API_GITHUB);
 
         UserApi userApi = target.proxy(UserApi.class);
-        User user = userApi.getAuthenticatedUser();
+        User user = userApi.getAuthenticatedUser("ASKFJDSLKFJSDLKDSJLFKSJDFLKDSJKLDS");
     }
 
     public class CustomAuthHeadersRequestFilter implements ClientRequestFilter {

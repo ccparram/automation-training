@@ -1,62 +1,47 @@
 package com.globant.automation.trainings.runners.junit;
 
-import org.junit.runners.Parameterized;
-import org.junit.runners.model.RunnerScheduler;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunListener;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.BlockJUnit4ClassRunner;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.lang.String.format;
+import static java.lang.System.err;
+import static java.lang.Thread.currentThread;
 
 /**
  * This class is supposed to be used from JUnit's RunWith annotation.
- * Adds support for parallel test runs (default is 5).
- * Extends JUnit's Parameterized class, so you still get the parameterized tests :)
+ * Adds support for parallel test runs (default is double the number of available processors).
  *
  * @author Juan Krzemien
  */
-public class Parallelism extends Parameterized {
+public class Parallelism extends BlockJUnit4ClassRunner {
 
-    private static final int TIMEOUT_MINUTES = 10;
+    // Just for Class instance HASH DEMO purposes...not really needed!
+    private static final ThreadLocal<Object> test = new ThreadLocal<>();
 
     public Parallelism(Class<?> clazz) throws Throwable {
         super(clazz);
         setScheduler(new ThreadPoolScheduler());
     }
 
-    private static class ThreadPoolScheduler implements RunnerScheduler {
-        private final ExecutorService executor;
+    @Override
+    protected Object createTest() throws Exception {
+        test.set(super.createTest());
+        return test.get();
+    }
 
-        ThreadPoolScheduler() {
-            String threads = System.getProperty("junit.parallel.threads", "5");
-            int numThreads = Integer.parseInt(threads);
-            this.executor = Executors.newFixedThreadPool(numThreads, new TestThreadPool());
-        }
+    @Override
+    public void run(RunNotifier notifier) {
+        notifier.addListener(new DumbListener());
+        super.run(notifier);
+    }
 
-        @Override
-        public void finished() {
-            executor.shutdown();
-            try {
-                executor.awaitTermination(TIMEOUT_MINUTES, MINUTES);
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
-            }
-        }
+    class DumbListener extends RunListener {
 
         @Override
-        public void schedule(Runnable childStatement) {
-            executor.submit(childStatement);
-        }
-
-        static class TestThreadPool implements ThreadFactory {
-            private static final AtomicInteger poolNumber = new AtomicInteger(1);
-
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread(r, "TestPool-Thread-" + poolNumber.getAndIncrement());
-            }
+        public void testStarted(Description description) throws Exception {
+            err.println(format("Class instance: %s Thread ID: %s Thread Name: %s ", test.get().hashCode(), currentThread().getId(), currentThread().getName()));
         }
     }
 }

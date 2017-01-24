@@ -15,7 +15,7 @@ public class TestListener implements IInvokedMethodListener {
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-        int hash = method.getTestMethod().getRealClass().hashCode();
+        int hash = method.getTestMethod().getTestClass().hashCode();
         err.println(format("Class instance: %s Thread ID: %s Thread Name: %s ", hash, currentThread().getId(), currentThread().getName()));
     }
 

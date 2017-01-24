@@ -1,4 +1,4 @@
-package frameworks.runner;
+package com.globant.automation.trainings.runners.junit;
 
 import org.junit.runners.Parameterized;
 

@@ -1,5 +1,7 @@
 package frameworks.utils;
 
+import java.util.Optional;
+
 import static java.lang.System.getProperty;
 
 /**
@@ -29,5 +31,10 @@ public final class Environment {
 
     public static boolean is64Bits() {
         return ARCH.contains("64");
+    }
+
+    public static int getNumberOfThreads() {
+        String threads = Optional.ofNullable(System.getProperty("junit.parallel.threads")).orElse(((Integer) (Runtime.getRuntime().availableProcessors() * 2)).toString());
+        return Integer.parseInt(threads);
     }
 }

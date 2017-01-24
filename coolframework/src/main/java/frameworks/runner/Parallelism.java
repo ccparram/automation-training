@@ -4,7 +4,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 
 /**
  * This class is supposed to be used from JUnit's RunWith annotation.
- * Adds support for parallel test runs (default is 5).
+ * Adds support for parallel test runs (default is double the number of available processors).
  *
  * @author Juan Krzemien
  */

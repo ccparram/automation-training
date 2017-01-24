@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="SampleSuite" verbose="0">
+<suite name="SampleSuite" verbose="0" parallel="methods" thread-count="10">
     <test name="Regression1">
         <classes>
             <class name="com.globant.automation.trainings.runners.testng.Threading"/>

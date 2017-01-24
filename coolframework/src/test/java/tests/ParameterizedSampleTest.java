@@ -1,28 +1,23 @@
 package tests;
 
-import frameworks.web.InjectPageObjectsRunnerFactory;
-import frameworks.web.ParametrizedWebDriverRunner;
+import frameworks.web.ParameterizedWebDriverTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.junit.runners.Parameterized.UseParametersRunnerFactory;
 import tests.pages.SamplePage;
 
 import java.util.Arrays;
 
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(ParametrizedWebDriverRunner.class)
-@UseParametersRunnerFactory(value = InjectPageObjectsRunnerFactory.class)
-public class ParameterizedSampleTest {
+public class ParameterizedSampleTest extends ParameterizedWebDriverTest {
 
     @Parameter
     public String sampleParam;
 
     private SamplePage samplePage;
 
-    @Parameters
+    @Parameters(name = "Parameter {0}")
     public static Iterable<Object> parameters() {
         return Arrays.asList("A", "B");
     }

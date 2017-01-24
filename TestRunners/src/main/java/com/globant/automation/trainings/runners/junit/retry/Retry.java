@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Created by Juan Krzemien on 7/21/2016.
+ * @author Juan Krzemien
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Retry {

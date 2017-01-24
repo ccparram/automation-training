@@ -1,32 +1,27 @@
-package com.globant.automation.trainings.runners.testng;
+package com.globant.automation.trainings.runners.junit;
 
 import com.globant.automation.trainings.runners.logging.Logging;
-import org.testng.annotations.Listeners;
-import org.testng.annotations.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.Random;
 
 import static org.testng.Assert.assertEquals;
 
 /**
- * DEMO test suite to show how TestNG reuses *same* class instance for every test method.
+ * DEMO test suite to show how JUnit focuses on test isolation. It creates a new class instance for every test method.
+ * Thread safety is not a major issue here, although you always should keep an eye on class's state (thread safety).
  * <p>
- * This causes issues if you do not keep an eye on class's state (thread safety).
- * <p>
- * TestNG parallel options should be parallel="methods"...which, is the *only true* concurrent/parallel option it has at method test level.
- * <p>
- * You can play around with other parallel="..." options in XML file. You will see that Thread ID/Name changes accordingly.
- * <p>
- * Run this suite (from companion testng.xml file) *several* times and you will see it fail from time to time.
+ * Run this suite *several* times. It should never fail
  *
  * @author Juan Krzemien
  */
-@Listeners({TestListener.class})
+@RunWith(Parallelism.class)
 public class Threading implements Logging {
 
     private boolean a;
 
-    @Test(alwaysRun = true)
+    @Test
     public void test1() {
         boolean b = new Random().nextBoolean();
         a = b;

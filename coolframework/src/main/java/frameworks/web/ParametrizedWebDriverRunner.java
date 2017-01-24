@@ -8,7 +8,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,8 +29,13 @@ public class ParametrizedWebDriverRunner extends ParametrizedParallelism impleme
         final List<Runner> runners = super.getChildren();
         final Set<Browser> browsers = Framework.CONFIGURATION.AvailableDrivers();
         final List<Runner> expandedRunners = new ArrayList<>(runners.size() * browsers.size());
-        runners.forEach(m -> browsers.forEach(b -> expandedRunners.add(new InternalWebDriverRunner(m, b))));
+        runners.forEach(r -> browsers.forEach(b -> expandedRunners.add(new InternalWebDriverRunner(r, b))));
         return expandedRunners;
+    }
+
+    @Override
+    public Description getDescription() {
+        return super.getDescription();
     }
 
     private class InternalWebDriverRunner extends Runner {
@@ -54,7 +58,7 @@ public class ParametrizedWebDriverRunner extends ParametrizedParallelism impleme
 
             try {
                 WEB_DRIVER_CONTEXT.set(webDriverProvider.createDriverWith(browser));
-            } catch (MalformedURLException e) {
+            } catch (Exception e) {
                 notifier.fireTestFailure(new Failure(getDescription(), e));
                 return;
             }

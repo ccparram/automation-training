@@ -1,7 +1,6 @@
-package frameworks.runner;
+package com.globant.automation.trainings.runners.junit;
 
-import frameworks.logging.Logging;
-import frameworks.utils.Environment;
+import com.globant.automation.trainings.runners.logging.Logging;
 import org.junit.runners.model.RunnerScheduler;
 
 import java.util.concurrent.ExecutorService;
@@ -25,7 +24,7 @@ public class ThreadPoolScheduler implements RunnerScheduler, Logging {
     private final ExecutorService executor;
 
     ThreadPoolScheduler() {
-        this.executor = Executors.newFixedThreadPool(Environment.getNumberOfThreads(), new TestThreadPool());
+        this.executor = Executors.newFixedThreadPool(Math.max(2, Runtime.getRuntime().availableProcessors() * 2), new TestThreadPool());
     }
 
     @Override
