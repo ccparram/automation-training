@@ -11,7 +11,7 @@ enum WebDriverContext {
 
     WEB_DRIVER_CONTEXT;
 
-    private static ThreadLocal<WebDriver> DRIVERS_PER_THREAD = new ThreadLocal<>();
+    private static final ThreadLocal<WebDriver> DRIVERS_PER_THREAD = new ThreadLocal<>();
 
     public void set(WebDriver driver) {
         DRIVERS_PER_THREAD.set(driver);

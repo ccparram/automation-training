@@ -24,8 +24,9 @@ public class ThreadPoolScheduler implements RunnerScheduler, Logging {
 
     private final ExecutorService executor;
 
-    ThreadPoolScheduler() {
-        this.executor = Executors.newFixedThreadPool(Environment.getNumberOfThreads(), new TestThreadPool());
+    public ThreadPoolScheduler() {
+        this.executor = Executors.newWorkStealingPool(Environment.getNumberOfThreads());
+        //this.executor =  Executors.newFixedThreadPool(Environment.getNumberOfThreads(), new TestThreadPool());
     }
 
     @Override

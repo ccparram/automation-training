@@ -1,5 +1,6 @@
 package frameworks.web;
 
+import frameworks.runner.InjectPageObjectsParametersRunnerFactory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.UseParametersRunnerFactory;
 

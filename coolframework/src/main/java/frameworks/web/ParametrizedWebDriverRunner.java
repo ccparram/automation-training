@@ -5,19 +5,13 @@ import frameworks.logging.Logging;
 import frameworks.runner.ParametrizedParallelism;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static frameworks.web.WebDriverContext.WEB_DRIVER_CONTEXT;
-import static java.lang.Thread.currentThread;
-
 public class ParametrizedWebDriverRunner extends ParametrizedParallelism implements Logging {
-
-    private final WebDriverProvider webDriverProvider = new WebDriverProvider();
 
     public ParametrizedWebDriverRunner(Class<?> clazz) throws Throwable {
         super(clazz);
@@ -54,18 +48,9 @@ public class ParametrizedWebDriverRunner extends ParametrizedParallelism impleme
 
         @Override
         public void run(RunNotifier notifier) {
-            currentThread().setName(browser.name() + "-" + currentThread().getName());
-
-            try {
-                WEB_DRIVER_CONTEXT.set(webDriverProvider.createDriverWith(browser));
-            } catch (Exception e) {
-                notifier.fireTestFailure(new Failure(getDescription(), e));
-                return;
-            }
-
+            ((BlockJUnit4ClassRunnerWithParametersInjector) runner).setBrowser(browser);
             runner.run(notifier);
-
-            WEB_DRIVER_CONTEXT.remove();
         }
+
     }
 }

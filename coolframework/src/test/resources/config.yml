@@ -7,7 +7,7 @@ webdriver:
   scriptTimeout: 30
   pollingEveryMs: 1000
   useSeleniumGrid: false
-  useListener: false
+  useListener: true
 
 drivers:
   CHROME:

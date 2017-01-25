@@ -8,6 +8,8 @@ import tests.pages.SamplePage;
 
 import java.util.Arrays;
 
+import static java.lang.String.format;
+import static java.lang.Thread.currentThread;
 import static org.junit.Assert.assertNotNull;
 
 public class ParameterizedSampleTest extends ParameterizedWebDriverTest {
@@ -27,6 +29,7 @@ public class ParameterizedSampleTest extends ParameterizedWebDriverTest {
         assertNotNull("Parameter not injected", sampleParam);
         assertNotNull("Instance not injected", samplePage);
         samplePage.navigate();
+        System.err.println(format("From inside test 1. Parameter is %s. Thread ID is %s and its name is %s", sampleParam, currentThread().getId(), currentThread().getName()));
     }
 
     @Test
@@ -34,6 +37,7 @@ public class ParameterizedSampleTest extends ParameterizedWebDriverTest {
         assertNotNull("Parameter not injected", sampleParam);
         assertNotNull("Instance not injected", samplePage);
         samplePage.navigate();
+        System.err.println(format("From inside test 2. Parameter is %s. Thread ID is %s and its name is %s", sampleParam, currentThread().getId(), currentThread().getName()));
     }
 
     @Test
@@ -41,6 +45,7 @@ public class ParameterizedSampleTest extends ParameterizedWebDriverTest {
         assertNotNull("Parameter not injected", sampleParam);
         assertNotNull("Instance not injected", samplePage);
         samplePage.navigate();
+        System.err.println(format("From inside test 3. Parameter is %s. Thread ID is %s and its name is %s", sampleParam, currentThread().getId(), currentThread().getName()));
     }
 
     @Test
@@ -48,6 +53,7 @@ public class ParameterizedSampleTest extends ParameterizedWebDriverTest {
         assertNotNull("Parameter not injected", sampleParam);
         assertNotNull("Instance not injected", samplePage);
         samplePage.navigate();
+        System.err.println(format("From inside test 4. Parameter is %s. Thread ID is %s and its name is %s", sampleParam, currentThread().getId(), currentThread().getName()));
     }
 
     @Test
@@ -55,6 +61,7 @@ public class ParameterizedSampleTest extends ParameterizedWebDriverTest {
         assertNotNull("Parameter not injected", sampleParam);
         assertNotNull("Instance not injected", samplePage);
         samplePage.navigate();
+        System.err.println(format("From inside test 5. Parameter is %s. Thread ID is %s and its name is %s", sampleParam, currentThread().getId(), currentThread().getName()));
     }
 
 }
