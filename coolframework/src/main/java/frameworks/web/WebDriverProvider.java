@@ -25,7 +25,6 @@ import static org.openqa.selenium.remote.CapabilityType.PROXY;
 class WebDriverProvider implements Logging {
 
     WebDriver createDriverWith(Browser browser) throws MalformedURLException {
-        browser.setupDriverServer();
         DesiredCapabilities capabilities = new DesiredCapabilities(browser.getCapabilities());
         Optional<Map<String, Object>> driverCapabilities = ofNullable(CONFIGURATION.Driver(browser).getCapabilities());
         capabilities.merge(new DesiredCapabilities(driverCapabilities.orElse(emptyMap())));

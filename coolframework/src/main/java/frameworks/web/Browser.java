@@ -7,6 +7,9 @@ import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static frameworks.config.Framework.CONFIGURATION;
 import static frameworks.utils.Environment.is64Bits;
 import static io.github.bonigarcia.wdm.Architecture.x32;
@@ -25,6 +28,7 @@ public enum Browser implements Logging, HasCapabilities {
     MARIONETTE {
         @Override
         public Capabilities getCapabilities() {
+            initialize(this);
             DesiredCapabilities capabilities = DesiredCapabilities.firefox();
             capabilities.setCapability("marionette", true);
             return capabilities;
@@ -33,12 +37,14 @@ public enum Browser implements Logging, HasCapabilities {
     FIREFOX {
         @Override
         public Capabilities getCapabilities() {
+            initialize(this);
             return DesiredCapabilities.firefox();
         }
     },
     CHROME {
         @Override
         public Capabilities getCapabilities() {
+            initialize(this);
             DesiredCapabilities capabilities = DesiredCapabilities.chrome();
             ChromeOptions options = new ChromeOptions();
             options.addArguments(CONFIGURATION.Driver(this).getArguments());
@@ -49,12 +55,14 @@ public enum Browser implements Logging, HasCapabilities {
     IE {
         @Override
         public Capabilities getCapabilities() {
+            initialize(this);
             return DesiredCapabilities.internetExplorer();
         }
     },
     EDGE {
         @Override
         public Capabilities getCapabilities() {
+            initialize(this);
             return DesiredCapabilities.edge();
         }
     },
@@ -95,19 +103,18 @@ public enum Browser implements Logging, HasCapabilities {
         }
     };
 
-    private final Architecture architecture = is64Bits() ? x64 : x32;
-    private boolean alreadyRun = false;
+    private static final Architecture architecture = is64Bits() ? x64 : x32;
+    private static final Map<Browser, Boolean> alreadyInitialized = new HashMap<>();
 
     Browser() {
         getLogger().info(format("Initializing [%s] browser capabilities...", name()));
     }
 
-    public synchronized void setupDriverServer() {
-        if (alreadyRun || CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
+    private synchronized static void initialize(Browser browser) {
+        if (alreadyInitialized.computeIfAbsent(browser, b -> false) || CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
             return;
         }
-
-        switch (this) {
+        switch (browser) {
             case MARIONETTE:
             case FIREFOX:
                 FirefoxDriverManager.getInstance().setup(architecture, LATEST);
@@ -123,6 +130,6 @@ public enum Browser implements Logging, HasCapabilities {
                 EdgeDriverManager.getInstance().setup(architecture, LATEST);
                 break;
         }
-        alreadyRun = true;
+        alreadyInitialized.put(browser, true);
     }
 }
