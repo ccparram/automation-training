@@ -1,10 +1,8 @@
-package com.globant.automation.trainings.webframework.pageobject;
+package frameworks.web;
 
-import com.globant.automation.trainings.webframework.events.Messages;
-import com.globant.automation.trainings.webframework.pageobject.annotations.DeletesCookies;
-import com.globant.automation.trainings.webframework.pageobject.annotations.FocusFrames;
-import com.globant.automation.trainings.webframework.pageobject.annotations.Url;
-import com.globant.automation.trainings.webframework.utils.Reflection;
+import frameworks.utils.Reflection;
+import frameworks.web.annotations.DeletesCookies;
+import frameworks.web.annotations.Url;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -13,11 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.globant.automation.trainings.webframework.events.EventBus.FRAMEWORK;
 import static java.lang.String.format;
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.joining;
-import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
 import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
 
 /**
@@ -29,37 +23,14 @@ public class PageObject extends WebDriverOperations {
 
     protected PageObject() {
 
-        FRAMEWORK.post(Messages.PageObjects.CREATED(this));
-
         getLogger().info(format("Creating new [%s] Page Object instance...", getClass().getSimpleName()));
 
         navigateIfDecorated();
-
-        focusFrameIfDecorated();
 
         getLogger().info(format("[%s] Page Object instance created...", getClass().getSimpleName()));
 
     }
 
-    /**
-     * If POM is marked with {@link FocusFrames}, processes annotation
-     * values and switches WebDriver focus to the frames mentioned in the list, from first to last.
-     */
-    private void focusFrameIfDecorated() {
-        FocusFrames focusFrames = getClass().getAnnotation(FocusFrames.class);
-        if (focusFrames != null) {
-            String framePath = stream(focusFrames.value()).collect(joining(" -> "));
-            switchTo().defaultContent();
-            getLogger().info(format("Page Object [%s] is marked with @FocusFrames, switching frame focus: Default Context -> %s", getClass().getSimpleName(), framePath));
-            for (String frame : focusFrames.value()) {
-                waitFor(frameToBeAvailableAndSwitchToIt(frame));
-            }
-        }
-        /*else {
-            getLogger().info(format("Switch to default content for Page Object [%s]...", getClass().getSimpleName()));
-            switchTo().defaultContent();
-        }*/
-    }
 
     /**
      * Pretty print POM name, when requested as a String

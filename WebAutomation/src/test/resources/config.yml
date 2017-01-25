@@ -32,7 +32,7 @@ drivers:
 #      initialBrowserUrl: "about:blank"
 
 # USE ONLY WITH FIREFOX VERSION 47 OR ABOVE
-#  MARIONETTE:
+  MARIONETTE:
 #    capabilities:
 #        firefox_binary: "D:/Programas/Firefox/firefox.exe"
 #        webdriver.firefox.bin: "D:/Programas/Firefox/firefox.exe"

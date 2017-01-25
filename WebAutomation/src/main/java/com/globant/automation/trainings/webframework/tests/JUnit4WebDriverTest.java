@@ -1,6 +1,6 @@
 package com.globant.automation.trainings.webframework.tests;
 
-import com.globant.automation.trainings.runners.junit.Parallelism;
+import com.globant.automation.trainings.runners.junit.ParametrizedParallelism;
 import com.globant.automation.trainings.webframework.events.Messages;
 import com.globant.automation.trainings.webframework.pageobject.PageObject;
 import com.globant.automation.trainings.webframework.webdriver.Browser;
@@ -20,7 +20,7 @@ import static com.globant.automation.trainings.webframework.events.EventBus.FRAM
  *
  * @author Juan Krzemien
  */
-@RunWith(Parallelism.class)
+@RunWith(ParametrizedParallelism.class)
 public abstract class JUnit4WebDriverTest<T extends PageObject> extends GenericWebDriverTest<T> {
 
     @Parameter

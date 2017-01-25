@@ -24,7 +24,7 @@ public enum Browser implements Logging {
         @Override
         public Capabilities getCapabilities() {
             if (!CONFIGURATION.WebDriver().isUseSeleniumGrid()) {
-                MarionetteDriverManager.getInstance().setup(architecture, LATEST.toString());
+                FirefoxDriverManager.getInstance().setup(architecture, LATEST.toString());
             }
             DesiredCapabilities capabilities = DesiredCapabilities.firefox();
             capabilities.setCapability("marionette", true);

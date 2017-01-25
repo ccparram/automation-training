@@ -3,7 +3,7 @@ package frameworks.web;
 import frameworks.config.Framework;
 import frameworks.logging.Logging;
 import frameworks.runner.Parallelism;
-import frameworks.utils.Reflections;
+import frameworks.utils.Reflection;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static frameworks.utils.Reflections.injectFieldsPageObject;
+import static frameworks.utils.Reflection.injectFieldsPageObject;
 import static frameworks.web.WebDriverContext.WEB_DRIVER_CONTEXT;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
@@ -46,7 +46,7 @@ public class WebDriverRunner extends Parallelism implements Logging {
     @Override
     protected Object createTest() throws Exception {
         final Object test = super.createTest();
-        stream(test.getClass().getDeclaredFields()).filter(Reflections::isPom).forEach(f -> injectFieldsPageObject(f, test));
+        stream(test.getClass().getDeclaredFields()).filter(Reflection::isPom).forEach(f -> injectFieldsPageObject(f, test));
         return test;
     }
 
@@ -54,6 +54,7 @@ public class WebDriverRunner extends Parallelism implements Logging {
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
         final Browser browser = ((WebDriverFrameworkMethod) method).getBrowser();
+
         currentThread().setName(browser.name() + "-" + currentThread().getName());
 
         try {
@@ -63,31 +64,11 @@ public class WebDriverRunner extends Parallelism implements Logging {
             return;
         }
 
-        Description description = createTestDescription(getTestClass().getJavaClass(), browser.name() + "-" + method.getName());
+        final Description description = createTestDescription(getTestClass().getJavaClass(), browser.name() + "-" + method.getName());
 
         runLeaf(methodBlock(method), description, notifier);
 
         WEB_DRIVER_CONTEXT.remove();
-    }
-
-    private static class WebDriverFrameworkMethod extends FrameworkMethod {
-
-        private final Browser browser;
-
-        /**
-         * Returns a new {@code FrameworkMethod} for {@code method}
-         *
-         * @param method  original framework test method
-         * @param browser browser associated with this test method
-         */
-        WebDriverFrameworkMethod(FrameworkMethod method, Browser browser) {
-            super(method.getMethod());
-            this.browser = browser;
-        }
-
-        Browser getBrowser() {
-            return browser;
-        }
     }
 
 }
