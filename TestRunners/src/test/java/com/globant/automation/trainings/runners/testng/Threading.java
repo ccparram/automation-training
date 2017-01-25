@@ -6,6 +6,9 @@ import org.testng.annotations.Test;
 
 import java.util.Random;
 
+import static java.lang.String.format;
+import static java.lang.System.err;
+import static java.lang.Thread.currentThread;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -26,7 +29,11 @@ public class Threading implements Logging {
 
     private boolean a;
 
-    @Test(alwaysRun = true)
+    public Threading() {
+        err.println(format("IN CONSTRUCTOR: Class instance: %s Thread ID: %s Thread Name: %s ", this.hashCode(), currentThread().getId(), currentThread().getName()));
+    }
+
+    @Test
     public void test1() {
         boolean b = new Random().nextBoolean();
         a = b;
