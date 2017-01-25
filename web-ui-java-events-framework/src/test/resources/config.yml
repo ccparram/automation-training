@@ -1,0 +1,52 @@
+isDebugMode: false
+webdriver:
+  remoteURL: "http://localhost:4444/wd/hub"
+  explicitTimeOut: 30
+  implicitTimeOut: 0
+  pageLoadTimeout: 30
+  scriptTimeout: 30
+  pollingEveryMs: 1000
+  isSeleniumGrid: false
+  useListener: true
+
+drivers:
+  CHROME:
+    arguments:
+      - no-sandbox
+
+#  IE:
+#    capabilities:
+#      #pageLoadStrategy: "eager"
+#      initialBrowserUrl: "about:blank"
+#      ie.ensureCleanSession: true
+#      #ie.validateCookieDocumentType: false
+#      #requireWindowFocus: true
+#      nativeEvents: false
+#      #ignoreProtectedModeSettings: true
+#      #unexpectedAlertBehaviour: "accept"
+#      disable-popup-blocking: true
+#      #enablePersistentHover: true
+
+#  EDGE:
+#    capabilities:
+#      initialBrowserUrl: "about:blank"
+
+# USE ONLY WITH FIREFOX VERSION 47 OR ABOVE
+#  MARIONETTE:
+#    capabilities:
+#        firefox_binary: "D:/Programas/Firefox/firefox.exe"
+#        webdriver.firefox.bin: "D:/Programas/Firefox/firefox.exe"
+
+# USE ONLY WITH FIREFOX VERSION 46 OR BELOW
+  FIREFOX:
+    capabilities:
+      firefox_binary: "D:/Programas/Firefox/firefox.exe"
+#      #webdriver.load.strategy: "eager"
+
+
+proxy:
+  enabled: false
+  host: ""
+  port: 0
+
+

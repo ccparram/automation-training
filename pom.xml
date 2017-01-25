@@ -28,11 +28,6 @@
             <version>2.0.2-beta</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.1.8</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -50,13 +45,15 @@
     </build>
 
     <modules>
-        <module>JavaConcurrency</module>
-        <module>JMeterTests</module>
-        <module>ServiceAutomation</module>
-        <module>WebAutomation</module>
-        <module>TestRunners</module>
-        <module>Arquillian-Demo</module>
-        <module>coolframework</module>
+        <module>commons</module>
+        <module>java</module>
+        <module>performance</module>
+        <module>services</module>
+        <module>runners</module>
+        <module>component-arquillian</module>
+        <module>web-ui-commons</module>
+        <module>web-ui-java-framework</module>
+        <module>web-ui-java-events-framework</module>
     </modules>
 
 </project>
