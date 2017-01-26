@@ -19,7 +19,9 @@ drivers:
     capabilities:
       platformName: "Android"
       deviceName: "ANY"
-      androidPackage: "com.google.android.browser"
+      androidPackage: "com.android.browser"
+      appActivity: ".BrowserActivity"
+      ignoreUnimportantViews: true
 
 #  CHROME:
 #    arguments:

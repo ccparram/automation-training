@@ -3,6 +3,7 @@ package frameworks.web;
 import com.globant.automation.trainings.utils.Reflection;
 import com.globant.automation.trainings.webdriver.annotations.DeletesCookies;
 import com.globant.automation.trainings.webdriver.annotations.Url;
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -12,6 +13,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.globant.automation.trainings.webdriver.browsers.Browser.ANDROID;
+import static frameworks.web.WebDriverContext.WEB_DRIVER_CONTEXT;
 import static java.lang.String.format;
 import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
@@ -26,7 +29,6 @@ public class PageObject<T extends PageObject> extends WebDriverOperations {
     protected PageObject() {
         getLogger().info(format("Creating new [%s] Page Object instance...", getClass().getSimpleName()));
     }
-
 
     /**
      * Pretty print POM name, when requested as a String
@@ -47,9 +49,9 @@ public class PageObject<T extends PageObject> extends WebDriverOperations {
     }
 
     public T open() {
-        final AtomicBoolean fromEnvironment = new AtomicBoolean(false);
+        final AtomicBoolean fromEnvironment = new AtomicBoolean(true);
         String url = Optional.ofNullable(System.getenv("SUT_URL")).orElseGet(() -> {
-            fromEnvironment.set(true);
+            fromEnvironment.set(false);
             Url urlMark = Optional.ofNullable(getClass().getAnnotation(Url.class)).orElseThrow(() -> new IllegalArgumentException("@Url is not present in this Page Object"));
             getLogger().info(format("Page Object [%s] is marked with @Url, navigating to [%s]...", getClass().getSimpleName(), urlMark.value()));
             return urlMark.value();
@@ -61,9 +63,17 @@ public class PageObject<T extends PageObject> extends WebDriverOperations {
         return (T) this;
     }
 
+    protected void switchToWebView() {
+        if (WEB_DRIVER_CONTEXT.get().getBrowser().equals(ANDROID)) {
+            AndroidDriver driver = (AndroidDriver) getDriver();
+            driver.context("WEBVIEW_" + driver.getCapabilities().getCapability("androidPackage"));
+        }
+    }
+
     protected void goToUrl(String url) {
         deleteCookiesIfDecorated();
-        getDriver().get(url);
+        switchToWebView();
+        getDriver().navigate().to(url);
     }
 
     public void refresh() {

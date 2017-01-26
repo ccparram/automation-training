@@ -59,7 +59,7 @@ public class RunnerWithParametersInjector extends BlockJUnit4ClassRunnerWithPara
         currentThread().setName(browser.name() + "-" + currentThread().getName());
 
         try {
-            WEB_DRIVER_CONTEXT.set(webDriverProvider.createDriverWith(browser));
+            WEB_DRIVER_CONTEXT.set(new WebDriverContext.BrowserDriverPair(browser, webDriverProvider.createDriverWith(browser)));
             super.runChild(method, notifier);
         } catch (Exception e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));

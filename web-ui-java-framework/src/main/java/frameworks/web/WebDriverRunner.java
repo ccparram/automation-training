@@ -1,10 +1,10 @@
 package frameworks.web;
 
 import com.globant.automation.trainings.logging.Logging;
+import com.globant.automation.trainings.runner.Parallelism;
 import com.globant.automation.trainings.utils.Reflection;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 import com.globant.automation.trainings.webdriver.config.Framework;
-import com.globant.automation.trainings.runner.Parallelism;
 import com.globant.automation.trainings.webdriver.server.SeleniumServerStandAlone;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -60,7 +60,7 @@ public class WebDriverRunner extends Parallelism implements Logging {
         currentThread().setName(browser.name() + "-" + currentThread().getName());
 
         try {
-            WEB_DRIVER_CONTEXT.set(webDriverProvider.createDriverWith(browser));
+            WEB_DRIVER_CONTEXT.set(new WebDriverContext.BrowserDriverPair(browser, webDriverProvider.createDriverWith(browser)));
         } catch (MalformedURLException e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));
             return;

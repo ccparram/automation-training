@@ -3,6 +3,8 @@ package frameworks.web;
 import com.globant.automation.trainings.logging.Logging;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 import com.globant.automation.trainings.webdriver.listeners.BasicWebDriverListener;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -18,6 +20,7 @@ import static com.globant.automation.trainings.webdriver.config.Framework.CONFIG
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.openqa.selenium.Platform.ANDROID;
 import static org.openqa.selenium.remote.CapabilityType.PROXY;
 
 /**
@@ -35,14 +38,27 @@ class WebDriverProvider implements Logging {
     private WebDriver createDriverWith(DesiredCapabilities capabilities) throws MalformedURLException {
         setProxySettings(capabilities);
         getLogger().info("Creating RemoteWebDriver instance...");
-        WebDriver driver = new RemoteWebDriver(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
-        getLogger().info("Setting up WebDriver timeouts...");
-        driver.manage().timeouts().implicitlyWait(CONFIGURATION.WebDriver().getImplicitTimeOut(), SECONDS);
-        driver.manage().timeouts().pageLoadTimeout(CONFIGURATION.WebDriver().getPageLoadTimeout(), SECONDS);
-        driver.manage().timeouts().setScriptTimeout(CONFIGURATION.WebDriver().getScriptTimeout(), SECONDS);
-        driver.manage().window().maximize();
-        driver = setListeners(driver);
-        return driver;
+        try {
+            WebDriver driver;
+            if (ANDROID.equals(capabilities.getPlatform())) {
+                driver = new AndroidDriver<AndroidElement>(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
+                getLogger().info("Setting up AndroidDriver timeout...");
+                driver.manage().timeouts().implicitlyWait(CONFIGURATION.WebDriver().getImplicitTimeOut(), SECONDS);
+            } else {
+                driver = new RemoteWebDriver(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
+                // TODO: APPIUM DOES NOT SUPPORT THIS!
+                getLogger().info("Setting up WebDriver timeouts...");
+                driver.manage().timeouts().implicitlyWait(CONFIGURATION.WebDriver().getImplicitTimeOut(), SECONDS);
+                driver.manage().timeouts().pageLoadTimeout(CONFIGURATION.WebDriver().getPageLoadTimeout(), SECONDS);
+                driver.manage().timeouts().setScriptTimeout(CONFIGURATION.WebDriver().getScriptTimeout(), SECONDS);
+                driver.manage().window().maximize();
+                driver = setListeners(driver);
+            }
+            return driver;
+        } catch (Exception e) {
+            getLogger().error(e.getLocalizedMessage(), e);
+            throw e;
+        }
     }
 
     private void setProxySettings(DesiredCapabilities capabilities) {

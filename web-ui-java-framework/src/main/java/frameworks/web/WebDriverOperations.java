@@ -38,7 +38,7 @@ class WebDriverOperations implements Logging {
     }
 
     protected WebDriver getDriver() {
-        return WEB_DRIVER_CONTEXT.get();
+        return WEB_DRIVER_CONTEXT.get().getDriver();
     }
 
     protected void initializePageObject() {

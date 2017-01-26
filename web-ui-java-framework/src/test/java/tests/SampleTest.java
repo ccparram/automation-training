@@ -7,6 +7,8 @@ import tests.locale.UiText;
 import tests.pages.GoogleHomePage;
 import tests.pages.SamplePage;
 
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -29,7 +31,8 @@ public class SampleTest {
     public void aWebDriverTest() throws Exception {
         assertNotNull("Instance not injected", home);
         home.open();
-        home.search(UiText.Constants.SOMETHING).getResultsTexts();
+        List<String> results = home.search(UiText.Constants.SOMETHING).getResultsTexts();
+
     }
 
 }
