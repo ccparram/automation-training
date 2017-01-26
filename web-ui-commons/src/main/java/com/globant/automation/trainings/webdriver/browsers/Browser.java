@@ -25,15 +25,6 @@ import static java.util.jar.Pack200.Packer.LATEST;
 
 public enum Browser implements Logging, HasCapabilities {
 
-    //    MARIONETTE {
-    //        @Override
-    //        public Capabilities getCapabilities() {
-    //            initialize(this);
-    //            DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-    //            capabilities.setCapability("marionette", true);
-    //            return capabilities;
-    //        }
-    //    },
     FIREFOX {
         @Override
         public Capabilities getCapabilities() {
@@ -75,7 +66,9 @@ public enum Browser implements Logging, HasCapabilities {
     ANDROID {
         @Override
         public Capabilities getCapabilities() {
-            return DesiredCapabilities.android();
+            DesiredCapabilities capabilities = DesiredCapabilities.android();
+            capabilities.setCapability("ignoreUnimportantViews", true);
+            return capabilities;
         }
     },
     IPHONE {

@@ -64,11 +64,11 @@ public final class Reflection {
         }).collect(toList());
     }
 
-    public static <T> List<T> getFieldValuesAnnotatedWith(final Object object, final Class<? extends Annotation> annotationClass) {
+    public static List<?> getFieldValuesAnnotatedWith(final Object object, final Class<? extends Annotation> annotationClass) {
         return getFieldsAnnotatedWith(object, annotationClass).stream().map(f -> {
             try {
                 f.setAccessible(true);
-                return (T) f.get(object);
+                return f.get(object);
             } catch (IllegalAccessException e) {
                 LOG.error(format("Could not retrieve %s annotated with %s!", f.getName(), annotationClass), e);
                 return null;
