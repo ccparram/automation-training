@@ -46,10 +46,10 @@
 
     <modules>
         <module>commons</module>
-        <module>java</module>
+        <module>java-concurrency</module>
         <module>performance</module>
-        <module>services</module>
-        <module>runners</module>
+        <module>service-automation</module>
+        <module>test-runners</module>
         <module>component-arquillian</module>
         <module>web-ui-commons</module>
         <module>web-ui-java-framework</module>

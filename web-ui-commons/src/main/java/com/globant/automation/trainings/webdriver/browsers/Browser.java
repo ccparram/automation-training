@@ -7,11 +7,11 @@ import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
 import static com.globant.automation.trainings.utils.Environment.is64Bits;
+import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
 import static io.github.bonigarcia.wdm.Architecture.x32;
 import static io.github.bonigarcia.wdm.Architecture.x64;
 import static java.lang.String.format;
@@ -25,15 +25,15 @@ import static java.util.jar.Pack200.Packer.LATEST;
 
 public enum Browser implements Logging, HasCapabilities {
 
-    MARIONETTE {
-        @Override
-        public Capabilities getCapabilities() {
-            initialize(this);
-            DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-            capabilities.setCapability("marionette", true);
-            return capabilities;
-        }
-    },
+    //    MARIONETTE {
+    //        @Override
+    //        public Capabilities getCapabilities() {
+    //            initialize(this);
+    //            DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+    //            capabilities.setCapability("marionette", true);
+    //            return capabilities;
+    //        }
+    //    },
     FIREFOX {
         @Override
         public Capabilities getCapabilities() {
@@ -104,7 +104,7 @@ public enum Browser implements Logging, HasCapabilities {
     };
 
     private static final Architecture architecture = is64Bits() ? x64 : x32;
-    private static final Map<Browser, Boolean> alreadyInitialized = new HashMap<>();
+    private static final Map<Browser, Boolean> alreadyInitialized = new ConcurrentHashMap<>();
 
     Browser() {
         getLogger().info(format("Initializing [%s] browser capabilities...", name()));
@@ -115,7 +115,6 @@ public enum Browser implements Logging, HasCapabilities {
             return;
         }
         switch (browser) {
-            case MARIONETTE:
             case FIREFOX:
                 FirefoxDriverManager.getInstance().setup(architecture, LATEST);
                 break;

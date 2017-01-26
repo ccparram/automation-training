@@ -9,7 +9,7 @@ import org.openqa.selenium.support.FindBy;
  * @author Juan Krzemien
  */
 @Url("http://www.nyaa.se/?cats=1_37&filter=2")
-public class SamplePage extends PageObject {
+public class SamplePage extends PageObject<SamplePage> {
 
     @FindBy(name = "term")
     private WebElement searchCriteria;

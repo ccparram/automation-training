@@ -4,8 +4,10 @@ package com.globant.automation.trainings.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
@@ -36,10 +38,18 @@ public final class Reflection {
         }
     }
 
-    public static List<Field> getFieldsOfType(final Object object, final Class<?> fieldType) {
+    public static List<Field> getFieldsFilteringBy(final Object object, final Predicate<? super Field> filter) {
         if (object == null) throw new IllegalArgumentException("Object cannot be null!");
         Field[] fields = object.getClass().getDeclaredFields();
-        return stream(fields).filter(f -> f.getType().isAssignableFrom(fieldType)).collect(toList());
+        return stream(fields).filter(filter).collect(toList());
+    }
+
+    public static List<Field> getFieldsAnnotatedWith(final Object object, final Class<? extends Annotation> annotationClass) {
+        return getFieldsFilteringBy(object, f -> f.isAnnotationPresent(annotationClass));
+    }
+
+    public static List<Field> getFieldsOfType(final Object object, final Class<?> fieldType) {
+        return getFieldsFilteringBy(object, f -> f.getType().isAssignableFrom(fieldType));
     }
 
     public static <T> List<T> getFieldValuesOfType(final Object object, final Class<?> fieldType) {
@@ -49,6 +59,18 @@ public final class Reflection {
                 return (T) f.get(object);
             } catch (IllegalAccessException e) {
                 LOG.error(format("Could not retrieve %s from %s!", fieldType, object), e);
+                return null;
+            }
+        }).collect(toList());
+    }
+
+    public static <T> List<T> getFieldValuesAnnotatedWith(final Object object, final Class<? extends Annotation> annotationClass) {
+        return getFieldsAnnotatedWith(object, annotationClass).stream().map(f -> {
+            try {
+                f.setAccessible(true);
+                return (T) f.get(object);
+            } catch (IllegalAccessException e) {
+                LOG.error(format("Could not retrieve %s annotated with %s!", f.getName(), annotationClass), e);
                 return null;
             }
         }).collect(toList());

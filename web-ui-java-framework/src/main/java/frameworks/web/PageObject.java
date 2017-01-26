@@ -4,11 +4,13 @@ import com.globant.automation.trainings.utils.Reflection;
 import com.globant.automation.trainings.webdriver.annotations.DeletesCookies;
 import com.globant.automation.trainings.webdriver.annotations.Url;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
 import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
@@ -19,16 +21,10 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
  *
  * @author Juan Krzemien
  */
-public class PageObject extends WebDriverOperations {
+public class PageObject<T extends PageObject> extends WebDriverOperations {
 
     protected PageObject() {
-
         getLogger().info(format("Creating new [%s] Page Object instance...", getClass().getSimpleName()));
-
-        navigateIfDecorated();
-
-        getLogger().info(format("[%s] Page Object instance created...", getClass().getSimpleName()));
-
     }
 
 
@@ -50,18 +46,19 @@ public class PageObject extends WebDriverOperations {
         }
     }
 
-    private void navigateIfDecorated() {
-        String envUrl = System.getenv("SUT_URL");
-        if (envUrl != null && !envUrl.isEmpty()) {
-            getLogger().info(format("Environment variable SUT_URL present! Navigating to [%s]...", envUrl));
-            goToUrl(envUrl);
-        } else {
-            Url urlMark = getClass().getAnnotation(Url.class);
-            if (urlMark != null) {
-                getLogger().info(format("Page Object [%s] is marked with @Url, navigating to [%s]...", getClass().getSimpleName(), urlMark.value()));
-                goToUrl(urlMark.value());
-            }
+    public T open() {
+        final AtomicBoolean fromEnvironment = new AtomicBoolean(false);
+        String url = Optional.ofNullable(System.getenv("SUT_URL")).orElseGet(() -> {
+            fromEnvironment.set(true);
+            Url urlMark = Optional.ofNullable(getClass().getAnnotation(Url.class)).orElseThrow(() -> new IllegalArgumentException("@Url is not present in this Page Object"));
+            getLogger().info(format("Page Object [%s] is marked with @Url, navigating to [%s]...", getClass().getSimpleName(), urlMark.value()));
+            return urlMark.value();
+        });
+        if (fromEnvironment.get()) {
+            getLogger().info(format("Environment variable SUT_URL present! Navigating to [%s]...", url));
         }
+        goToUrl(url);
+        return (T) this;
     }
 
     protected void goToUrl(String url) {
@@ -96,8 +93,7 @@ public class PageObject extends WebDriverOperations {
     }
 
     protected List<WebElement> getOwnWebElements() {
-        List<WebElement> reflectiveType = Collections.emptyList();
-        return Reflection.getFieldValuesOfType(this, reflectiveType.getClass());
+        return Reflection.getFieldValuesAnnotatedWith(this, FindBy.class);
     }
 
 }

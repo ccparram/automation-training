@@ -1,9 +1,9 @@
 package frameworks.web;
 
+import com.globant.automation.trainings.runner.ThreadPoolScheduler;
 import com.globant.automation.trainings.utils.Reflection;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 import com.globant.automation.trainings.webdriver.config.Framework;
-import com.globant.automation.trainings.runner.ThreadPoolScheduler;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;

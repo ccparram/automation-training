@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  */
 
 @RunWith(MockitoJUnitRunner.class)
-public class HideNonRelatedStuff {
+public abstract class HideNonRelatedStuff {
 
     @Mock
     protected WebElement anElement;

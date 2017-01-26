@@ -11,7 +11,7 @@
 
     <name>Component / Integration Testing with Arquillian</name>
 
-    <artifactId>arquillian-demo</artifactId>
+    <artifactId>component-arquillian</artifactId>
 
     <properties>
         <java.version>1.8</java.version>

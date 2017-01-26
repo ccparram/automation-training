@@ -60,7 +60,7 @@ class WebDriverOperations implements Logging {
             return wait.until(condition);
         } catch (TimeoutException toe) {
             String currentUrl = getDriver().getCurrentUrl();
-            getLogger().error(format("Error: %s\nCurrent URL: %s", toe.getMessage(), currentUrl), toe);
+            getLogger().error(format("Error: %s\nCurrent URL: %s", toe.getMessage(), currentUrl));
             throw toe;
         }
     }
