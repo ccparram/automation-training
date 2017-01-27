@@ -1,4 +1,4 @@
-package frameworks.web;
+package com.globant.automation.trainings.webframework;
 
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 import org.junit.runners.model.FrameworkMethod;

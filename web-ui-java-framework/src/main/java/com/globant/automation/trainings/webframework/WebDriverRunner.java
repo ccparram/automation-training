@@ -1,4 +1,4 @@
-package frameworks.web;
+package com.globant.automation.trainings.webframework;
 
 import com.globant.automation.trainings.logging.Logging;
 import com.globant.automation.trainings.runner.Parallelism;
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 
 import static com.globant.automation.trainings.utils.Reflection.injectFieldsPageObject;
-import static frameworks.web.WebDriverContext.WEB_DRIVER_CONTEXT;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
 import static org.junit.runner.Description.createTestDescription;
@@ -60,7 +59,7 @@ public class WebDriverRunner extends Parallelism implements Logging {
         currentThread().setName(browser.name() + "-" + currentThread().getName());
 
         try {
-            WEB_DRIVER_CONTEXT.set(new WebDriverContext.BrowserDriverPair(browser, webDriverProvider.createDriverWith(browser)));
+            WebDriverContext.WEB_DRIVER_CONTEXT.set(new WebDriverContext.BrowserDriverPair(browser, webDriverProvider.createDriverWith(browser)));
         } catch (MalformedURLException e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));
             return;
@@ -70,7 +69,7 @@ public class WebDriverRunner extends Parallelism implements Logging {
 
         runLeaf(methodBlock(method), description, notifier);
 
-        WEB_DRIVER_CONTEXT.remove();
+        WebDriverContext.WEB_DRIVER_CONTEXT.remove();
     }
 
 }

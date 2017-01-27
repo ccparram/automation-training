@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Map;
 
 import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
+import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.remote.CapabilityType.PROXY;
 
@@ -26,46 +27,52 @@ enum Drivers implements Logging {
 
     INSTANCE;
 
-    private static final ThreadLocal<WebDriver> DriverPerThread = new ThreadLocal<>();
-    private static final WebDriverStrategyFactory factory = new WebDriverStrategyFactory();
+    private static final ThreadLocal<WebDriver> DRIVER_PER_THREAD = new ThreadLocal<>();
+    private static final WebDriverStrategyFactory FACTORY = new WebDriverStrategyFactory();
 
     Drivers() {
         getLogger().info("Initializing WebDriver Thread Manager...");
-//        FRAMEWORK.suscribe(this);
         DriverEventsHandler.INSTANCE.init();
     }
 
-    public WebDriver create(Browser desiredBrowser) throws MalformedURLException {
+    public WebDriver create(Browser browser) throws MalformedURLException {
         WebDriver instance = get();
         if (instance == null) {
-            instance = factory.getDriverFor(desiredBrowser);
-            DriverPerThread.set(instance);
+            getLogger().info(format("Creating RemoteWebDriver for %s instance...", browser));
+            instance = FACTORY.getDriverFor(browser);
+            DRIVER_PER_THREAD.set(instance);
         }
         return instance;
     }
 
     public WebDriver get() {
-        return DriverPerThread.get();
+        return DRIVER_PER_THREAD.get();
     }
 
     public void destroy() {
-        WebDriver instance = DriverPerThread.get();
+        WebDriver instance = DRIVER_PER_THREAD.get();
         if (instance != null) {
             instance.quit();
         }
-        DriverPerThread.remove();
+        DRIVER_PER_THREAD.remove();
     }
 
     static class WebDriverStrategyFactory implements Logging {
 
         private WebDriver getDriverFor(Browser browser) throws MalformedURLException {
+            DesiredCapabilities capabilities = defineCapabilities(browser);
+            setProxy(capabilities);
+            return getDriverFor(capabilities);
+        }
 
+        private DesiredCapabilities defineCapabilities(Browser browser) {
             DesiredCapabilities capabilities = new DesiredCapabilities(browser.getCapabilities());
-
             Map<String, Object> driverConfig = CONFIGURATION.Driver(browser).getCapabilities();
-
             capabilities.merge(new DesiredCapabilities(driverConfig));
+            return capabilities;
+        }
 
+        private void setProxy(DesiredCapabilities capabilities) {
             // Set proxy settings, if any
             if (CONFIGURATION.Proxy().isEnabled()) {
                 getLogger().info("Setting WebDriver proxy...");
@@ -79,21 +86,19 @@ enum Drivers implements Logging {
 
                 capabilities.setCapability(PROXY, proxy);
             }
-
-            return getDriverFor(capabilities);
         }
 
         private WebDriver getDriverFor(DesiredCapabilities capabilities) throws MalformedURLException {
-            getLogger().info("Creating RemoteWebDriver instance...");
             WebDriver driver = new RemoteWebDriver(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
-
             getLogger().info("Setting up WebDriver timeouts...");
             driver.manage().timeouts().implicitlyWait(CONFIGURATION.WebDriver().getImplicitTimeOut(), SECONDS);
             driver.manage().timeouts().pageLoadTimeout(CONFIGURATION.WebDriver().getPageLoadTimeout(), SECONDS);
             driver.manage().timeouts().setScriptTimeout(CONFIGURATION.WebDriver().getScriptTimeout(), SECONDS);
-
             driver.manage().window().maximize();
+            return setListener(driver);
+        }
 
+        private WebDriver setListener(WebDriver driver) {
             if (CONFIGURATION.WebDriver().isUseListener()) {
                 getLogger().info("Setting up WebDriver listener...");
                 // Wrap the driver as an event firing one, and add basic listener
@@ -101,10 +106,7 @@ enum Drivers implements Logging {
                 eventDriver.register(new BasicWebDriverListener());
                 driver = eventDriver;
             }
-
             return driver;
         }
-
     }
-
 }

@@ -1,10 +1,10 @@
 package com.globant.automation.trainings.webframework.pageobject;
 
 import com.globant.automation.trainings.utils.Reflection;
-import com.globant.automation.trainings.webframework.events.Messages;
 import com.globant.automation.trainings.webdriver.annotations.DeletesCookies;
 import com.globant.automation.trainings.webdriver.annotations.FocusFrames;
 import com.globant.automation.trainings.webdriver.annotations.Url;
+import com.globant.automation.trainings.webframework.events.Messages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -38,7 +38,6 @@ public class PageObject extends WebDriverOperations {
         focusFrameIfDecorated();
 
         getLogger().info(format("[%s] Page Object instance created...", getClass().getSimpleName()));
-
     }
 
     /**

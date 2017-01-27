@@ -16,7 +16,7 @@ import static java.lang.String.format;
 /**
  * @author Juan Krzemien
  */
-enum DriverEventsHandler implements Logging {
+public enum DriverEventsHandler implements Logging {
 
     INSTANCE;
 

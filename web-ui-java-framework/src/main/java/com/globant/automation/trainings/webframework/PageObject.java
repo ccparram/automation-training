@@ -1,8 +1,9 @@
-package frameworks.web;
+package com.globant.automation.trainings.webframework;
 
 import com.globant.automation.trainings.utils.Reflection;
 import com.globant.automation.trainings.webdriver.annotations.DeletesCookies;
 import com.globant.automation.trainings.webdriver.annotations.Url;
+import com.globant.automation.trainings.webdriver.waiting.conditions.Conditions;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -14,10 +15,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.globant.automation.trainings.webdriver.browsers.Browser.ANDROID;
-import static frameworks.web.WebDriverContext.WEB_DRIVER_CONTEXT;
 import static java.lang.String.format;
 import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
-import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
 
 /**
  * Base class for modeling a Web Page using the Page Object pattern
@@ -64,7 +63,7 @@ public class PageObject<T extends PageObject> extends WebDriverOperations {
     }
 
     protected void switchToWebView() {
-        if (WEB_DRIVER_CONTEXT.get().getBrowser().equals(ANDROID)) {
+        if (WebDriverContext.WEB_DRIVER_CONTEXT.get().getBrowser().equals(ANDROID)) {
             AndroidDriver driver = (AndroidDriver) getDriver();
             driver.context("WEBVIEW_" + driver.getCapabilities().getCapability("androidPackage"));
         }
@@ -86,7 +85,14 @@ public class PageObject<T extends PageObject> extends WebDriverOperations {
     }
 
     public boolean isVisible() {
-        getOwnWebElements().forEach(e -> waitFor(visibilityOf(e)));
+        getOwnWebElements().forEach(e -> {
+            if (e instanceof WebElement) {
+                waitUntil((WebElement) e).is(Conditions.Element.Visibility.Visible);
+            } else {
+                List<WebElement> le = (List<WebElement>) e;
+                waitUntil(le).are(Conditions.Elements.Visibility.Visible);
+            }
+        });
         return true;
     }
 
@@ -102,7 +108,7 @@ public class PageObject<T extends PageObject> extends WebDriverOperations {
         }
     }
 
-    protected List<WebElement> getOwnWebElements() {
+    protected List<?> getOwnWebElements() {
         return Reflection.getFieldValuesAnnotatedWith(this, FindBy.class);
     }
 

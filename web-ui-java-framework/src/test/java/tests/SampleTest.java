@@ -1,6 +1,6 @@
 package tests;
 
-import frameworks.web.WebDriverRunner;
+import com.globant.automation.trainings.webframework.WebDriverRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import tests.locale.UiText;

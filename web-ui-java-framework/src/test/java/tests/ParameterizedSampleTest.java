@@ -1,6 +1,6 @@
 package tests;
 
-import frameworks.web.ParameterizedWebDriverTest;
+import com.globant.automation.trainings.webframework.ParameterizedWebDriverTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;

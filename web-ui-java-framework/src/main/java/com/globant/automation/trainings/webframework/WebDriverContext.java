@@ -1,4 +1,4 @@
-package frameworks.web;
+package com.globant.automation.trainings.webframework;
 
 import com.globant.automation.trainings.logging.Logging;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
@@ -42,7 +42,7 @@ enum WebDriverContext implements Logging {
         private final Browser browser;
         private final WebDriver driver;
 
-        public BrowserDriverPair(Browser browser, WebDriver driver) {
+        BrowserDriverPair(Browser browser, WebDriver driver) {
             this.browser = browser;
             this.driver = driver;
         }

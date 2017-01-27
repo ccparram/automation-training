@@ -1,4 +1,4 @@
-package frameworks.web;
+package com.globant.automation.trainings.webframework;
 
 import com.globant.automation.trainings.runner.ThreadPoolScheduler;
 import com.globant.automation.trainings.utils.Reflection;
@@ -16,14 +16,13 @@ import java.util.List;
 import java.util.Set;
 
 import static com.globant.automation.trainings.utils.Reflection.injectFieldsPageObject;
-import static frameworks.web.WebDriverContext.WEB_DRIVER_CONTEXT;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
 
 /**
  * @author Juan Krzemien
  */
-public class RunnerWithParametersInjector extends BlockJUnit4ClassRunnerWithParameters {
+class RunnerWithParametersInjector extends BlockJUnit4ClassRunnerWithParameters {
 
     private final WebDriverProvider webDriverProvider = new WebDriverProvider();
 
@@ -59,13 +58,12 @@ public class RunnerWithParametersInjector extends BlockJUnit4ClassRunnerWithPara
         currentThread().setName(browser.name() + "-" + currentThread().getName());
 
         try {
-            WEB_DRIVER_CONTEXT.set(new WebDriverContext.BrowserDriverPair(browser, webDriverProvider.createDriverWith(browser)));
+            WebDriverContext.WEB_DRIVER_CONTEXT.set(new WebDriverContext.BrowserDriverPair(browser, webDriverProvider.createDriverWith(browser)));
             super.runChild(method, notifier);
         } catch (Exception e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));
         } finally {
-            WEB_DRIVER_CONTEXT.remove();
+            WebDriverContext.WEB_DRIVER_CONTEXT.remove();
         }
     }
-
 }

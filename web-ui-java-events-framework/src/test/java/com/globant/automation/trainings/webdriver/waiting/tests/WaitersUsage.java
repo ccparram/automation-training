@@ -83,7 +83,7 @@ public class WaitersUsage extends HideNonRelatedStuff {
 
     @Test
     public void complexWaiterUsageTriFunctionCondition() {
-        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(5).until(Conditions.Locator.Exists, anId);
+        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(5).is(Conditions.Locator.Exists, anId);
         assertNotNull(elements);
         assertEquals("There should be one element in here!", 1, elements.size());
         out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. Element was found.");
@@ -91,12 +91,12 @@ public class WaitersUsage extends HideNonRelatedStuff {
 
     @Test(expected = TimeoutException.class)
     public void complexWaiterUsageTriFunctionConditionTimesOut() {
-        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).until(Conditions.Locator.Exists, anXPath);
+        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).is(Conditions.Locator.Exists, anXPath);
     }
 
     @Test
     public void complexWaiterWithoutFailing() {
-        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).withoutFailing().until(Conditions.Locator.Exists, anXPath);
+        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).withoutFailing().is(Conditions.Locator.Exists, anXPath);
         assertNotNull(elements);
         assertEquals("There should be one element in here!", 0, elements.size());
         out.println("Done waiting! Since you can see this, a TimeoutException was not thrown due to withoutFailing().");

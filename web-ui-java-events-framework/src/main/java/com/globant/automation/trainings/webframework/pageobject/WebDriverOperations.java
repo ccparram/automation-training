@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
 import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
@@ -33,7 +34,7 @@ class WebDriverOperations implements Logging {
     }
 
     protected WebDriver getDriver() {
-        return driver;
+        return ofNullable(driver).orElseThrow(() -> new IllegalStateException(String.format("Page Object [%s] does not have a WebDriver instance associated with it", this)));
     }
 
     public void setDriver(WebDriver newDriver) {
@@ -44,10 +45,10 @@ class WebDriverOperations implements Logging {
         wait.ignoring(StaleElementReferenceException.class);
         wait.pollingEvery(CONFIGURATION.WebDriver().getPollingEveryMs(), MILLISECONDS);
 
-        initializePageObject();
+        initializePageObject(driver);
     }
 
-    protected void initializePageObject() {
+    protected void initializePageObject(WebDriver driver) {
         PageFactory.initElements(driver, this);
     }
 

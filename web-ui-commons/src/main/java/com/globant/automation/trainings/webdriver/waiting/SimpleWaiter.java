@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.FluentWait;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -22,37 +23,39 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class SimpleWaiter<T> {
 
     private static final int DEFAULT_TIMEOUT_SECS = 30;
-    private static final int DEFAULT_POLLING_TIME_MS = 1000;
+    private static final long DEFAULT_POLLING_TIME_MS = 1000;
 
     private final AtomicInteger timeOut = new AtomicInteger(DEFAULT_TIMEOUT_SECS);
+    private final AtomicLong pollingEvery = new AtomicLong(DEFAULT_POLLING_TIME_MS);
     private final AtomicBoolean noFail = new AtomicBoolean(false);
-    private final AtomicInteger pollingEvery = new AtomicInteger(DEFAULT_POLLING_TIME_MS);
 
-    public SimpleWaiter<T> withTimeOut(final int timeOutSeconds) {
+    public SimpleWaiter<T> withTimeOut(int timeOutSeconds) {
         timeOut.set(timeOutSeconds);
         return this;
     }
 
-    public T until(final T waitOn, final Predicate<T> predicate) {
-        return resolveUntil(waitOn, predicate, null);
-    }
-
-    private <V> V resolveUntil(final T waitOn, final Predicate<T> conditionA, final Function<? super T, V> conditionB) {
+    public void until(T waitOn, Predicate<T> predicate) {
         try {
-            if (conditionA == null) {
-                return getWaiter(waitOn).until(conditionB);
-            } else {
-                getWaiter(waitOn).until(conditionA);
-            }
+            getWaiter(waitOn).until(predicate);
         } catch (TimeoutException toe) {
             if (!noFail.get()) {
                 throw toe;
             }
         }
-        return null;
     }
 
-    public <K, R> R until(final T waitOn, final TriFunction<T, K, R> triFunction, final K argument) {
+    public <V> V until(T waitOn, Function<? super T, V> condition) {
+        try {
+            return getWaiter(waitOn).until(condition);
+        } catch (TimeoutException toe) {
+            if (!noFail.get()) {
+                throw toe;
+            }
+            return null;
+        }
+    }
+
+    public <K, R> R until(T waitOn, TriFunction<T, K, R> triFunction, K argument) {
         try {
             return getWaiter(waitOn).until((Function<T, R>) input -> triFunction.apply(waitOn, argument));
         } catch (TimeoutException toe) {
@@ -63,9 +66,9 @@ public class SimpleWaiter<T> {
         return null;
     }
 
-    private FluentWait<T> getWaiter(final T waitOn) {
-        final int timeout = timeOut.get();
-        final int polling = pollingEvery.get();
+    private FluentWait<T> getWaiter(T waitOn) {
+        int timeout = timeOut.get();
+        long polling = pollingEvery.get();
         return new FluentWait<>(waitOn)
                 .withTimeout(timeout, SECONDS)
                 .pollingEvery(polling, MILLISECONDS)
@@ -84,8 +87,4 @@ public class SimpleWaiter<T> {
         return this;
     }
 
-    public <V> V until(T waitOn, Function<? super T, V> isTrue) {
-        return resolveUntil(waitOn, null, isTrue);
-
-    }
 }

@@ -1,4 +1,4 @@
-package frameworks.web;
+package com.globant.automation.trainings.webframework;
 
 import com.globant.automation.trainings.logging.Logging;
 import org.junit.runner.Runner;

@@ -1,6 +1,7 @@
-package frameworks.web;
+package com.globant.automation.trainings.webframework;
 
 import com.globant.automation.trainings.logging.Logging;
+import com.globant.automation.trainings.webdriver.waiting.ComplexWaiter;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
@@ -11,7 +12,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 
 import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
-import static frameworks.web.WebDriverContext.WEB_DRIVER_CONTEXT;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
@@ -33,12 +33,11 @@ class WebDriverOperations implements Logging {
         wait.ignoring(NoSuchElementException.class);
         wait.ignoring(StaleElementReferenceException.class);
         wait.pollingEvery(CONFIGURATION.WebDriver().getPollingEveryMs(), MILLISECONDS);
-
         initializePageObject();
     }
 
     protected WebDriver getDriver() {
-        return WEB_DRIVER_CONTEXT.get().getDriver();
+        return WebDriverContext.WEB_DRIVER_CONTEXT.get().getDriver();
     }
 
     protected void initializePageObject() {
@@ -63,6 +62,10 @@ class WebDriverOperations implements Logging {
             getLogger().error(format("Error: %s\nCurrent URL: %s", toe.getMessage(), currentUrl));
             throw toe;
         }
+    }
+
+    public <T> ComplexWaiter<T> waitUntil(T waitOn) {
+        return new ComplexWaiter<>(waitOn);
     }
 
     /**

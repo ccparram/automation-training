@@ -1,4 +1,4 @@
-package frameworks.web;
+package com.globant.automation.trainings.webframework;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.UseParametersRunnerFactory;
@@ -12,4 +12,5 @@ import org.junit.runners.Parameterized.UseParametersRunnerFactory;
 @RunWith(ParametrizedWebDriverRunner.class)
 @UseParametersRunnerFactory(value = InjectPageObjectsParametersRunnerFactory.class)
 public abstract class ParameterizedWebDriverTest {
+
 }
