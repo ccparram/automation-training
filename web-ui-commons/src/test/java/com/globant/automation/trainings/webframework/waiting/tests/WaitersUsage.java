@@ -1,9 +1,9 @@
-package com.globant.automation.trainings.webdriver.waiting.tests;
+package com.globant.automation.trainings.webframework.waiting.tests;
 
 import com.globant.automation.trainings.webdriver.waiting.ComplexWaiter;
 import com.globant.automation.trainings.webdriver.waiting.SimpleWaiter;
 import com.globant.automation.trainings.webdriver.waiting.conditions.Conditions;
-import com.globant.automation.trainings.webdriver.waiting.tests.base.HideNonRelatedStuff;
+import com.globant.automation.trainings.webframework.waiting.tests.base.HideNonRelatedStuff;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;

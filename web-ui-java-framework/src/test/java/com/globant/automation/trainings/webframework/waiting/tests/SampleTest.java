@@ -1,14 +1,14 @@
-package tests;
+package com.globant.automation.trainings.webframework.waiting.tests;
 
 import com.globant.automation.trainings.webframework.WebDriverRunner;
+import com.globant.automation.trainings.webframework.waiting.tests.pages.GoogleHomePage;
+import com.globant.automation.trainings.webframework.waiting.tests.pages.SamplePage;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import tests.locale.UiText;
-import tests.pages.GoogleHomePage;
-import tests.pages.SamplePage;
+import com.globant.automation.trainings.webframework.waiting.tests.locale.UiText;
 
 import java.util.List;
 

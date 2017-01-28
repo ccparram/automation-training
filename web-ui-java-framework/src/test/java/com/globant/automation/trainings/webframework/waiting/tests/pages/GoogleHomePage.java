@@ -1,4 +1,4 @@
-package tests.pages;
+package com.globant.automation.trainings.webframework.waiting.tests.pages;
 
 import com.globant.automation.trainings.webdriver.annotations.Url;
 import com.globant.automation.trainings.webframework.PageObject;

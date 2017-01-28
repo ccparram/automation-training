@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.webdriver.waiting.tests.locators;
+package com.globant.automation.trainings.webframework.waiting.tests.locators;
 
 import org.openqa.selenium.By;
 

@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.webdriver.waiting.tests.base;
+package com.globant.automation.trainings.webframework.waiting.tests.base;
 
 import org.junit.After;
 import org.junit.Before;

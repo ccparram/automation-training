@@ -1,11 +1,11 @@
-package tests;
+package com.globant.automation.trainings.webframework.waiting.tests;
 
 import com.globant.automation.trainings.webframework.ParameterizedWebDriverTest;
+import com.globant.automation.trainings.webframework.waiting.tests.pages.GoogleHomePage;
+import com.globant.automation.trainings.webframework.waiting.tests.pages.SamplePage;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import tests.pages.GoogleHomePage;
-import tests.pages.SamplePage;
 
 import java.util.Arrays;
 

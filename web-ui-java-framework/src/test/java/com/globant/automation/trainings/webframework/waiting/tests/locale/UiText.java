@@ -1,4 +1,4 @@
-package tests.locale;
+package com.globant.automation.trainings.webframework.waiting.tests.locale;
 
 
 import com.globant.automation.trainings.language.AbstractUiText;
