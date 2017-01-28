@@ -49,9 +49,8 @@ public abstract class HideNonRelatedStuff {
         when(options.timeouts()).thenReturn(timeouts);
         when(timeouts.implicitlyWait(anyLong(), any(TimeUnit.class))).thenReturn(null);
 
-        when(aDriver.getCurrentUrl()).thenReturn("", "", "", "about:blank");
-
         // Simulates around 4 seconds of delay due to wait pooling...
+        when(aDriver.getCurrentUrl()).thenReturn("", "", "", "about:blank");
         when(anElement.isDisplayed()).thenReturn(false, false, false, true);
         when(anotherElement.isDisplayed()).thenReturn(false, false, false, true);
         when(aDriver.findElement(anId)).thenReturn(null, null, null, anElement);

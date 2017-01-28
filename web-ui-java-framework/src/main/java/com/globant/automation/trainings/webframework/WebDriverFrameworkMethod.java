@@ -4,6 +4,8 @@ import com.globant.automation.trainings.webdriver.browsers.Browser;
 import org.junit.runners.model.FrameworkMethod;
 
 /**
+ * WebDriver aware replacement for JUnit's FrameworkMethod.
+ *
  * @author Juan Krzemien
  */
 class WebDriverFrameworkMethod extends FrameworkMethod {

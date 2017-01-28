@@ -1,7 +1,6 @@
 package com.globant.automation.trainings.webframework;
 
 import com.globant.automation.trainings.runner.ThreadPoolScheduler;
-import com.globant.automation.trainings.utils.Reflection;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 import com.globant.automation.trainings.webdriver.config.Framework;
 import org.junit.runner.notification.Failure;
@@ -16,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.globant.automation.trainings.utils.Reflection.injectFieldsPageObject;
+import static com.globant.automation.trainings.utils.Reflection.isSubClassOf;
+import static com.globant.automation.trainings.webframework.WebDriverContext.WEB_DRIVER_CONTEXT;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
 
@@ -34,7 +35,7 @@ class RunnerWithParametersInjector extends BlockJUnit4ClassRunnerWithParameters 
     @Override
     public Object createTest() throws Exception {
         Object test = super.createTest();
-        stream(test.getClass().getDeclaredFields()).filter(f -> Reflection.isSubClassOf(f, PageObject.class)).forEach(f -> injectFieldsPageObject(f, test));
+        stream(test.getClass().getDeclaredFields()).filter(f -> isSubClassOf(f, PageObject.class)).forEach(f -> injectFieldsPageObject(f, test));
         return test;
     }
 
@@ -58,12 +59,13 @@ class RunnerWithParametersInjector extends BlockJUnit4ClassRunnerWithParameters 
         currentThread().setName(browser.name() + "-" + currentThread().getName());
 
         try {
-            WebDriverContext.WEB_DRIVER_CONTEXT.set(new WebDriverContext.BrowserDriverPair(browser, webDriverProvider.createDriverWith(browser)));
+            WEB_DRIVER_CONTEXT.set(new WebDriverContext.BrowserDriverPair(browser, webDriverProvider.createDriverWith(browser)));
             super.runChild(method, notifier);
         } catch (Exception e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));
         } finally {
-            WebDriverContext.WEB_DRIVER_CONTEXT.remove();
+            WEB_DRIVER_CONTEXT.remove();
         }
     }
+
 }

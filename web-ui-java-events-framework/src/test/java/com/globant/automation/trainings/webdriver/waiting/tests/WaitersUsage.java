@@ -23,26 +23,30 @@ import static org.junit.Assert.assertNotNull;
 
 public class WaitersUsage extends HideNonRelatedStuff {
 
+    private final SimpleWaiter.Waiter<WebElement> ELEMENT_WAITER = new SimpleWaiter.Waiter<>();
+    private final SimpleWaiter.Waiter<List<WebElement>> ELEMENTS_WAITER = new SimpleWaiter.Waiter<>();
+    private final SimpleWaiter.Waiter<WebDriver> DRIVER_WAITER = new SimpleWaiter.Waiter<>();
+
     @Test
     public void simpleWaiterUsage() {
-        new SimpleWaiter<WebElement>().withTimeOut(5).until(anElement, Visible);
+        ELEMENT_WAITER.withTimeOut(5).on(anElement).until(Visible);
         out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. So element is visible.");
     }
 
     @Test
     public void simpleWaiterUsageOnManyElements() {
-        new SimpleWaiter<List<WebElement>>().withTimeOut(5).until(manyElements, Conditions.Elements.Visibility.Visible);
+        ELEMENTS_WAITER.withTimeOut(5).on(manyElements).until(Conditions.Elements.Visibility.Visible);
         out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. So element is visible.");
     }
 
     @Test(expected = TimeoutException.class)
     public void simpleWaiterTimesOut() {
-        new SimpleWaiter<WebElement>().withTimeOut(1).until(anElement, Visible);
+        ELEMENT_WAITER.withTimeOut(1).on(anElement).until(Visible);
     }
 
     @Test
     public void simpleWaiterWithoutFailing() {
-        new SimpleWaiter<WebElement>().withTimeOut(1).withoutFailing().until(anElement, Visible);
+        ELEMENT_WAITER.withTimeOut(1).withoutFailing().on(anElement).until(Visible);
     }
 
     @Test
@@ -70,20 +74,20 @@ public class WaitersUsage extends HideNonRelatedStuff {
 
     @Test
     public void simpleWaiterUsageTriFunctionCondition() {
-        new SimpleWaiter<WebDriver>().withTimeOut(5).until(aDriver, ContainsInUrl, "about:blank");
+        DRIVER_WAITER.withTimeOut(5).on(aDriver).until(ContainsInUrl, "about:blank");
         out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. Url matched.");
     }
 
     @Test
     public void simpleWaiterUsageTriFunctionCondition2() {
-        WebElement element = new SimpleWaiter<WebDriver>().withTimeOut(5).until(aDriver, Conditions.Locator.Exists, anId);
+        WebElement element = DRIVER_WAITER.withTimeOut(5).on(aDriver).until(Conditions.Locator.Exists, anId);
         assertNotNull(element);
         out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. Element was found.");
     }
 
     @Test
     public void complexWaiterUsageTriFunctionCondition() {
-        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(5).is(Conditions.Locator.Exists, anId);
+        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(5).until(Conditions.Locator.Exists, anId);
         assertNotNull(elements);
         assertEquals("There should be one element in here!", 1, elements.size());
         out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. Element was found.");
@@ -91,12 +95,12 @@ public class WaitersUsage extends HideNonRelatedStuff {
 
     @Test(expected = TimeoutException.class)
     public void complexWaiterUsageTriFunctionConditionTimesOut() {
-        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).is(Conditions.Locator.Exists, anXPath);
+        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).until(Conditions.Locator.Exists, anXPath);
     }
 
     @Test
     public void complexWaiterWithoutFailing() {
-        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).withoutFailing().is(Conditions.Locator.Exists, anXPath);
+        List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).withoutFailing().until(Conditions.Locator.Exists, anXPath);
         assertNotNull(elements);
         assertEquals("There should be one element in here!", 0, elements.size());
         out.println("Done waiting! Since you can see this, a TimeoutException was not thrown due to withoutFailing().");
