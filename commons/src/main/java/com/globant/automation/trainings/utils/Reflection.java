@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -32,8 +33,8 @@ public final class Reflection {
     public static void injectFieldsPageObject(final Field field, final Object testInstance) {
         field.setAccessible(true);
         try {
-            field.set(testInstance, field.getType().newInstance());
-        } catch (IllegalAccessException | InstantiationException e) {
+            field.set(testInstance, field.getType().getConstructor().newInstance());
+        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
     }

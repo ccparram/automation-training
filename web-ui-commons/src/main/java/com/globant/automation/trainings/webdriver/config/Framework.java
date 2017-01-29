@@ -3,9 +3,7 @@ package com.globant.automation.trainings.webdriver.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.utils.Environment;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
-import com.globant.automation.trainings.webdriver.config.impl.ConfigImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,11 +54,11 @@ public enum Framework implements Logging, Config {
         Config configuration = null;
         InputStream configFile = currentThread().getContextClassLoader().getResourceAsStream(CONFIG_FILE);
         try {
-            configuration = om.readValue(configFile, ConfigImpl.class);
+            configuration = om.readValue(configFile, com.globant.automation.trainings.webdriver.config.impl.ConfigImpl.class);
         } catch (Exception e) {
             getLogger().error("Error parsing framework config!. Re-check!", e);
         }
-        return Optional.ofNullable(configuration).orElse(ConfigImpl.EMPTY);
+        return Optional.ofNullable(configuration).orElse(com.globant.automation.trainings.webdriver.config.impl.ConfigImpl.EMPTY);
     }
 
     @Override
