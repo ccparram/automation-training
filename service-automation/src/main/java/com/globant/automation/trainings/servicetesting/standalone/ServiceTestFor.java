@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.servicetesting.standalone;
 
 import com.globant.automation.trainings.servicetesting.config.Framework;
-import com.globant.automation.trainings.servicetesting.logging.Logging;
+import com.globant.automation.trainings.logging.Logging;
 import okhttp3.Authenticator;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;

@@ -1,6 +1,6 @@
 package com.globant.automation.trainings.servicetesting.spring;
 
-import com.globant.automation.trainings.servicetesting.logging.Logging;
+import com.globant.automation.trainings.logging.Logging;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

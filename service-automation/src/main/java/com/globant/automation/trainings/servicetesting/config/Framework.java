@@ -2,9 +2,8 @@ package com.globant.automation.trainings.servicetesting.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.globant.automation.trainings.servicetesting.config.interfaces.IConfig;
-import com.globant.automation.trainings.servicetesting.config.interfaces.IProxy;
-import com.globant.automation.trainings.servicetesting.logging.Logging;
+import com.globant.automation.trainings.logging.Logging;
+import com.globant.automation.trainings.servicetesting.config.impl.ConfigImpl;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -20,13 +19,13 @@ import static java.lang.Thread.currentThread;
  *
  * @author Juan Krzemien
  */
-public enum Framework implements IConfig, Logging {
+public enum Framework implements Config, Logging {
 
     CONFIGURATION;
 
     private static final String CONFIG_FILE = "config.yml";
 
-    private final IConfig config;
+    private final Config config;
 
     Framework() {
         Thread.currentThread().setName("Framework-Thread");
@@ -34,16 +33,16 @@ public enum Framework implements IConfig, Logging {
         this.config = readConfig();
     }
 
-    private IConfig readConfig() {
+    private Config readConfig() {
         ObjectMapper om = new ObjectMapper(new YAMLFactory());
-        IConfig configuration = null;
+        Config configuration = null;
         InputStream configFile = currentThread().getContextClassLoader().getResourceAsStream(CONFIG_FILE);
         try {
-            configuration = om.readValue(configFile, Config.class);
+            configuration = om.readValue(configFile, ConfigImpl.class);
         } catch (Exception e) {
             getLogger().error(format("Error parsing framework config file [%s]. Re-check!", CONFIG_FILE), e);
         }
-        return configuration;
+        return Optional.ofNullable(configuration).orElse(ConfigImpl.EMPTY);
     }
 
     @Override
@@ -53,7 +52,7 @@ public enum Framework implements IConfig, Logging {
 
 
     @Override
-    public IProxy Proxy() {
+    public Proxy Proxy() {
         return config.Proxy();
     }
 

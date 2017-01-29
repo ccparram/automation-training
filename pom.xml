@@ -54,6 +54,7 @@
         <module>web-ui-commons</module>
         <module>web-ui-java-framework</module>
         <module>web-ui-java-events-framework</module>
+        <module>web-ui-java-filters-framework</module>
     </modules>
 
 </project>

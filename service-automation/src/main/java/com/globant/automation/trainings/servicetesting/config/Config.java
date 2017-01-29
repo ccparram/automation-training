@@ -1,55 +1,32 @@
 package com.globant.automation.trainings.servicetesting.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.globant.automation.trainings.servicetesting.config.interfaces.IConfig;
-import com.globant.automation.trainings.servicetesting.config.interfaces.IProxy;
-import com.globant.automation.trainings.servicetesting.logging.Logging;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
-
-import static java.lang.Boolean.parseBoolean;
-import static java.lang.String.valueOf;
-import static java.lang.System.getProperty;
 
 /**
  * @author Juan Krzemien
  */
-@JsonSerialize
-class Config implements IConfig, Logging {
+public interface Config {
 
-    @JsonProperty
-    private boolean isDebugMode = false;
+    /**
+     * Flag indicating whether framework should run in DEBUG logging level or not
+     *
+     * @return true if DEBUG logging level is set, false otherwise
+     */
+    boolean isDebugMode();
 
-    @JsonProperty
-    private Proxy proxy = new Proxy();
+    /**
+     * HTTP(S) Proxy configuration retrieval from config file
+     *
+     * @return A {@link Proxy} implementation
+     */
+    Proxy Proxy();
 
-    @JsonProperty
-    private String baseUrl = "";
-
-    Config() throws MalformedURLException {
-    }
-
-    @Override
-    public boolean isDebugMode() {
-        return parseBoolean(getProperty("DEBUG_MODE", valueOf(isDebugMode)));
-    }
-
-    @Override
-    public IProxy Proxy() {
-        return proxy;
-    }
-
-    @Override
-    public Optional<URL> getBaseUrl() {
-        try {
-            return Optional.of(new URL(baseUrl));
-        } catch (MalformedURLException e) {
-            getLogger().error(e.getMessage(), e);
-        }
-        return Optional.empty();
-    }
-
+    /**
+     * Holds the definition of the base URL to test against
+     *
+     * @return URL instance
+     */
+    Optional<URL> getBaseUrl();
 }

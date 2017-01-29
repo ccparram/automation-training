@@ -1,34 +1,29 @@
 package com.globant.automation.trainings.servicetesting.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.globant.automation.trainings.servicetesting.config.interfaces.IProxy;
-
 /**
  * @author Juan Krzemien
  */
-@JsonSerialize
-class Proxy implements IProxy {
+public interface Proxy {
 
-    @JsonProperty
-    private boolean enabled = false;
+    /**
+     * Use HTTP(S) proxy in WebDriver flag
+     *
+     * @return true if WebDriver should use proxy, false otherwise.
+     */
+    boolean isEnabled();
 
-    @JsonProperty
-    private String host = "";
+    /**
+     * HTTP(S) proxy host
+     *
+     * @return Proxy host to use defined in config file
+     */
+    String getHost();
 
-    @JsonProperty
-    private int port = 0;
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public int getPort() {
-        return port;
-    }
+    /**
+     * HTTP(S) proxy port
+     *
+     * @return Proxy port to use defined in config file
+     */
+    int getPort();
 
 }
