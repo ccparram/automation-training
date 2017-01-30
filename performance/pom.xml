@@ -13,7 +13,7 @@
     <artifactId>performance</artifactId>
     <version>1.0</version>
 
-    <name>JMeter Java Tests</name>
+    <name>JMeter Performance Java Tests</name>
 
     <dependencies>
         <dependency>

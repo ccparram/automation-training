@@ -1,6 +1,5 @@
 package com.globant.automation.trainings.servicetesting.standalone;
 
-import com.globant.automation.trainings.servicetesting.config.Framework;
 import com.globant.automation.trainings.logging.Logging;
 import okhttp3.Authenticator;
 import okhttp3.OkHttpClient;
@@ -12,13 +11,14 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
-import java.net.URL;
+import java.net.MalformedURLException;
 
+import static com.globant.automation.trainings.servicetesting.standalone.config.Framework.CONFIGURATION;
 import static java.lang.String.format;
 
 /**
  * Simple base class for service tests classes to extend from.
- *
+ * <p>
  * Define the API to test (Retrofit's interface) as the generic type
  * for the class.
  *
@@ -77,12 +77,15 @@ public abstract class ServiceTestFor<T> implements Logging {
      * @return new Retrofit instance
      */
     private Retrofit getRetrofit() {
-        URL baseUrl = Framework.CONFIGURATION.getBaseUrl().orElseThrow(() -> new RuntimeException("Undefined base URL to test!"));
-        return new Retrofit.Builder()
-                .client(getOkHttpClient())
-                .baseUrl(baseUrl.toString())
-                .addConverterFactory(getConverterFactory())
-                .build();
+        try {
+            return new Retrofit.Builder()
+                    .client(getOkHttpClient())
+                    .baseUrl(CONFIGURATION.getBaseUrl().toString())
+                    .addConverterFactory(getConverterFactory())
+                    .build();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Undefined base URL to test!", e);
+        }
     }
 
     /**

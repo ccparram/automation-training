@@ -14,19 +14,19 @@ public abstract class AbstractTestContext {
 
     @Profile({"dev"})
     @Configuration
-    @PropertySource("classpath:dev.properties")
+    @PropertySource("classpath:spring/dev.properties")
     public static class devConfig {
     }
 
     @Profile({"qa", "default"})
     @Configuration
-    @PropertySource("classpath:qa.properties")
+    @PropertySource("classpath:spring/qa.properties")
     public static class qaConfig {
     }
 
     @Profile("staging")
     @Configuration
-    @PropertySource("classpath:staging.properties")
+    @PropertySource("classpath:spring/staging.properties")
     public static class stagingConfig {
     }
 
