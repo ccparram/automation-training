@@ -19,14 +19,14 @@ public enum ObjectsContainer implements AutoCloseable, Logging {
 
     INSTANCE;
 
-    private final Set<Object> objects = Collections.synchronizedSet(new HashSet<>());
+    private final ThreadLocal<Set<Object>> objects = ThreadLocal.withInitial(HashSet::new);
 
     private PluginManager pluginManager;
 
     ObjectsContainer() {
         try {
             this.pluginManager = new PluginManagerImpl(Paths.get("plugins"));
-            pluginManager.onPluginsUpdate(updatedPlugins -> objects.forEach(o -> processFilters(updatedPlugins, o)));
+            pluginManager.onPluginsUpdate(updatedPlugins -> objects.get().forEach(o -> processFilters(updatedPlugins, o)));
         } catch (IOException e) {
             getLogger().error("Could not initialize PluginManager!", e);
         }
@@ -34,16 +34,21 @@ public enum ObjectsContainer implements AutoCloseable, Logging {
 
     public void add(Object object) {
         Object processedObject = processFilters(pluginManager.getPlugins(), object);
-        objects.add(processedObject);
+        objects.get().add(processedObject);
     }
 
     public <T> List<T> get(Class<T> objectType) {
-        return objects.parallelStream().filter(o -> objectType.isAssignableFrom(o.getClass())).map(objectType::cast).collect(toList());
+        return objects.get()
+                .parallelStream()
+                .filter(o -> objectType.isAssignableFrom(o.getClass()))
+                .map(objectType::cast)
+                .collect(toList());
     }
 
     @Override
     public void close() throws Exception {
-        objects.clear();
+        objects.get().clear();
+        objects.remove();
         pluginManager.close();
     }
 
