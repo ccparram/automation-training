@@ -27,7 +27,7 @@ public class PluginWatcherTests implements Logging {
             getLogger().info("value: " + driver.toString());
             getLogger().info("value: " + driver.manage().timeouts().toString());
 
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.SECONDS.sleep(15);
 
         } finally {
             if (driver != null) {

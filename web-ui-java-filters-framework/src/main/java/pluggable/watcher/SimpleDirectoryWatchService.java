@@ -3,10 +3,8 @@ package pluggable.watcher;
 import com.globant.automation.trainings.logging.Logging;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -31,10 +29,16 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService, Loggi
     public SimpleDirectoryWatchService(Path path) throws IOException {
         this.watchedPath = path;
         this.watcher = watchedPath.getFileSystem().newWatchService();
-        watchedPath.register(watcher,
-                ENTRY_CREATE,
-                ENTRY_DELETE,
-                ENTRY_MODIFY);
+        Files.walkFileTree(watchedPath, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                path.register(watcher,
+                        ENTRY_CREATE,
+                        ENTRY_DELETE,
+                        ENTRY_MODIFY);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     @Override

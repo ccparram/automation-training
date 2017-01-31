@@ -18,8 +18,6 @@ import java.util.*;
  */
 public class PluginManagerImpl implements PluginManager, DirectoryWatchService.OnFileChangeListener, Logging {
 
-    private static final String JAR_SUFFIX = ".jar";
-
     private final DirectoryWatchService dirWatchService;
     private final Set<PluginsUpdatedEvent> observers = new HashSet<>();
     private final PluginRegistry pluginsRegistry = new PluginRegistryImpl();
@@ -63,9 +61,7 @@ public class PluginManagerImpl implements PluginManager, DirectoryWatchService.O
     @Override
     public void onFileCreate(Path filePath) {
         getLogger().info("File CREATED: " + filePath);
-        if (isJarFile(filePath)) {
-            pluginsRegistry.register(filePath);
-        }
+        pluginsRegistry.register(filePath);
     }
 
     @Override
@@ -77,17 +73,11 @@ public class PluginManagerImpl implements PluginManager, DirectoryWatchService.O
     @Override
     public void onFileDelete(Path filePath) {
         getLogger().info("File DELETED: " + filePath);
-        if (isJarFile(filePath)) {
-            pluginsRegistry.unregister(filePath);
-        }
+        pluginsRegistry.unregister(filePath);
     }
 
     private void notifyObservers() {
         observers.parallelStream().forEach(observer -> observer.pluginsUpdated(pluginsRegistry.getPlugins()));
-    }
-
-    private boolean isJarFile(Path filePath) {
-        return filePath.toString().endsWith(JAR_SUFFIX);
     }
 
 }

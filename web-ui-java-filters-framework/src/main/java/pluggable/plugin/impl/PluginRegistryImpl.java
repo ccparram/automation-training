@@ -1,30 +1,31 @@
 package pluggable.plugin.impl;
 
 import com.globant.automation.trainings.logging.Logging;
-import org.apache.commons.io.FilenameUtils;
 import pluggable.plugin.Plugin;
 import pluggable.plugin.PluginLoader;
 import pluggable.plugin.PluginRegistry;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 
 /**
  * @author Juan Krzemien
  */
 public class PluginRegistryImpl implements PluginRegistry, Logging {
 
-    private final Map<Path, Plugin> plugins = new ConcurrentHashMap<>();
+    private final Map<String, Plugin> plugins = new ConcurrentHashMap<>();
     private final Set<PluginLoader> pluginLoaders = new HashSet<>();
 
     @Override
     public void register(Path pluginPath) {
-        String extension = getExtension(pluginPath);
         getLogger().info(format("Registering plugin %s...", pluginPath));
+        String extension = getExtension(pluginPath.toFile().toString());
         pluginLoaders
                 .stream()
                 .filter(loader -> loader.handlesExtension(extension))
@@ -32,7 +33,7 @@ public class PluginRegistryImpl implements PluginRegistry, Logging {
                     try {
                         loader.loadPlugin(pluginPath)
                                 .ifPresent(plugin -> {
-                                    plugins.put(pluginPath, plugin);
+                                    plugins.put(pluginPath.toString(), plugin);
                                     plugin.load();
                                 });
                     } catch (IOException e) {
@@ -41,23 +42,20 @@ public class PluginRegistryImpl implements PluginRegistry, Logging {
                 });
     }
 
-    private String getExtension(Path pluginPath) {
-        return FilenameUtils.getExtension(pluginPath.toFile().toString());
-    }
-
     @Override
     public void unregister(Path pluginPath) {
         getLogger().info(format("Unregistering plugin %s...", pluginPath));
-        Plugin plugin = plugins.get(pluginPath);
+        String asString = pluginPath.toString();
+        Plugin plugin = plugins.get(asString);
         if (plugin != null) {
             plugin.unload();
-            plugins.remove(pluginPath);
+            plugins.remove(asString);
         }
     }
 
     @Override
     public void unloadPlugins() {
-        plugins.entrySet().parallelStream().forEach(entry -> unregister(entry.getKey()));
+        plugins.entrySet().parallelStream().forEach(entry -> unregister(Paths.get(entry.getKey())));
         plugins.clear();
     }
 
