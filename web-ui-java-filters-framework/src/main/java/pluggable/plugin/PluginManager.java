@@ -1,5 +1,7 @@
 package pluggable.plugin;
 
+import pluggable.plugin.events.PluginsUpdatedEvent;
+
 import java.util.Collection;
 
 /**
@@ -8,5 +10,7 @@ import java.util.Collection;
 public interface PluginManager extends AutoCloseable {
 
     Collection<Plugin> getPlugins();
+
+    void subscribe(PluginsUpdatedEvent pluginsUpdatedEvent);
 
 }

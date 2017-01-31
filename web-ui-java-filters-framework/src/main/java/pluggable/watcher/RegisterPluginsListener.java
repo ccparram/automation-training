@@ -2,8 +2,14 @@ package pluggable.watcher;
 
 import com.globant.automation.trainings.logging.Logging;
 import pluggable.plugin.PluginRegistry;
+import pluggable.plugin.events.PluginsUpdatedEvent;
 
+import java.io.File;
 import java.nio.file.Path;
+import java.util.Set;
+
+import static java.util.Arrays.stream;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Juan Krzemien
@@ -13,9 +19,23 @@ public class RegisterPluginsListener implements DirectoryWatchService.OnFileChan
     private static final String JAR_SUFFIX = ".jar";
 
     private final PluginRegistry pluginRegistry;
+    private final Set<PluginsUpdatedEvent> subscribers;
 
-    public RegisterPluginsListener(PluginRegistry pluginRegistry) {
-        this.pluginRegistry = pluginRegistry;
+    public RegisterPluginsListener(Path watchedPath, PluginRegistry pluginsRegistry, Set<PluginsUpdatedEvent> subscribers) {
+        this.pluginRegistry = pluginsRegistry;
+        this.subscribers = subscribers;
+        // Register already present plugins in directory...
+        ofNullable(watchedPath.toFile().listFiles())
+                .ifPresent(files -> stream(files)
+                        .map(File::toPath)
+                        .filter(this::isJarFile)
+                        .forEach(pluginRegistry::register));
+    }
+
+    private void notifySubscribers() {
+        for (PluginsUpdatedEvent subscriber : subscribers) {
+            subscriber.pluginsUpdated(pluginRegistry.getPlugins());
+        }
     }
 
     @Override
@@ -29,6 +49,7 @@ public class RegisterPluginsListener implements DirectoryWatchService.OnFileChan
     @Override
     public void onFileModify(Path filePath) {
         //getLogger().info("File MODIFIED: " + filePath);
+        notifySubscribers();
     }
 
     @Override

@@ -2,12 +2,7 @@ package pluggable;
 
 import com.globant.automation.trainings.logging.Logging;
 import org.junit.Test;
-import pluggable.filter.FilterChain;
-import pluggable.filter.impl.FilterChainImpl;
-import pluggable.plugin.impl.PluginManagerImpl;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,20 +10,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class PluginWatcherTests implements Logging {
 
-    private static final Path PLUGINS_DIRECTORY = Paths.get("plugins");
-
     @Test
     public void aFolderWatcherTest() throws Exception {
 
-        try (PluginManagerImpl pluginsManager = new PluginManagerImpl(PLUGINS_DIRECTORY)) {
-
-            FilterChain filterChain = new FilterChainImpl(pluginsManager);
+        try (ObjectsContainer objectsContainer = ObjectsContainer.INSTANCE) {
 
             PageObject pom = new PageObject();
-            filterChain.processFilter(pom);
 
-            getLogger().info("New POM X value: " + pom.getX());
-            getLogger().info("New POM Y value: " + pom.getY());
+            objectsContainer.add(pom);
+
+            getLogger().info("New POM X value: " + objectsContainer.get(PageObject.class).getX());
+            getLogger().info("New POM Y value: " + objectsContainer.get(PageObject.class).getY());
 
             TimeUnit.SECONDS.sleep(15);
 

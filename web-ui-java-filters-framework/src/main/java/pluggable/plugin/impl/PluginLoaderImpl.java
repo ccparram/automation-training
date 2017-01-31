@@ -19,6 +19,8 @@ import static java.lang.String.format;
  */
 public class PluginLoaderImpl implements PluginLoader, Logging {
 
+    private static final String PLUGIN_CLASS_VALUE = "Plugin-Class";
+
     @Override
     public Optional<Plugin> loadPlugin(Path filePath) throws IOException {
         try (JarFile jar = new JarFile(filePath.toFile())) {
@@ -52,6 +54,6 @@ public class PluginLoaderImpl implements PluginLoader, Logging {
     }
 
     private String getPluginClassFromManifest(JarFile jarFile) throws IOException {
-        return jarFile.getManifest().getMainAttributes().getValue("Plugin-Class");
+        return jarFile.getManifest().getMainAttributes().getValue(PLUGIN_CLASS_VALUE);
     }
 }
