@@ -1,13 +1,14 @@
 package pluggable.plugin.impl;
 
 import com.globant.automation.trainings.logging.Logging;
+import org.apache.commons.io.FilenameUtils;
 import pluggable.plugin.Plugin;
+import pluggable.plugin.PluginLoader;
 import pluggable.plugin.PluginRegistry;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
@@ -18,28 +19,39 @@ import static java.lang.String.format;
 public class PluginRegistryImpl implements PluginRegistry, Logging {
 
     private final Map<Path, Plugin> plugins = new ConcurrentHashMap<>();
-    private final PluginLoaderImpl pluginLoader = new PluginLoaderImpl();
+    private final Set<PluginLoader> pluginLoaders = new HashSet<>();
 
     @Override
-    public void register(Path pluginJarPath) {
-        getLogger().info(format("Registering plugin %s...", pluginJarPath));
-        try {
-            pluginLoader.loadPlugin(pluginJarPath).ifPresent(plugin -> {
-                plugins.put(pluginJarPath, plugin);
-                plugin.load();
-            });
-        } catch (Exception e) {
-            getLogger().error(e.getLocalizedMessage(), e);
-        }
+    public void register(Path pluginPath) {
+        String extension = getExtension(pluginPath);
+        getLogger().info(format("Registering plugin %s...", pluginPath));
+        pluginLoaders
+                .stream()
+                .filter(loader -> loader.handlesExtension(extension))
+                .forEach(loader -> {
+                    try {
+                        loader.loadPlugin(pluginPath)
+                                .ifPresent(plugin -> {
+                                    plugins.put(pluginPath, plugin);
+                                    plugin.load();
+                                });
+                    } catch (IOException e) {
+                        getLogger().error(e.getLocalizedMessage(), e);
+                    }
+                });
+    }
+
+    private String getExtension(Path pluginPath) {
+        return FilenameUtils.getExtension(pluginPath.toFile().toString());
     }
 
     @Override
-    public void unregister(Path pluginJarPath) {
-        getLogger().info(format("Unregistering plugin %s...", pluginJarPath));
-        Plugin plugin = plugins.get(pluginJarPath);
+    public void unregister(Path pluginPath) {
+        getLogger().info(format("Unregistering plugin %s...", pluginPath));
+        Plugin plugin = plugins.get(pluginPath);
         if (plugin != null) {
             plugin.unload();
-            plugins.remove(pluginJarPath);
+            plugins.remove(pluginPath);
         }
     }
 
@@ -55,5 +67,9 @@ public class PluginRegistryImpl implements PluginRegistry, Logging {
         return new ArrayList<>(plugins.values());
     }
 
+    @Override
+    public void addPluginLoader(PluginLoader pluginLoader) {
+        pluginLoaders.add(pluginLoader);
+    }
 
 }

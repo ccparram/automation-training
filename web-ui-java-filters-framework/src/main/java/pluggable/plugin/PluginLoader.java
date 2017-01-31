@@ -9,6 +9,8 @@ import java.util.Optional;
  */
 public interface PluginLoader {
 
+    boolean handlesExtension(String extension);
+
     Optional<Plugin> loadPlugin(Path filePath) throws IOException;
 
 }

@@ -1,7 +1,10 @@
 package pluggable;
 
 import com.globant.automation.trainings.logging.Logging;
+import io.github.bonigarcia.wdm.ChromeDriverManager;
 import org.junit.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,17 +16,23 @@ public class PluginWatcherTests implements Logging {
     @Test
     public void aFolderWatcherTest() throws Exception {
 
+        ChromeDriverManager.getInstance().setup();
+        WebDriver driver = null;
         try (ObjectsContainer objectsContainer = ObjectsContainer.INSTANCE) {
 
-            PageObject pom = new PageObject();
+            objectsContainer.add(new ChromeDriver());
 
-            objectsContainer.add(pom);
+            driver = objectsContainer.get(WebDriver.class).get(0);
 
-            getLogger().info("New POM X value: " + objectsContainer.get(PageObject.class).getX());
-            getLogger().info("New POM Y value: " + objectsContainer.get(PageObject.class).getY());
+            getLogger().info("value: " + driver.toString());
+            getLogger().info("value: " + driver.manage().timeouts().toString());
 
-            TimeUnit.SECONDS.sleep(15);
+            TimeUnit.SECONDS.sleep(1);
 
+        } finally {
+            if (driver != null) {
+                driver.quit();
+            }
         }
     }
 }

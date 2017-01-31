@@ -16,4 +16,6 @@ public interface PluginRegistry {
 
     Collection<Plugin> getPlugins();
 
+    void addPluginLoader(PluginLoader pluginLoader);
+
 }

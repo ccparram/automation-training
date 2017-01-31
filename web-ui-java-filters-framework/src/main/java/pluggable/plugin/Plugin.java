@@ -14,6 +14,6 @@ public interface Plugin extends Comparable<Plugin> {
     Object execute(Object request);
 
     enum Priority {
-        HIGH, MEDIUM, LOW;
+        HIGH, MEDIUM, LOW
     }
 }

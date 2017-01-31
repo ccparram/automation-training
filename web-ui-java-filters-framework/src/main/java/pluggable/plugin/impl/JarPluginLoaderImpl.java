@@ -17,9 +17,14 @@ import static java.lang.String.format;
 /**
  * @author Juan Krzemien
  */
-public class PluginLoaderImpl implements PluginLoader, Logging {
+public class JarPluginLoaderImpl implements PluginLoader, Logging {
 
     private static final String PLUGIN_CLASS_VALUE = "Plugin-Class";
+
+    @Override
+    public boolean handlesExtension(String extension) {
+        return "jar".equalsIgnoreCase(extension);
+    }
 
     @Override
     public Optional<Plugin> loadPlugin(Path filePath) throws IOException {

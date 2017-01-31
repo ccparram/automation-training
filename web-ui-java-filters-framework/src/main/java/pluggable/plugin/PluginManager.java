@@ -11,6 +11,6 @@ public interface PluginManager extends AutoCloseable {
 
     Collection<Plugin> getPlugins();
 
-    void subscribe(PluginsUpdatedEvent pluginsUpdatedEvent);
+    void onPluginsUpdate(PluginsUpdatedEvent pluginsUpdatedEvent);
 
 }
