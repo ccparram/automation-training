@@ -28,5 +28,10 @@
             <artifactId>web-ui-commons</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+        </dependency>
     </dependencies>
 </project>

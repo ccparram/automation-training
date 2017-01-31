@@ -2,24 +2,26 @@ package pluggable.plugin;
 
 import com.globant.automation.trainings.logging.Logging;
 
+
 /**
  * @author Juan Krzemien
  */
-public abstract class AbstractPlugin implements Plugin, Logging {
+public abstract class AbstractPlugin<T> implements Comparable<AbstractPlugin<T>>, Logging {
 
-    @Override
-    public int compareTo(Plugin o) {
-        return getPriority().compareTo(o.getPriority());
-    }
-
-    @Override
     public void load() {
         getLogger().info("Initializing plugin...");
     }
 
-    @Override
+    public abstract T execute(T input);
+
     public void unload() {
-        getLogger().info("Finalizing plugin...");
+        getLogger().info("Terminating plugin...");
     }
 
+    public abstract Priority getPriority();
+
+    @Override
+    public int compareTo(AbstractPlugin<T> o) {
+        return getPriority().compareTo(o.getPriority());
+    }
 }

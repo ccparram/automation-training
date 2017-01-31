@@ -1,12 +1,10 @@
 package pluggable;
 
 import com.globant.automation.trainings.logging.Logging;
-import pluggable.plugin.Plugin;
+import pluggable.plugin.AbstractPlugin;
 import pluggable.plugin.PluginManager;
-import pluggable.plugin.impl.PluginManagerImpl;
 
-import java.io.IOException;
-import java.nio.file.Paths;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -21,24 +19,23 @@ public enum ObjectsContainer implements AutoCloseable, Logging {
 
     private final ThreadLocal<Set<Object>> objects = ThreadLocal.withInitial(HashSet::new);
 
-    private PluginManager pluginManager;
+    private PluginManager pluginManager = new PluginManager();
 
     ObjectsContainer() {
-        try {
-            this.pluginManager = new PluginManagerImpl(Paths.get("plugins"));
-            pluginManager.onPluginsUpdate(updatedPlugins -> objects.get().forEach(o -> processFilters(updatedPlugins, o)));
-        } catch (IOException e) {
-            getLogger().error("Could not initialize PluginManager!", e);
-        }
+        pluginManager.onPluginFound(plugins -> getForThread().forEach(o -> processFilters(plugins, o)));
     }
 
-    public void add(Object object) {
+    private Set<Object> getForThread() {
+        return objects.get();
+    }
+
+    public <T> void add(T object) {
         Object processedObject = processFilters(pluginManager.getPlugins(), object);
-        objects.get().add(processedObject);
+        getForThread().add(processedObject);
     }
 
     public <T> List<T> get(Class<T> objectType) {
-        return objects.get()
+        return getForThread()
                 .parallelStream()
                 .filter(o -> objectType.isAssignableFrom(o.getClass()))
                 .map(objectType::cast)
@@ -47,20 +44,27 @@ public enum ObjectsContainer implements AutoCloseable, Logging {
 
     @Override
     public void close() throws Exception {
-        objects.get().clear();
+        getForThread().clear();
         objects.remove();
         pluginManager.close();
     }
 
-    private Object processFilters(Collection<Plugin> plugins, Object object) {
-        SortedSet<Plugin> sortedSet = new ConcurrentSkipListSet<>(plugins);
+    private Object processFilters(Collection<? extends AbstractPlugin> plugins, Object object) {
+        SortedSet<? extends AbstractPlugin> sortedSet = new ConcurrentSkipListSet<>(plugins);
 
         Object response = object;
-        for (Plugin plugin : sortedSet) {
-            // pass request & response through various filters
-            response = plugin.execute(response);
+        for (AbstractPlugin plugin : sortedSet) {
+            Class<?> pluginWorksOnType = getPluginWorkType(plugin);
+            if (pluginWorksOnType.isAssignableFrom(object.getClass())) {
+                // pass request & response through various filters
+                response = plugin.execute(pluginWorksOnType.cast(response));
+            }
         }
         getLogger().info("Processed object: " + object.toString());
         return response;
+    }
+
+    private Class<?> getPluginWorkType(AbstractPlugin plugin) {
+        return (Class<?>) ((ParameterizedType) plugin.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 }

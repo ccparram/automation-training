@@ -5,31 +5,27 @@ import com.globant.automation.trainings.webdriver.listeners.BasicWebDriverListen
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import pluggable.plugin.AbstractPlugin;
+import pluggable.plugin.Priority;
 
-import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
-import static java.lang.String.format;
+import static pluggable.plugin.Priority.LOW;
 
 /**
  * @author Juan Krzemien
  */
-public class WebDriverBasicListenerPlugin extends AbstractPlugin {
+public class WebDriverBasicListenerPlugin extends AbstractPlugin<WebDriver> {
 
     @Override
-    public Priority getPriority() {
-        return Priority.LOW;
+    public WebDriver execute(WebDriver input) {
+        getLogger().info("Executing plugin...");
+        getLogger().info("Setting up WebDriver listener...");
+        // Wrap the driver as an event firing one, and add basic listener
+        final EventFiringWebDriver eventDriver = new EventFiringWebDriver(input);
+        eventDriver.register(new BasicWebDriverListener());
+        return eventDriver;
     }
 
     @Override
-    public Object execute(Object input) {
-        if (input instanceof WebDriver && CONFIGURATION.WebDriver().isUseListener()) {
-            getLogger().info(format("Executing %s plugin...", getClass().getName()));
-            WebDriver driver = (WebDriver) input;
-            getLogger().info("Setting up WebDriver listener...");
-            // Wrap the driver as an event firing one, and add basic listener
-            final EventFiringWebDriver eventDriver = new EventFiringWebDriver(driver);
-            eventDriver.register(new BasicWebDriverListener());
-            return eventDriver;
-        }
-        return input;
+    public Priority getPriority() {
+        return LOW;
     }
 }

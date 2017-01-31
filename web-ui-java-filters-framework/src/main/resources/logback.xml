@@ -15,8 +15,9 @@
         </encoder>
     </appender>
 
-    <logger name="com.globant.automation.trainings.webframework" level="INFO"/>
+    <logger name="pluggable" level="INFO"/>
     <logger name="io.github.bonigarcia.wdm" level="INFO"/>
+    <logger name="org.reflections.Reflections" level="INFO" />
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>
