@@ -41,8 +41,8 @@ drivers:
 #      #enablePersistentHover: true
 
   FIREFOX:
-    capabilities:
-      firefox_binary: "D:/Programas/Firefox/firefox.exe"
+#    capabilities:
+#      firefox_binary: "D:/Programas/Firefox/firefox.exe"
       #webdriver.load.strategy: "eager"
 
 #  EDGE:
