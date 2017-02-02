@@ -5,6 +5,7 @@ import java.util.Date;
 
 /**
  * No getters/setters for brevity
+ *
  * @author Juan Krzemien
  */
 @Entity

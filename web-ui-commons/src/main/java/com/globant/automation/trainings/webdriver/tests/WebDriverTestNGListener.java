@@ -19,13 +19,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import static com.globant.automation.trainings.utils.Reflection.*;
+import static com.globant.automation.trainings.utils.Reflection.fieldIsSubClassOf;
+import static com.globant.automation.trainings.utils.Reflection.injectFieldOwnInstance;
 import static com.globant.automation.trainings.webdriver.tests.WebDriverContext.WEB_DRIVER_CONTEXT;
-import static java.lang.String.format;
 import static java.util.Arrays.stream;
 
 /**
  * TestNG listener to multiply number of tests by browsers and to inject POM into test suites automatically.
+ *
  * @author Juan Krzemien
  */
 public class WebDriverTestNGListener implements IMethodInterceptor, IInvokedMethodListener, Logging {
@@ -46,11 +47,9 @@ public class WebDriverTestNGListener implements IMethodInterceptor, IInvokedMeth
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         try {
             WebDriverTestNGMethodDelegate delegate = ((WebDriverTestNGMethodDelegate) method.getTestMethod());
-            Browser browser = delegate.getBrowser();
-            WebDriver driver = WebDriverProvider.createDriverWith(browser);
-            WebDriverContext.BrowserDriverPair pair = new WebDriverContext.BrowserDriverPair(browser, driver);
-            WEB_DRIVER_CONTEXT.set(pair);
-            injectPOMs(method.getTestMethod().getInstance());
+            Object testInstance = method.getTestMethod().getInstance();
+            createDriverFrom(delegate);
+            injectPomsInto(testInstance);
         } catch (MalformedURLException e) {
             getLogger().error(e.getLocalizedMessage(), e);
             testResult.setStatus(ITestResult.FAILURE);
@@ -58,23 +57,20 @@ public class WebDriverTestNGListener implements IMethodInterceptor, IInvokedMeth
         }
     }
 
-    private void injectPOMs(Object target) {
-        stream(target.getClass().getDeclaredFields())
-                .filter(this::isPom)
-                .forEach(field -> {
-                    try {
-                        Object pom = injectFieldOwnInstance(field, target);
-                        setField(field, target, pom);
-                    } catch (Exception e) {
-                        getLogger().error(format("Could not instantiate %s. Make sure class has a non-arg constructor.", field.getType().getName()));
-                    }
-                });
+    private void createDriverFrom(WebDriverTestNGMethodDelegate delegate) throws MalformedURLException {
+        Browser browser = delegate.getBrowser();
+        WebDriver driver = WebDriverProvider.createDriverWith(browser);
+        WebDriverContext.BrowserDriverPair pair = new WebDriverContext.BrowserDriverPair(browser, driver);
+        WEB_DRIVER_CONTEXT.set(pair);
+    }
+
+    private void injectPomsInto(Object target) {
+        stream(target.getClass().getDeclaredFields()).filter(this::isPom).forEach(f -> injectFieldOwnInstance(f, target));
     }
 
     private boolean isPom(Field field) {
         return fieldIsSubClassOf(field, PageObject.class);
     }
-
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
@@ -85,7 +81,7 @@ public class WebDriverTestNGListener implements IMethodInterceptor, IInvokedMeth
 
         private Browser browser;
 
-        public WebDriverMethodInstance(ITestNGMethod method, Browser browser) {
+        WebDriverMethodInstance(ITestNGMethod method, Browser browser) {
             super(method);
             this.browser = browser;
         }

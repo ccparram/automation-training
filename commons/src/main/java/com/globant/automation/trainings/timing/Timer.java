@@ -7,13 +7,13 @@ import static java.lang.System.currentTimeMillis;
 
 /**
  * Time your code runs!
- *
+ * <p>
  * Usage:
- *
+ * <p>
  * new Timer("Method doThingsInParallel") {{
  * // code to time
  * }}.timeMe();
- *
+ * <p>
  * Notice the {{ and }} between constructor and method call!
  *
  * @author Juan Krzemien

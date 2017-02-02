@@ -1,7 +1,6 @@
 package com.globant.automation.training.arquillian;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-//import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -10,6 +9,8 @@ import org.testng.annotations.Test;
 import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
+
+//import org.jboss.arquillian.testng.Arquillian;
 
 /**
  * @author Juan Krzemien

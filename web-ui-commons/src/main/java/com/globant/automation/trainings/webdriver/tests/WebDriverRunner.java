@@ -3,7 +3,6 @@ package com.globant.automation.trainings.webdriver.tests;
 import com.globant.automation.trainings.logging.Logging;
 import com.globant.automation.trainings.runner.Parallelism;
 import com.globant.automation.trainings.runner.ParametrizedParallelism;
-import com.globant.automation.trainings.utils.Reflection;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 import com.globant.automation.trainings.webdriver.server.SeleniumServerStandAlone;
 import org.junit.runner.Description;
@@ -16,11 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.globant.automation.trainings.utils.Reflection.injectFieldOwnInstance;
 import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
 import static com.globant.automation.trainings.webdriver.tests.WebDriverContext.WEB_DRIVER_CONTEXT;
 import static java.lang.Thread.currentThread;
-import static java.util.Arrays.stream;
 import static org.junit.runner.Description.createTestDescription;
 
 /**

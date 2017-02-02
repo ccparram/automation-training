@@ -4,7 +4,6 @@ import com.globant.automation.trainings.utils.Reflection;
 import com.globant.automation.trainings.webdriver.annotations.DeletesCookies;
 import com.globant.automation.trainings.webdriver.annotations.Url;
 import com.globant.automation.trainings.webdriver.waiting.conditions.Conditions;
-import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -14,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.globant.automation.trainings.webdriver.browsers.Browser.ANDROID;
 import static java.lang.String.format;
 import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
 
@@ -27,6 +25,7 @@ public class PageObject<T extends PageObject> extends WebDriverOperations {
 
     public PageObject() {
         getLogger().info(format("Creating new [%s] Page Object instance...", getClass().getSimpleName()));
+        deleteCookiesIfDecorated();
     }
 
     /**
@@ -62,16 +61,7 @@ public class PageObject<T extends PageObject> extends WebDriverOperations {
         return (T) this;
     }
 
-    protected void switchToWebView() {
-        if (getBrowser().equals(ANDROID)) {
-            AndroidDriver driver = (AndroidDriver) getDriver();
-            driver.context("WEBVIEW_" + driver.getCapabilities().getCapability("androidPackage"));
-        }
-    }
-
     protected void goToUrl(String url) {
-        deleteCookiesIfDecorated();
-        switchToWebView();
         getDriver().navigate().to(url);
     }
 

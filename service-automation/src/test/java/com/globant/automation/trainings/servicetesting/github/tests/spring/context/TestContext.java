@@ -16,9 +16,9 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Spring context definition as Java Config file.
- *
+ * <p>
  * Extends AbstractTestContext to have multi configuration settings from Spring's Profiles.
- *
+ * <p>
  * Scans Models and Repositories packages via @EntityScan and @EnableJpaRepositories, respectively.
  *
  * @author Juan Krzemien

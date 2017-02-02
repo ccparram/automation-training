@@ -1,5 +1,6 @@
 package com.globant.automation.trainings;
 
+import com.globant.automation.trainings.base.HideNonRelatedStuff;
 import com.globant.automation.trainings.webdriver.waiting.ComplexWaiter;
 import com.globant.automation.trainings.webdriver.waiting.SimpleWaiter;
 import com.globant.automation.trainings.webdriver.waiting.conditions.Conditions;
@@ -7,7 +8,6 @@ import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import com.globant.automation.trainings.base.HideNonRelatedStuff;
 
 import java.util.List;
 

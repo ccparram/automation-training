@@ -1,4 +1,5 @@
 package com.globant.automation.training.arquillian;
+
 /**
  * @author Juan Krzemien
  */

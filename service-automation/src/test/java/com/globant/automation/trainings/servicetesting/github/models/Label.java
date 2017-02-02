@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 /**
  * ENTITY RELATED INFORMATION IS MADE UP! DO NOT ASSUME IT IS RELATED TO GITHUB!
- *
+ * <p>
  * No getters/setters for brevity
  *
  * @author Juan Krzemien

@@ -1,9 +1,9 @@
 package com.globant.automation.trainings.servicetesting.github.tests.standalone.retrofit;
 
 import com.globant.automation.trainings.servicetesting.authenticators.BasicAuthenticator;
+import com.globant.automation.trainings.servicetesting.github.api.retrofit.UserApi;
 import com.globant.automation.trainings.servicetesting.github.models.User;
 import com.globant.automation.trainings.servicetesting.standalone.ServiceTestFor;
-import com.globant.automation.trainings.servicetesting.github.api.retrofit.UserApi;
 import okhttp3.Authenticator;
 import org.junit.Test;
 import retrofit2.Response;
