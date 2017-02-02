@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.globant.automation.trainings.utils.Reflection.injectFieldsPageObject;
+import static com.globant.automation.trainings.utils.Reflection.injectFieldOwnInstance;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
 import static org.junit.runner.Description.createTestDescription;
@@ -65,7 +65,7 @@ public class WebDriverRunner implements Logging {
         @Override
         protected Object createTest() throws Exception {
             final Object test = super.createTest();
-            stream(test.getClass().getDeclaredFields()).filter(f -> Reflection.isSubClassOf(f, PageObject.class)).forEach(f -> injectFieldsPageObject(f, test));
+            stream(test.getClass().getDeclaredFields()).filter(f -> Reflection.fieldIsSubClassOf(f, PageObject.class)).forEach(f -> injectFieldOwnInstance(f, test));
             return test;
         }
 

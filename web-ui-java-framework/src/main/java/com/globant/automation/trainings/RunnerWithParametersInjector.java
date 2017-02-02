@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.globant.automation.trainings.utils.Reflection.injectFieldsPageObject;
-import static com.globant.automation.trainings.utils.Reflection.isSubClassOf;
+import static com.globant.automation.trainings.utils.Reflection.injectFieldOwnInstance;
+import static com.globant.automation.trainings.utils.Reflection.fieldIsSubClassOf;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
 
@@ -34,7 +34,7 @@ class RunnerWithParametersInjector extends BlockJUnit4ClassRunnerWithParameters 
     @Override
     public Object createTest() throws Exception {
         Object test = super.createTest();
-        stream(test.getClass().getDeclaredFields()).filter(f -> isSubClassOf(f, PageObject.class)).forEach(f -> injectFieldsPageObject(f, test));
+        stream(test.getClass().getDeclaredFields()).filter(f -> fieldIsSubClassOf(f, PageObject.class)).forEach(f -> injectFieldOwnInstance(f, test));
         return test;
     }
 

@@ -26,34 +26,49 @@ public final class Reflection {
     private Reflection() {
     }
 
-    public static boolean isSubClassOf(Field field, Class<?> pomClass) {
-        return pomClass != null && pomClass.isAssignableFrom(field.getType());
+    public static boolean fieldIsSubClassOf(Field field, Class<?> aClass) {
+        return aClass != null && aClass.isAssignableFrom(field.getType());
     }
 
-    public static void injectFieldsPageObject(final Field field, final Object testInstance) {
+    public static Object createOwnDefaultInstance(Field field) {
+        try {
+            return field.getType().getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LOG.error(format("Could not create default instance for %s", field.getType()), e);
+        }
+        return null;
+    }
+
+    public static void setField(Field field, Object target, Object value) {
         field.setAccessible(true);
         try {
-            field.set(testInstance, field.getType().getConstructor().newInstance());
-        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-            LOG.error(e.getLocalizedMessage(), e);
+            field.set(target, value);
+        } catch (IllegalAccessException e) {
+            LOG.error(format("Could not set field %s in %s using %s", field.getName(), target.toString(), value.toString()), e);
         }
     }
 
-    public static List<Field> getFieldsFilteringBy(final Object object, final Predicate<? super Field> filter) {
+    public static Object injectFieldOwnInstance(Field field, Object target) {
+        Object instance = createOwnDefaultInstance(field);
+        setField(field, target, instance);
+        return instance;
+    }
+
+    public static List<Field> getFieldsFilteringBy(Object object, Predicate<? super Field> filter) {
         if (object == null) throw new IllegalArgumentException("Object cannot be null!");
         Field[] fields = object.getClass().getDeclaredFields();
         return stream(fields).filter(filter).collect(toList());
     }
 
-    public static List<Field> getFieldsAnnotatedWith(final Object object, final Class<? extends Annotation> annotationClass) {
+    public static List<Field> getFieldsAnnotatedWith(Object object, Class<? extends Annotation> annotationClass) {
         return getFieldsFilteringBy(object, f -> f.isAnnotationPresent(annotationClass));
     }
 
-    public static List<Field> getFieldsOfType(final Object object, final Class<?> fieldType) {
+    public static List<Field> getFieldsOfType(Object object, Class<?> fieldType) {
         return getFieldsFilteringBy(object, f -> f.getType().isAssignableFrom(fieldType));
     }
 
-    public static <T> List<T> getFieldValuesOfType(final Object object, final Class<?> fieldType) {
+    public static <T> List<T> getFieldValuesOfType(Object object, Class<?> fieldType) {
         return getFieldsOfType(object, fieldType).stream().map(f -> {
             try {
                 f.setAccessible(true);
@@ -65,7 +80,7 @@ public final class Reflection {
         }).collect(toList());
     }
 
-    public static List<?> getFieldValuesAnnotatedWith(final Object object, final Class<? extends Annotation> annotationClass) {
+    public static List<?> getFieldValuesAnnotatedWith(Object object, Class<? extends Annotation> annotationClass) {
         return getFieldsAnnotatedWith(object, annotationClass).stream().map(f -> {
             try {
                 f.setAccessible(true);
@@ -75,6 +90,14 @@ public final class Reflection {
                 return null;
             }
         }).collect(toList());
+    }
+
+    public static Class<?> getBaseClass(Field field) {
+        Class<?> baseClass = field.getType();
+        while (baseClass.getSuperclass() != Object.class) {
+            baseClass = baseClass.getSuperclass();
+        }
+        return baseClass;
     }
 
 }

@@ -1,22 +1,20 @@
 package crap;
 
-import com.globant.automation.trainings.webdriver.browsers.Browser;
-import org.testng.annotations.Factory;
+import com.globant.automation.trainings.logging.Logging;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 /**
  * @author Juan Krzemien
  */
-public class TestNGTest extends BaseTestNG {
+@Listeners(WebDriverTestNGListener.class)
+public class TestNGTest implements Logging { //extends BaseTestNG {
 
-    @Factory(dataProvider = "browsers")
-    TestNGTest(Browser browser) {
-        super(browser);
-    }
+    SamplePage samplePage;
 
     @Test
     public void aSampleTest() throws Exception {
-        getLogger().info("Current browser is " + getBrowser());
+        getLogger().info("Current POM is " + samplePage.toString());
     }
 
 }
