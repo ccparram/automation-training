@@ -11,7 +11,7 @@
         <version>1.0</version>
     </parent>
 
-    <artifactId>web-ui-java-filters-framework</artifactId>
+    <artifactId>web-ui-java-plugins-framework</artifactId>
     <version>1.0</version>
 
     <name>Web UI Automation - Filters Based</name>
