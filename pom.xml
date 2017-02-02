@@ -53,7 +53,6 @@
         <module>component-arquillian</module>
         <module>web-ui-commons</module>
         <module>web-ui-java-framework</module>
-        <module>web-ui-java-events-framework</module>
     </modules>
 
 </project>
