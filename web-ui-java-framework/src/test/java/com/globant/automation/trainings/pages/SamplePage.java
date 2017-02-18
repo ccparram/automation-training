@@ -8,7 +8,7 @@ import org.openqa.selenium.support.FindBy;
 /**
  * @author Juan Krzemien
  */
-@Url("http://www.nyaa.se/?cats=1_37&filter=2")
+@Url("/?cats=1_37&filter=2")
 public class SamplePage extends PageObject<SamplePage> {
 
     @FindBy(name = "term")
@@ -17,4 +17,13 @@ public class SamplePage extends PageObject<SamplePage> {
     @FindBy(className = "inputsearchsubmit")
     private WebElement searchButton;
 
+    public boolean isVisible() {
+        return isVisible(searchCriteria) && isVisible(searchButton);
+    }
+
+    public SamplePage doSearch(String criteria) {
+        type(searchCriteria, criteria);
+        click(searchButton);
+        return new SamplePage();
+    }
 }

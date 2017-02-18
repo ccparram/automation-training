@@ -21,4 +21,8 @@ public class GoogleHomePage extends PageObject<GoogleHomePage> {
         type(searchBox, criteria.toString() + Keys.ENTER);
         return new GoogleSearchResults();
     }
+
+    public boolean isVisible() {
+        return isVisible(searchBox);
+    }
 }

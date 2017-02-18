@@ -1,104 +1,104 @@
 package com.globant.automation.trainings.webdriver.tests;
 
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.webdriver.browsers.Browser;
-import com.globant.automation.trainings.webdriver.waiting.ComplexWaiter;
+import com.globant.automation.trainings.webdriver.webdriver.WebDriverDecorator;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
+import static com.globant.automation.trainings.logging.Reporter.REPORTER;
 import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
-import static com.globant.automation.trainings.webdriver.tests.WebDriverContext.WEB_DRIVER_CONTEXT;
 import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
+import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.io.FileUtils.copyFile;
+import static org.openqa.selenium.OutputType.BASE64;
+import static org.openqa.selenium.OutputType.FILE;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
 
 /**
  * This package local class contains most operation that WebDriver can perform
- * on a WebElement (click, select, type, etc) or on a Browser (switchTo, get URL/title, etc).
+ * on a WebElement (click, select, type, etc). Explicit wait usage enforced.
  *
  * @author Juan Krzemien
  */
-class WebDriverOperations implements Logging {
+abstract class WebDriverOperations implements Logging {
 
-    private final WebDriverWait wait;
-    private final Browser browser;
-
-    WebDriverOperations() {
-        wait = new WebDriverWait(getDriver(), CONFIGURATION.WebDriver().getExplicitTimeOut());
-        wait.ignoring(NoSuchElementException.class);
-        wait.ignoring(StaleElementReferenceException.class);
-        wait.pollingEvery(CONFIGURATION.WebDriver().getPollingEveryMs(), MILLISECONDS);
-        initializePageObject();
-        browser = WEB_DRIVER_CONTEXT.get().getBrowser();
-    }
-
-    protected WebDriver getDriver() {
-        return WEB_DRIVER_CONTEXT.get().getDriver();
-    }
-
-    protected Browser getBrowser() {
-        return browser;
-    }
-
-    protected void initializePageObject() {
-        PageFactory.initElements(getDriver(), this);
+    protected WebDriverDecorator getDriver() {
+        return TestContext.get().getDriver();
     }
 
     /**
-     * Invokes WebDriver's active waiting on an expected condition
+     * Invokes getWebDriver's active waiting on an expected condition
      * <p>
      * This method was kept public since there is a chance of using this framework with
      * Gherkin like test runners which *may* need access to wait feature from outside POMs.
      *
      * @param condition the {@link ExpectedCondition} to wait for. Choose from {@link org.openqa.selenium.support.ui.ExpectedConditions} or create your own.
-     * @param <T>       Generic type on which to wait
+     * @param <K>       Generic type on which to wait
      * @return Result from condition evaluation or a {@link TimeoutException} if operation times out.
      */
-    public <T> T waitFor(ExpectedCondition<T> condition) {
+    protected <K> Optional<K> waitFor(ExpectedCondition<K> condition) {
+        return waitFor(condition, CONFIGURATION.WebDriver().getExplicitTimeOut(), SECONDS, true);
+    }
+
+    protected <K> Optional<K> waitFor(ExpectedCondition<K> condition, int time, TimeUnit unit, boolean shouldFail) {
+        WebDriverDecorator driver = getDriver();
         try {
-            return wait.until(condition);
+            return Optional.of(
+                    new WebDriverWait(driver.getWrappedDriver(), time)
+                            .ignoring(NoSuchElementException.class)
+                            .ignoring(StaleElementReferenceException.class)
+                            .pollingEvery(CONFIGURATION.WebDriver().getPollingEveryMs(), MILLISECONDS)
+                            .withTimeout(time, unit)
+                            .until(condition)
+            );
         } catch (TimeoutException toe) {
-            String currentUrl = getDriver().getCurrentUrl();
-            getLogger().error(format("Error: %s\nCurrent URL: %s", toe.getMessage(), currentUrl));
-            throw toe;
+            if (shouldFail) {
+                reportFailure(driver, toe);
+                throw toe;
+            }
+            return Optional.empty();
         }
     }
 
-    public <T> ComplexWaiter<T> waitUntil(T waitOn) {
-        return new ComplexWaiter<>(waitOn);
+    private void reportFailure(WebDriverDecorator driver, TimeoutException toe) {
+        String currentUrl = getDriver().getCurrentUrl();
+        getLogger().error(format("Error: %s\nCurrent URL: %s", toe.getMessage(), currentUrl));
+        ofNullable(toe.getLocalizedMessage()).ifPresent(message -> {
+            int firstLinePos = message.indexOf('\n');
+            REPORTER.error("An exception occurred! Exception was: " + (firstLinePos > 0 ? message.substring(0, firstLinePos) : message));
+        });
+
+        String base64ScreenShot = driver.getScreenshotAs(BASE64);
+        String dateTime = now().format(ofPattern("ddMMyyyy-hhmmss"));
+        File screenShotFile = Paths.get(format("screenshots/screenShot%s.png", dateTime)).toFile();
+        try {
+            copyFile(FILE.convertFromBase64Png(base64ScreenShot), screenShotFile);
+        } catch (IOException e) {
+            getLogger().error(e.getLocalizedMessage(), e);
+        }
+        REPORTER.addScreenShot(screenShotFile.getAbsoluteFile().toString());
     }
 
     /**
-     * Allows to switch WebDriver focus to a specific window or frame
-     * <p>
-     * This method was kept public since there is a chance of using this framework with
-     * Gherkin like test runners which *may* need access to Switch context feature from outside POMs.
+     * Retrieves getWebDriver's low level {@link org.openqa.selenium.interactions.Action} interactions API
      *
-     * @return {@link WebDriver.TargetLocator} object from WebDriver instance
-     */
-    public WebDriver.TargetLocator switchTo() {
-        return getDriver().switchTo();
-    }
-
-    /**
-     * Closes current WebDriver window. <b>Does not shut down WebDriver server!</b>
-     */
-    public void closeWindow() {
-        getDriver().close();
-    }
-
-    /**
-     * Retrieves WebDriver's low level {@link org.openqa.selenium.interactions.Action} interactions API
-     *
-     * @return WebDriver's low level {@link org.openqa.selenium.interactions.Action} interactions API instance
+     * @return getWebDriver's low level {@link org.openqa.selenium.interactions.Action} interactions API instance
      */
     protected Actions getActions() {
         return new Actions(getDriver());
@@ -114,10 +114,16 @@ class WebDriverOperations implements Logging {
      * @param element {@link WebElement} to type onto
      * @param text    Text or {@link Keys} to type
      */
-    protected void type(WebElement element, CharSequence text) {
-        waitFor(visibilityOf(element));
-        element.clear();
+    protected void type(WebElement element, CharSequence text, boolean cleanFirst) {
+        waitFor(visibilityOf(element)).orElseThrow(() -> new IllegalArgumentException("Element is not there!"));
+        if (cleanFirst) {
+            element.clear();
+        }
         element.sendKeys(text);
+    }
+
+    protected void type(WebElement element, CharSequence text) {
+        type(element, text, true);
     }
 
     /**
@@ -143,15 +149,32 @@ class WebDriverOperations implements Logging {
     }
 
     /**
-     * Clicks on a {@link WebElement} using JavaScript (not regular WebDriver click).
+     * Checks a {@link WebElement} representing a checkbox.
      * <p>
-     * Waits for element to be clickable.
+     * Waits for element to be visible.
      *
-     * @param element The {@link WebElement} to click on
+     * @param element {@link WebElement} to check
      */
-    protected void jsClick(WebElement element) {
+    protected void check(WebElement element) {
         waitFor(elementToBeClickable(element));
-        getJS().executeScript("return arguments[0].click();", element);
+        if (element.getAttribute("checked") == null) {
+            click(element);
+        }
+    }
+
+    /**
+     * Unchecks a {@link WebElement} representing a checkbox.
+     * <p>
+     * Waits for element to be visible.
+     *
+     * @param element {@link WebElement} to un-check
+     */
+    protected void uncheck(WebElement element) {
+        waitFor(elementToBeClickable(element));
+        if (element.getAttribute("checked") != null) {
+            return;
+        }
+        click(element);
     }
 
     /**
@@ -188,8 +211,9 @@ class WebDriverOperations implements Logging {
      * @return String containing the element's text
      */
     protected String getText(WebElement element) {
-        waitFor(visibilityOf(element));
-        return element.getText().trim();
+        // waitFor(visibilityOf(element));
+        // return element.getText().trim();
+        return waitFor(visibilityOf(element)).map(WebElement::getText).orElse("");
     }
 
     /**
@@ -216,31 +240,6 @@ class WebDriverOperations implements Logging {
     protected List<String> getSelectedOptions(WebElement element) {
         waitFor(visibilityOf(element));
         return new Select(element).getAllSelectedOptions().stream().map(WebElement::getText).collect(toList());
-    }
-
-    /**
-     * Retrieves WebDriver's Javascript executor instance
-     *
-     * @return WebDriver's Javascript executor instance
-     */
-    protected JavascriptExecutor getJS() {
-        return (JavascriptExecutor) getDriver();
-    }
-
-    /**
-     * Scrolls to the top of the web page
-     */
-    protected void scrollToTop() {
-        getJS().executeScript("scrollTo(0,0);");
-    }
-
-    /**
-     * Scrolls to a given {@link WebElement}.
-     *
-     * @param element {@link WebElement} to scroll to.
-     */
-    protected void scrollElementIntoView(WebElement element) {
-        getJS().executeScript("return arguments[0].scrollIntoView(true);", element);
     }
 
 }

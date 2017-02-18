@@ -3,9 +3,8 @@ package com.globant.automation.trainings.webdriver.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.utils.Environment;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
-import com.globant.automation.trainings.webdriver.config.impl.ConfigImpl;
+import com.globant.automation.trainings.webdriver.languages.Language;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.nio.file.Files;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.globant.automation.trainings.utils.Environment.isWindows;
 import static java.lang.Thread.currentThread;
 
 /**
@@ -23,7 +23,7 @@ import static java.lang.Thread.currentThread;
  *
  * @author Juan Krzemien
  */
-public enum Framework implements Logging, Config {
+public enum Framework implements Logging {
 
     CONFIGURATION;
 
@@ -40,7 +40,7 @@ public enum Framework implements Logging, Config {
 
     private void setDriversDownloadDirectory() {
         // Define WebDriver's driver download directory once!
-        File tmpDir = Environment.isWindows() ? new File("C:/Temp") : new File("/tmp");
+        File tmpDir = isWindows() ? new File("C:/Temp") : new File("/tmp");
         if (!tmpDir.exists()) {
             try {
                 Files.createDirectory(tmpDir.toPath());
@@ -56,36 +56,39 @@ public enum Framework implements Logging, Config {
         Config configuration = null;
         InputStream configFile = currentThread().getContextClassLoader().getResourceAsStream(CONFIG_FILE);
         try {
-            configuration = om.readValue(configFile, ConfigImpl.class);
+            configuration = om.readValue(configFile, Config.class);
         } catch (Exception e) {
             getLogger().error("Error parsing framework config!. Re-check!", e);
         }
-        return Optional.ofNullable(configuration).orElse(ConfigImpl.EMPTY);
+        return Optional.ofNullable(configuration).orElse(Config.EMPTY);
     }
 
-    @Override
     public boolean isDebugMode() {
         return config.isDebugMode();
     }
 
-    @Override
     public WebDriver WebDriver() {
-        return config.WebDriver();
+        return config.getWebDriver();
     }
 
-    @Override
     public Driver Driver(Browser browser) {
-        return config.Driver(browser);
+        return config.getDriver(browser);
     }
 
-    @Override
     public Proxy Proxy() {
-        return config.Proxy();
+        return config.getProxy();
     }
 
-    @Override
     public Set<Browser> AvailableDrivers() {
-        return config.AvailableDrivers();
+        return config.getAvailableDrivers();
+    }
+
+    public Set<Language> AvailableLanguages() {
+        return config.getAvailableLanguages();
+    }
+
+    public Environment Environment() {
+        return config.getActiveEnvironment();
     }
 
 }

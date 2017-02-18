@@ -1,4 +1,4 @@
-package com.globant.automation.trainings.webdriver.tests;
+package com.globant.automation.trainings.webdriver.tests.junit;
 
 import com.globant.automation.trainings.logging.Logging;
 import org.junit.Rule;
@@ -21,6 +21,9 @@ public abstract class ParameterizedWebDriverTest {
 
     @Rule
     public PomInjectorRule pomInjector = new PomInjectorRule();
+
+    @Rule
+    public ExtendedReporterRule extendedReportListener = new ExtendedReporterRule();
 
     public static class InjectPageObjectsParametersRunnerFactory implements ParametersRunnerFactory, Logging {
 

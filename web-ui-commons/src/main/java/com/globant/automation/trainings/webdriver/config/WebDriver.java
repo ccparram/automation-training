@@ -1,22 +1,67 @@
 package com.globant.automation.trainings.webdriver.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Juan Krzemien
  */
-public interface WebDriver {
-    int getExplicitTimeOut();
+public class WebDriver {
 
-    int getImplicitTimeOut();
+    private static final int DEFAULT_TIMEOUT = 30;
+    private static final int DEFAULT_POOLING_INTERVAL = 500;
 
-    long getPageLoadTimeout();
+    public static WebDriver DEFAULT = new WebDriver();
 
-    long getScriptTimeout();
+    @JsonProperty
+    private int explicitTimeOut = DEFAULT_TIMEOUT;
 
-    int getPollingEveryMs();
+    @JsonProperty
+    private int implicitTimeOut = 0;
 
-    String getRemoteURL();
+    @JsonProperty
+    private int pageLoadTimeout = DEFAULT_TIMEOUT;
 
-    boolean isSeleniumGrid();
+    @JsonProperty
+    private int scriptTimeout = DEFAULT_TIMEOUT;
 
-    boolean isUseListener();
+    @JsonProperty
+    private int pollingEveryMs = DEFAULT_POOLING_INTERVAL;
+
+    @JsonProperty
+    private String remoteURL = "http://localhost:4444/wd/hub";
+
+    @JsonProperty
+    private boolean isSeleniumGrid = false;
+
+    private WebDriver() {
+    }
+
+    public int getExplicitTimeOut() {
+        return explicitTimeOut;
+    }
+
+    public int getImplicitTimeOut() {
+        return implicitTimeOut;
+    }
+
+    public long getPageLoadTimeout() {
+        return pageLoadTimeout;
+    }
+
+    public long getScriptTimeout() {
+        return scriptTimeout;
+    }
+
+    public int getPollingEveryMs() {
+        return pollingEveryMs;
+    }
+
+    public String getRemoteURL() {
+        return remoteURL;
+    }
+
+    public boolean isSeleniumGrid() {
+        return isSeleniumGrid;
+    }
+
 }

@@ -23,3 +23,6 @@ bin/
 
 *.db
 *.log
+
+reports/
+screenshots/

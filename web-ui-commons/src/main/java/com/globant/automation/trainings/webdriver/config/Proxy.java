@@ -1,29 +1,36 @@
 package com.globant.automation.trainings.webdriver.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Juan Krzemien
  */
-public interface Proxy {
+public class Proxy {
 
-    /**
-     * Use HTTP(S) proxy in WebDriver flag
-     *
-     * @return true if WebDriver should use proxy, false otherwise.
-     */
-    boolean isEnabled();
+    public static final Proxy DEFAULT = new Proxy();
 
-    /**
-     * HTTP(S) proxy host
-     *
-     * @return Proxy host to use defined in config file
-     */
-    String getHost();
+    @JsonProperty
+    private boolean enabled = false;
 
-    /**
-     * HTTP(S) proxy port
-     *
-     * @return Proxy port to use defined in config file
-     */
-    int getPort();
+    @JsonProperty
+    private String host = "";
+
+    @JsonProperty
+    private int port = 0;
+
+    private Proxy() {
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
 
 }

@@ -7,21 +7,18 @@ webdriver:
   scriptTimeout: 30
   pollingEveryMs: 1000
   isSeleniumGrid: false
-  useListener: true
 
 proxy:
   enabled: false
   host: ""
   port: 0
 
-drivers:
+languages:
+  - EN
+#  - ES
+#  - PT_BR
 
-#  ANDROID:
-#    capabilities:
-#      platformName: "Android"
-#      deviceName: "ANY"
-#      androidPackage: "com.android.browser"
-#      appActivity: ".BrowserActivity"
+drivers:
 
   CHROME:
     arguments:
@@ -40,7 +37,7 @@ drivers:
 #      disable-popup-blocking: true
 #      #enablePersistentHover: true
 
-  FIREFOX:
+#  FIREFOX:
 #    capabilities:
 #      firefox_binary: "D:/Programas/Firefox/firefox.exe"
       #webdriver.load.strategy: "eager"
@@ -49,6 +46,14 @@ drivers:
 #    capabilities:
 #      initialBrowserUrl: "about:blank"
 
-
+sut:
+  activeEnvironment: QA
+  environments:
+    - name: DEV
+      baseUrl: http://www.nyaa.se
+    - name: QA
+      baseUrl: http://www.nyaa.se
+    - name: PRODUCTION
+      baseUrl: http://www.nyaa.se
 
 

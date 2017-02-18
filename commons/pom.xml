@@ -35,6 +35,18 @@
             <version>1.1.8</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.relevantcodes</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>2.41.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.smarttested</groupId>
+            <artifactId>smartassert</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>
