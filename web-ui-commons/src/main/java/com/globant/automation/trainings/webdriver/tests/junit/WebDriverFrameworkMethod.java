@@ -1,7 +1,8 @@
 package com.globant.automation.trainings.webdriver.tests.junit;
 
+import com.globant.automation.trainings.languages.Language;
+import com.globant.automation.trainings.runner.junit.ApiFrameworkMethod;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
-import com.globant.automation.trainings.webdriver.languages.Language;
 import org.junit.runners.model.FrameworkMethod;
 
 /**
@@ -9,10 +10,9 @@ import org.junit.runners.model.FrameworkMethod;
  *
  * @author Juan Krzemien
  */
-class WebDriverFrameworkMethod extends FrameworkMethod {
+class WebDriverFrameworkMethod extends ApiFrameworkMethod {
 
     private final Browser browser;
-    private final Language language;
 
     /**
      * Returns a new {@code FrameworkMethod} for {@code method}
@@ -22,16 +22,12 @@ class WebDriverFrameworkMethod extends FrameworkMethod {
      * @param language language associated with this test method
      */
     WebDriverFrameworkMethod(FrameworkMethod method, Browser browser, Language language) {
-        super(method.getMethod());
+        super(method, language);
         this.browser = browser;
-        this.language = language;
     }
 
     Browser getBrowser() {
         return browser;
     }
 
-    public Language getLanguage() {
-        return language;
-    }
 }

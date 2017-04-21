@@ -1,11 +1,14 @@
 package com.globant.automation.trainings.webdriver.tests.junit;
 
+import com.globant.automation.trainings.annotations.IgnoreLanguages;
+import com.globant.automation.trainings.languages.Language;
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.runner.ThreadPoolScheduler;
+import com.globant.automation.trainings.runner.TestContext;
+import com.globant.automation.trainings.runner.junit.ThreadPoolScheduler;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
-import com.globant.automation.trainings.webdriver.languages.Language;
 import com.globant.automation.trainings.webdriver.server.SeleniumServerStandAlone;
-import com.globant.automation.trainings.webdriver.tests.TestContext;
+import com.globant.automation.trainings.webdriver.tests.UIContext;
+import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -13,87 +16,99 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.TestClass;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
+import static com.globant.automation.trainings.config.CommonSettings.COMMON;
+import static com.globant.automation.trainings.logging.Reporter.REPORTER;
+import static com.globant.automation.trainings.webdriver.config.UISettings.UI;
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
-import static org.junit.runner.Description.createTestDescription;
+import static java.util.Arrays.stream;
 
 /**
- * JUnit runner for parallel OR single-thread WebDriver based tests executions.
+ * JUnit runners definitions for WebDriver based tests executions.
  *
  * @author Juan Krzemien
  */
+
 public class WebDriverRunner implements Logging {
 
-    public static class ParametrizedParallel extends Parameterized {
-        public ParametrizedParallel(Class<?> clazz) throws Throwable {
-            super(clazz);
-            setScheduler(new ThreadPoolScheduler());
+    private WebDriverRunner() {
+    }
+
+    private static void stopSeleniumServerOnJvmExit() {
+        if (!UI.WebDriver().isSeleniumGrid()) {
+            Runtime.getRuntime().addShutdownHook(new Thread(SeleniumServerStandAlone.INSTANCE::shutdown));
         }
     }
 
-    public static class Parallel extends WebDriverAwareParallelRunner {
+    static List<FrameworkMethod> multiplyTestMethodByBrowsersAndLanguages(List<FrameworkMethod> methods, TestClass testClass) {
+        final Set<Browser> browsers = UI.AvailableDrivers();
+        final Set<Language> languages = COMMON.availableLanguages();
+        final List<FrameworkMethod> expandedMethods = new ArrayList<>(methods.size() * browsers.size() * languages.size());
+        IgnoreLanguages ignoreInClass = testClass.getJavaClass().getAnnotation(IgnoreLanguages.class);
+        methods.forEach(m ->
+                browsers.forEach(b ->
+                        languages.forEach(l -> {
+                            IgnoreLanguages toIgnore = ignoreInClass;
+                            if (toIgnore == null) {
+                                toIgnore = m.getAnnotation(IgnoreLanguages.class);
+                            }
+                            if (toIgnore == null || stream(toIgnore.value()).noneMatch(ignore -> ignore.equals(l))) {
+                                expandedMethods.add(new WebDriverFrameworkMethod(m, b, l));
+                            }
+                        })
+                )
+        );
+        return expandedMethods;
+    }
 
-        public Parallel(Class<?> clazz) throws Throwable {
-            super(clazz);
+    public static class Parametrized extends Parameterized {
+        public Parametrized(Class<?> klass) throws Throwable {
+            super(klass);
+            stopSeleniumServerOnJvmExit();
         }
+    }
 
-        @Override
-        public Description getDescription() {
-            return Description.EMPTY;
+    public static class ParametrizedParallel extends Parameterized {
+        public ParametrizedParallel(Class<?> klass) throws Throwable {
+            super(klass);
+            setScheduler(new ThreadPoolScheduler());
+            stopSeleniumServerOnJvmExit();
         }
+    }
 
-        @Override
-        protected List<FrameworkMethod> getChildren() {
-            return multiplyTestMethodByBrowsersAndLanguages();
-        }
+    public static class Parallel extends WebDriverAwareRunner {
 
-        @Override
-        protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-            runWebDriverTestMethod(method, notifier);
+        /**
+         * Creates a WebDriver aware parallel runner to run {@code klass}
+         *
+         * @param klass A JUnit test class
+         * @throws InitializationError if the test class is malformed.
+         */
+        public Parallel(Class<?> klass) throws InitializationError {
+            super(klass);
+            setScheduler(new ThreadPoolScheduler());
         }
 
     }
 
     public static class SingleThread extends WebDriverAwareRunner {
 
-        public SingleThread(Class<?> clazz) throws Throwable {
-            super(clazz);
-        }
-
-        @Override
-        public Description getDescription() {
-            return Description.EMPTY;
-        }
-
-        @Override
-        protected List<FrameworkMethod> getChildren() {
-            return multiplyTestMethodByBrowsersAndLanguages();
-        }
-
-        @Override
-        protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-            runWebDriverTestMethod(method, notifier);
-        }
-
-    }
-
-    static class WebDriverAwareParallelRunner extends WebDriverAwareRunner {
         /**
-         * Creates a BlockJUnit4ClassRunner to run {@code klass}
+         * Creates a WebDriver aware single threaded runner to run {@code klass}
          *
-         * @param klass JUnit class
+         * @param klass A JUnit test class
          * @throws InitializationError if the test class is malformed.
          */
-        WebDriverAwareParallelRunner(Class<?> klass) throws InitializationError {
+        public SingleThread(Class<?> klass) throws InitializationError {
             super(klass);
-            setScheduler(new ThreadPoolScheduler());
         }
+
     }
 
     static class WebDriverAwareRunner extends BlockJUnit4ClassRunner {
@@ -106,26 +121,25 @@ public class WebDriverRunner implements Logging {
          */
         WebDriverAwareRunner(Class<?> klass) throws InitializationError {
             super(klass);
-            if (!CONFIGURATION.WebDriver().isSeleniumGrid()) {
-                Runtime.getRuntime().addShutdownHook(new Thread(SeleniumServerStandAlone.INSTANCE::shutdown));
-            }
+            stopSeleniumServerOnJvmExit();
         }
 
-        List<FrameworkMethod> multiplyTestMethodByBrowsersAndLanguages() {
-            final List<FrameworkMethod> methods = super.getChildren();
-            final Set<Browser> browsers = CONFIGURATION.AvailableDrivers();
-            final Set<Language> languages = CONFIGURATION.AvailableLanguages();
-            final List<FrameworkMethod> expandedMethods = new ArrayList<>(methods.size() * browsers.size() * languages.size());
-            methods.forEach(m ->
-                    browsers.forEach(b ->
-                            languages.forEach(l -> expandedMethods.add(new WebDriverFrameworkMethod(m, b, l))
-                            )
-                    )
-            );
-            return expandedMethods;
+        @Override
+        public Description getDescription() {
+            return Description.EMPTY;
         }
 
-        void runWebDriverTestMethod(FrameworkMethod method, RunNotifier notifier) {
+        @Override
+        protected List<FrameworkMethod> getChildren() {
+            return multiplyTestMethodByBrowsersAndLanguages(super.getChildren(), getTestClass());
+        }
+
+        @Override
+        protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+            runWebDriverTestMethod(method, notifier);
+        }
+
+        private void runWebDriverTestMethod(FrameworkMethod method, RunNotifier notifier) {
             final Browser browser = ((WebDriverFrameworkMethod) method).getBrowser();
             final Language language = ((WebDriverFrameworkMethod) method).getLanguage();
 
@@ -134,9 +148,17 @@ public class WebDriverRunner implements Logging {
             currentThread().setName(testName);
 
             try {
-                TestContext.set(TestContext.with(browser, language));
-                final Description description = createTestDescription(getTestClass().getJavaClass(), testName);
-                runLeaf(methodBlock(method), description, notifier);
+                TestContext.set(UIContext.with(browser, language));
+                Ignore ignore = method.getAnnotation(Ignore.class);
+                if (ignore != null) {
+                    Description description = describeChild(method);
+                    notifier.fireTestIgnored(description);
+                    REPORTER.startTest(testName, format("REASON: %s", ignore.value()));
+                    REPORTER.skip(format("Test [%s] is marked with @Ignore. Skipping.", testName));
+                    REPORTER.endTest();
+                    return;
+                }
+                super.runChild(method, notifier);
             } catch (Exception e) {
                 notifier.fireTestFailure(new Failure(getDescription(), e));
             } finally {

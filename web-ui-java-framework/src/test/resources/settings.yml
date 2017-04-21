@@ -1,0 +1,23 @@
+isDebugMode: false
+
+proxy:
+  enabled: false
+  host: "proxy.corp.globant.com"
+  port: 3128
+  noProxyFor: "*.globant.com"
+
+languages:
+#  - EN
+  - ES
+#  - PT_BR
+
+sut:
+  activeEnvironment: DEV
+
+  environments:
+    - name: DEV
+      baseUrl: http://www.nyaa.se
+    - name: QA
+      baseUrl: http://www.nyaa.se
+    - name: PRODUCTION
+      baseUrl: http://www.nyaa.se

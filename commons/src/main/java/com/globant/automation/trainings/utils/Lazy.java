@@ -3,6 +3,8 @@ package com.globant.automation.trainings.utils;
 import java.util.function.Supplier;
 
 /**
+ * Supplier that allows for lazy instantiation of objects
+ *
  * @author Juan Krzemien
  */
 public class Lazy {

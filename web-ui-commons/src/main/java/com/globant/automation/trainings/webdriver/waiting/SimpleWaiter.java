@@ -1,12 +1,13 @@
 package com.globant.automation.trainings.webdriver.waiting;
 
 import com.globant.automation.trainings.functions.TriFunction;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.FluentWait;
+
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -35,7 +36,7 @@ public class SimpleWaiter<T> {
 
     public void until(Predicate<T> predicate) {
         try {
-            wait.until(predicate);
+            wait.until(predicate::test);
         } catch (TimeoutException toe) {
             if (shouldFail) {
                 throw toe;
@@ -56,7 +57,7 @@ public class SimpleWaiter<T> {
 
     public <K, R> R until(TriFunction<T, K, R> containsInUrl, final K argument) {
         try {
-            return wait.until((Function<? super T, R>) k -> containsInUrl.apply(waitOn, argument));
+            return wait.until(k -> containsInUrl.apply(waitOn, argument));
         } catch (TimeoutException toe) {
             if (shouldFail) {
                 throw toe;

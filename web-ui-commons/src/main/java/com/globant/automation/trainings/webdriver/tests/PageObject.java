@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.globant.automation.trainings.config.CommonSettings.COMMON;
 import static com.globant.automation.trainings.logging.Reporter.REPORTER;
 import static com.globant.automation.trainings.utils.Reflection.getFieldValuesAnnotatedWith;
-import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
@@ -50,7 +50,7 @@ public class PageObject<T extends PageObject> extends PageCommon {
      */
     public T open() {
         // Environment variable SUT_URL may override all...
-        String url = getBaseUrlFromEnvironment().orElseGet(() -> CONFIGURATION.Environment().getBaseUrl());
+        String url = getBaseUrlFromEnvironment().orElseGet(() -> COMMON.environment().getBaseUrl());
         goToUrl(url);
         return (T) this;
     }
@@ -61,11 +61,11 @@ public class PageObject<T extends PageObject> extends PageCommon {
     private void navigateToPartialUrlIfDecorated() {
         final Class<? extends PageObject> pomClass = getClass();
         ofNullable(pomClass.getAnnotation(Url.class)).ifPresent(url -> {
-            String baseUrl = CONFIGURATION.Environment().getBaseUrl();
+            String baseUrl = COMMON.environment().getBaseUrl();
             try {
                 StringBuilder resource = new StringBuilder();
                 if (url.value().startsWith("/")) {
-                    resource.append(getBaseUrlFromEnvironment().orElseGet(() -> baseUrl));
+                    resource.append(getBaseUrlFromEnvironment().orElse(baseUrl));
                 }
                 resource.append(url.value());
                 URL builtUrl = new URL(resource.toString());

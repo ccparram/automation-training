@@ -15,7 +15,7 @@ import static java.util.Optional.ofNullable;
 
 public class Driver {
 
-    public static final Driver DEFAULT = new Driver();
+    static final Driver DEFAULT = new Driver();
 
     @JsonProperty
     private Map<String, Object> capabilities;

@@ -1,8 +1,9 @@
 package com.globant.automation.trainings.utils;
 
-import java.util.Optional;
-
+import static java.lang.Integer.parseInt;
+import static java.lang.Runtime.getRuntime;
 import static java.lang.System.getProperty;
+import static java.util.Optional.ofNullable;
 
 /**
  * Helper utility class that provides information on JVM's running environment
@@ -34,7 +35,6 @@ public final class Environment {
     }
 
     public static int getNumberOfThreads() {
-        String threads = Optional.ofNullable(System.getProperty("junit.parallel.threads")).orElse(((Integer) (Runtime.getRuntime().availableProcessors() * 2)).toString());
-        return Integer.parseInt(threads);
+        return parseInt(ofNullable(getProperty("junit.parallel.threads")).orElse(String.valueOf(getRuntime().availableProcessors())));
     }
 }

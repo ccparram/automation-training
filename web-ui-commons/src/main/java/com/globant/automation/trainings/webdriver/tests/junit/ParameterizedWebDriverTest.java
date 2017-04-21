@@ -1,6 +1,7 @@
 package com.globant.automation.trainings.webdriver.tests.junit;
 
 import com.globant.automation.trainings.logging.Logging;
+import com.globant.automation.trainings.runner.junit.ExtentReportRule;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
@@ -20,10 +21,10 @@ import org.junit.runners.parameterized.TestWithParameters;
 public abstract class ParameterizedWebDriverTest {
 
     @Rule
-    public PomInjectorRule pomInjector = new PomInjectorRule();
+    public PomInjectorRule pomInjectorRule = new PomInjectorRule();
 
     @Rule
-    public ExtendedReporterRule extendedReportListener = new ExtendedReporterRule();
+    public ExtentReportRule extendedReportListener = new ExtentReportRule();
 
     public static class InjectPageObjectsParametersRunnerFactory implements ParametersRunnerFactory, Logging {
 

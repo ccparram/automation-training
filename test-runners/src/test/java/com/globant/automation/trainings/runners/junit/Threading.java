@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.runners.junit;
 
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.runner.Parallelism;
+import com.globant.automation.trainings.runner.junit.Parallelism;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

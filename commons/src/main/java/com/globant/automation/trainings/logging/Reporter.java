@@ -12,9 +12,8 @@ import java.util.Optional;
 
 import static com.relevantcodes.extentreports.LogStatus.*;
 import static java.lang.String.format;
-import static java.time.LocalDateTime.now;
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 
 /**
  * @author Juan Krzemien
@@ -24,20 +23,18 @@ public enum Reporter implements Logging {
     REPORTER;
 
     private static final String REPORTS_DIRECTORY = "reports";
-    private static final String SCREENSHOTS_DIRECTORY = "screenshots";
     private static final ThreadLocal<ExtentTest> REPORT_PER_THREAD = new InheritableThreadLocal<>();
     private final ExtentReports REPORT;
 
     Reporter() {
         try {
             Files.createDirectories(Paths.get(REPORTS_DIRECTORY));
-            Files.createDirectories(Paths.get(SCREENSHOTS_DIRECTORY));
+            Files.createDirectories(Paths.get(format("%s/screenshots", REPORTS_DIRECTORY)));
         } catch (IOException e) {
             getLogger().error("Could not create directory!", e);
         }
 
-        String dateTime = now().format(ofPattern("ddMMyyyy-hhmmss"));
-        String filePath = format("%s/report-%s.html", REPORTS_DIRECTORY, dateTime);
+        String filePath = format("%s/report-latest.html", REPORTS_DIRECTORY);
 
         REPORT = new ExtentReports(filePath, NetworkMode.OFFLINE);
 
@@ -60,35 +57,56 @@ public enum Reporter implements Logging {
     }
 
     public void pass(String text, Object... args) {
-        get().ifPresent(extentTest -> extentTest.log(PASS, format(text, args)));
+        String message = escapeHtml4(args.length > 0 ? format(text, args) : text);
+        getLogger().info(message);
+        get().ifPresent(extentTest -> extentTest.log(PASS, message));
     }
 
     public void warn(String text, Object... args) {
-        get().ifPresent(extentTest -> extentTest.log(WARNING, format(text, args)));
+        String message = escapeHtml4(args.length > 0 ? format(text, args) : text);
+        getLogger().warn(message);
+        get().ifPresent(extentTest -> extentTest.log(WARNING, message));
     }
 
     public void skip(String text, Object... args) {
-        get().ifPresent(extentTest -> extentTest.log(SKIP, format(text, args)));
+        String message = escapeHtml4(args.length > 0 ? format(text, args) : text);
+        getLogger().warn(message);
+        get().ifPresent(extentTest -> extentTest.log(SKIP, message));
     }
 
     public void fail(String text, Object... args) {
-        get().ifPresent(extentTest -> extentTest.log(FAIL, format(text, args)));
+        String message = escapeHtml4(args.length > 0 ? format(text, args) : text);
+        getLogger().error(message);
+        get().ifPresent(extentTest -> extentTest.log(FAIL, message));
     }
 
     public void error(String text, Object... args) {
-        get().ifPresent(extentTest -> extentTest.log(ERROR, format(text, args)));
+        String message = escapeHtml4(args.length > 0 ? format(text, args) : text);
+        getLogger().error(message);
+        get().ifPresent(extentTest -> extentTest.log(ERROR, message));
     }
 
     public void info(String text, Object... args) {
-        get().ifPresent(extentTest -> extentTest.log(INFO, format(text, args)));
+        String message = escapeHtml4(args.length > 0 ? format(text, args) : text);
+        getLogger().info(message);
+        get().ifPresent(extentTest -> extentTest.log(INFO, message));
     }
 
     public void fatal(String text, Object... args) {
-        get().ifPresent(extentTest -> extentTest.log(FATAL, format(text, args)));
+        String message = escapeHtml4(args.length > 0 ? format(text, args) : text);
+        getLogger().error(message);
+        get().ifPresent(extentTest -> extentTest.log(FATAL, message));
     }
 
     public void unknown(String text, Object... args) {
-        get().ifPresent(extentTest -> extentTest.log(UNKNOWN, format(text, args)));
+        String message = escapeHtml4(args.length > 0 ? format(text, args) : text);
+        getLogger().error(message);
+        get().ifPresent(extentTest -> extentTest.log(UNKNOWN, message));
+    }
+
+    public void debug(String text, Object... args) {
+        String message = args.length > 0 ? format(text, args) : text;
+        getLogger().debug(message);
     }
 
     public void addBase64ScreenShot(String base64ScreenShot) {

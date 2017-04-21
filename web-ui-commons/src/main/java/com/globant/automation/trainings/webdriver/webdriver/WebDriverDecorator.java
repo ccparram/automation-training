@@ -10,10 +10,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 /**
+ * Decorator for WebDriver instances.
+ * <p>
+ * Allows for future interception of all WebDriver related methods, if needed.
+ * Also, allows for registering listeners to WebDriver instances.
+ *
  * @author Juan Krzemien
  */
 public class WebDriverDecorator implements WebDriver, JavascriptExecutor, TakesScreenshot, WrapsDriver, HasInputDevices, HasTouchScreen {
@@ -60,7 +66,7 @@ public class WebDriverDecorator implements WebDriver, JavascriptExecutor, TakesS
         try {
             final List<WebElement> result = delegate.findElements(by);
             listeners.forEach(l -> l.afterFindBy(by, null, delegate));
-            return result.stream().map(element -> new WebElementDecorator(element, delegate)).collect(toList());
+            return result.stream().map(element -> new WebElementDecorator(element, delegate, by)).collect(toList());
         } catch (Exception e) {
             sendExceptionToListeners(e);
         }
@@ -73,7 +79,7 @@ public class WebDriverDecorator implements WebDriver, JavascriptExecutor, TakesS
         try {
             WebElement result = delegate.findElement(by);
             listeners.forEach(l -> l.afterFindBy(by, result, delegate));
-            return new WebElementDecorator(result, delegate);
+            return new WebElementDecorator(result, delegate, by);
         } catch (Exception e) {
             sendExceptionToListeners(e);
             throw e;
@@ -214,6 +220,6 @@ public class WebDriverDecorator implements WebDriver, JavascriptExecutor, TakesS
 
     @Override
     public String toString() {
-        return delegate.toString();
+        return format("%s wrapping a %s", getClass().getSimpleName(), delegate.toString());
     }
 }

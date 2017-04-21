@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.net.BindException;
 import java.util.logging.LogManager;
 
-import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
+import static com.globant.automation.trainings.config.CommonSettings.COMMON;
+import static com.globant.automation.trainings.webdriver.config.UISettings.UI;
 
 
 /**
@@ -25,14 +26,14 @@ public enum SeleniumServerStandAlone implements Logging {
     private SeleniumServer server;
 
     SeleniumServerStandAlone() {
-        if (CONFIGURATION.WebDriver().isSeleniumGrid()) {
+        if (UI.WebDriver().isSeleniumGrid()) {
             getLogger().info("Using Selenium Grid...");
             return;
         }
         getLogger().info("Launching local Selenium Stand Alone Server...\n");
         try {
             StandaloneConfiguration options = new StandaloneConfiguration();
-            options.debug = CONFIGURATION.isDebugMode();
+            options.debug = COMMON.isDebugMode();
             if (!options.debug) {
                 // Turn off verbose logging from Selenium Server...(default is ON)
                 ((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(Level.OFF);
@@ -40,7 +41,7 @@ public enum SeleniumServerStandAlone implements Logging {
             }
             this.server = new SeleniumServer(options);
             server.boot();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             if (t.getCause() instanceof BindException) {
                 getLogger().error("Already running. Will reuse...");
                 return;
@@ -50,7 +51,7 @@ public enum SeleniumServerStandAlone implements Logging {
     }
 
     public void shutdown() {
-        if (CONFIGURATION.WebDriver().isSeleniumGrid()) {
+        if (UI.WebDriver().isSeleniumGrid()) {
             return;
         }
         getLogger().info("Shutting down local Selenium Stand Alone Server...");
@@ -58,6 +59,7 @@ public enum SeleniumServerStandAlone implements Logging {
             server.stop();
         } catch (RuntimeException ignored) {
             // Depending on when shutdown() is called, JVM may be already killing the thread
+            getLogger().debug(ignored.getLocalizedMessage(), ignored);
         }
         getLogger().info("Done");
     }

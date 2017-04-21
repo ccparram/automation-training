@@ -1,0 +1,21 @@
+package com.globant.automation.trainings.languages;
+
+import java.util.Locale;
+
+/**
+ * @author Juan Krzemien
+ */
+public enum Language {
+
+    EN("en-US"), ES("es-AR"), PT_BR("pt-BR");
+
+    private final Locale locale;
+
+    Language(String locale) {
+        this.locale = Locale.forLanguageTag(locale);
+    }
+
+    public Locale toLocale() {
+        return locale;
+    }
+}

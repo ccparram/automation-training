@@ -1,5 +1,6 @@
 package com.globant.automation.trainings.webdriver.tests;
 
+import com.globant.automation.trainings.runner.TestContext;
 import com.globant.automation.trainings.webdriver.webdriver.WebDriverDecorator;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MultiTouchAction;
@@ -59,7 +60,7 @@ public class MobilePageObject<T extends MobilePageObject> extends PageCommon {
 
     private void switchToWebView() {
         AppiumDriver driver = (AppiumDriver) getDriver().getWrappedDriver();
-        if (ANDROID.equals(TestContext.get().getBrowser())) {
+        if (ANDROID.equals(((UIContext) TestContext.get()).getBrowser())) {
             driver.context("WEBVIEW_" + driver.getCapabilities().getCapability("androidPackage"));
         }
     }

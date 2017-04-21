@@ -1,9 +1,12 @@
 package com.globant.automation.trainings.webdriver.tests.junit;
 
-import com.globant.automation.trainings.runner.ThreadPoolScheduler;
+import com.globant.automation.trainings.languages.Language;
+import com.globant.automation.trainings.runner.TestContext;
+import com.globant.automation.trainings.runner.junit.ThreadPoolScheduler;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
-import com.globant.automation.trainings.webdriver.languages.Language;
-import com.globant.automation.trainings.webdriver.tests.TestContext;
+import com.globant.automation.trainings.webdriver.tests.UIContext;
+import org.junit.Ignore;
+import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
@@ -11,11 +14,10 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
 import org.junit.runners.parameterized.TestWithParameters;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
+import static com.globant.automation.trainings.logging.Reporter.REPORTER;
+import static com.globant.automation.trainings.webdriver.tests.junit.WebDriverRunner.multiplyTestMethodByBrowsersAndLanguages;
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 
@@ -31,17 +33,7 @@ class RunnerWithParametersInjector extends BlockJUnit4ClassRunnerWithParameters 
 
     @Override
     protected List<FrameworkMethod> getChildren() {
-        final List<FrameworkMethod> methods = super.getChildren();
-        final Set<Browser> browsers = CONFIGURATION.AvailableDrivers();
-        final Set<Language> languages = CONFIGURATION.AvailableLanguages();
-        final List<FrameworkMethod> expandedMethods = new ArrayList<>(methods.size() * browsers.size() * languages.size());
-        methods.forEach(m ->
-                browsers.forEach(b ->
-                        languages.forEach(l -> expandedMethods.add(new WebDriverFrameworkMethod(m, b, l))
-                        )
-                )
-        );
-        return expandedMethods;
+        return multiplyTestMethodByBrowsersAndLanguages(super.getChildren(), getTestClass());
     }
 
     @Override
@@ -54,7 +46,16 @@ class RunnerWithParametersInjector extends BlockJUnit4ClassRunnerWithParameters 
         currentThread().setName(testName);
 
         try {
-            TestContext.set(TestContext.with(browser, language));
+            TestContext.set(UIContext.with(browser, language));
+            Ignore ignore = method.getAnnotation(Ignore.class);
+            if (ignore != null) {
+                Description description = describeChild(method);
+                notifier.fireTestIgnored(description);
+                REPORTER.startTest(testName, format("REASON: %s", ignore.value()));
+                REPORTER.skip(format("Test [%s] is marked with @Ignore. Skipping.", testName));
+                REPORTER.endTest();
+                return;
+            }
             super.runChild(method, notifier);
         } catch (Exception e) {
             notifier.fireTestFailure(new Failure(getDescription(), e));

@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.webdriver.browsers;
 
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.webdriver.tests.TestContext;
+import com.globant.automation.trainings.runner.TestContext;
 import io.github.bonigarcia.wdm.*;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.HasCapabilities;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.globant.automation.trainings.utils.Environment.is64Bits;
-import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
+import static com.globant.automation.trainings.webdriver.config.UISettings.UI;
 import static io.github.bonigarcia.wdm.Architecture.x32;
 import static io.github.bonigarcia.wdm.Architecture.x64;
 import static java.lang.String.format;
@@ -31,9 +31,7 @@ public enum Browser implements Logging, HasCapabilities {
         @Override
         public Capabilities getCapabilities() {
             initialize(this);
-            DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-            capabilities.setCapability("marionette", true);
-            return capabilities;
+            return DesiredCapabilities.firefox();
         }
     },
     CHROME {
@@ -42,7 +40,7 @@ public enum Browser implements Logging, HasCapabilities {
             initialize(this);
             DesiredCapabilities capabilities = DesiredCapabilities.chrome();
             ChromeOptions options = new ChromeOptions();
-            options.addArguments(CONFIGURATION.Driver(this).getArguments());
+            options.addArguments(UI.Driver(this).getArguments());
             capabilities.setCapability(ChromeOptions.CAPABILITY, options);
             return capabilities;
         }
@@ -67,7 +65,7 @@ public enum Browser implements Logging, HasCapabilities {
             return DesiredCapabilities.safari();
         }
     },
-    PHANTOM {
+    PHANTOMJS {
         @Override
         public Capabilities getCapabilities() {
             return DesiredCapabilities.htmlUnitWithJs();
@@ -111,26 +109,28 @@ public enum Browser implements Logging, HasCapabilities {
         getLogger().info(format("Initializing [%s] browser capabilities...", name()));
     }
 
-    private synchronized static void initialize(Browser browser) {
-        if (alreadyInitialized.computeIfAbsent(browser, b -> false) || CONFIGURATION.WebDriver().isSeleniumGrid()) {
+    private static synchronized void initialize(Browser browser) {
+        if (alreadyInitialized.computeIfAbsent(browser, b -> false) || UI.WebDriver().isSeleniumGrid()) {
             return;
         }
         switch (browser) {
             case FIREFOX:
-                FirefoxDriverManager.getInstance().setup(architecture, LATEST);
+                FirefoxDriverManager.getInstance().architecture(architecture).version(LATEST).setup();
                 break;
             case CHROME:
-                ChromeDriverManager.getInstance().setup(architecture, LATEST);
+                ChromeDriverManager.getInstance().architecture(architecture).version(LATEST).setup();
                 break;
             case IE:
                 // Override architecture for IE. 64 bits version is known to misbehave...
-                InternetExplorerDriverManager.getInstance().setup(x32, LATEST);
+                InternetExplorerDriverManager.getInstance().arch32().version("3.3").setup();
                 break;
             case EDGE:
-                EdgeDriverManager.getInstance().setup(architecture, LATEST);
+                EdgeDriverManager.getInstance().architecture(architecture).version(LATEST).setup();
                 break;
-            case PHANTOM:
-                PhantomJsDriverManager.getInstance().setup(architecture, LATEST);
+            case PHANTOMJS:
+                PhantomJsDriverManager.getInstance().architecture(architecture).version(LATEST).setup();
+                break;
+            default:
                 break;
         }
         alreadyInitialized.put(browser, true);

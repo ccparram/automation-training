@@ -1,0 +1,23 @@
+isDebugMode: false
+
+proxy:
+  enabled: false
+  host: "proxy.corp.globant.com"
+  port: 3128
+  noProxyFor: "*.globant.com"
+
+languages:
+#  - EN
+  - ES
+#  - PT_BR
+
+sut:
+  activeEnvironment: DEV
+
+  environments:
+    - name: DEV
+      baseUrl: https://api.github.com
+    - name: QA
+      baseUrl: https://api.github.com
+    - name: PRODUCTION
+      baseUrl: https://api.github.com

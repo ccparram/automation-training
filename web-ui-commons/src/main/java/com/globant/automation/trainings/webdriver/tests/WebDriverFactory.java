@@ -18,26 +18,30 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Set;
 
-import static com.globant.automation.trainings.webdriver.config.Framework.CONFIGURATION;
+import static com.globant.automation.trainings.config.CommonSettings.COMMON;
+import static com.globant.automation.trainings.webdriver.browsers.Browser.*;
+import static com.globant.automation.trainings.webdriver.config.UISettings.UI;
 import static java.lang.Thread.currentThread;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.openqa.selenium.remote.CapabilityType.PROXY;
 
 /**
+ * Package local class factory in charge of instantiation of WebDriver objects
+ *
  * @author Juan Krzemien
  */
 class WebDriverFactory implements Logging {
 
-    private static final Set<Browser> MOBILE_BROWSERS = Sets.immutableEnumSet(Browser.ANDROID, Browser.IPHONE, Browser.IPAD);
+    private static final Set<Browser> MOBILE_BROWSERS = Sets.immutableEnumSet(ANDROID, IPHONE, IPAD);
 
     WebDriverDecorator createFor(Browser browser) throws MalformedURLException {
         DesiredCapabilities capabilities = buildCapabilities(browser);
         WebDriver innerDriver;
         if (MOBILE_BROWSERS.contains(browser)) {
-            innerDriver = new AppiumDriver<MobileElement>(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
+            innerDriver = new AppiumDriver<MobileElement>(new URL(UI.WebDriver().getRemoteURL()), capabilities);
         } else {
-            innerDriver = new RemoteWebDriver(new URL(CONFIGURATION.WebDriver().getRemoteURL()), capabilities);
+            innerDriver = new RemoteWebDriver(new URL(UI.WebDriver().getRemoteURL()), capabilities);
             innerDriver.manage().window().maximize();
         }
         WebDriverDecorator driver = new WebDriverDecorator(ThreadGuard.protect(innerDriver));
@@ -47,10 +51,10 @@ class WebDriverFactory implements Logging {
 
     private DesiredCapabilities buildCapabilities(Browser browser) {
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        DesiredCapabilities fromConfigCapabilities = new DesiredCapabilities(CONFIGURATION.Driver(browser).getCapabilities());
+        DesiredCapabilities fromConfigCapabilities = new DesiredCapabilities(UI.Driver(browser).getCapabilities());
         capabilities.merge(browser.getCapabilities());
         capabilities.merge(fromConfigCapabilities);
-        if (browser == Browser.ANDROID) {
+        if (browser == ANDROID) {
             ofNullable(capabilities.getCapability("app")).ifPresent(app -> {
                 ofNullable(currentThread().getContextClassLoader().getResource((String) app)).ifPresent(appPath -> {
                     try {
@@ -65,24 +69,25 @@ class WebDriverFactory implements Logging {
     }
 
     private void setTimeOuts(Browser browser, WebDriverDecorator driver) {
-        driver.manage().timeouts().implicitlyWait(CONFIGURATION.WebDriver().getImplicitTimeOut(), SECONDS);
+        driver.manage().timeouts().implicitlyWait(UI.WebDriver().getImplicitTimeOut(), SECONDS);
         if (!MOBILE_BROWSERS.contains(browser)) {
-            driver.manage().timeouts().pageLoadTimeout(CONFIGURATION.WebDriver().getPageLoadTimeout(), SECONDS);
-            driver.manage().timeouts().setScriptTimeout(CONFIGURATION.WebDriver().getScriptTimeout(), SECONDS);
+            driver.manage().timeouts().pageLoadTimeout(UI.WebDriver().getPageLoadTimeout(), SECONDS);
+            driver.manage().timeouts().setScriptTimeout(UI.WebDriver().getScriptTimeout(), SECONDS);
         }
     }
 
     private DesiredCapabilities setProxySettings(DesiredCapabilities capabilities) {
         // Set proxy settings, if any
-        if (CONFIGURATION.Proxy().isEnabled()) {
+        if (COMMON.proxy().isEnabled()) {
             getLogger().info("Setting WebDriver proxy...");
 
-            String proxyCfg = CONFIGURATION.Proxy().getHost() + ":" + CONFIGURATION.Proxy().getPort();
+            String proxyCfg = COMMON.proxy().getHost() + ":" + COMMON.proxy().getPort();
 
             capabilities.setCapability(PROXY, new Proxy()
                     .setHttpProxy(proxyCfg)
                     .setFtpProxy(proxyCfg)
                     .setSslProxy(proxyCfg)
+                    .setNoProxy(COMMON.proxy().getNoProxyFor())
             );
         }
         return capabilities;
