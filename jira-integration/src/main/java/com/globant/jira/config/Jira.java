@@ -2,6 +2,9 @@ package com.globant.jira.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jboss.resteasy.util.Base64;
+
+import java.io.IOException;
 
 /**
  * @author Juan Krzemien
@@ -44,8 +47,8 @@ public class Jira {
         return username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPassword() throws IOException {
+        return new String(Base64.decode(password.getBytes()));
     }
 
     public String getAppVersion() {

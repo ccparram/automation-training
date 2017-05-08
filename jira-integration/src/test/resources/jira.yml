@@ -1,0 +1,7 @@
+baseUrl: "https://jira.corp.globant.com/"
+username: "user.name"
+password: "Base64 encoded password"
+appVersion: "Jira Fix Version"
+proxyEnabled: false
+proxyHost: "http://proxy.corp.globant.com"
+proxyPort: 3128

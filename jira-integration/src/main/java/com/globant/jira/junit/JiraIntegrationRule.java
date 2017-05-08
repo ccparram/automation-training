@@ -12,6 +12,7 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -90,9 +91,13 @@ public class JiraIntegrationRule extends TestWatcher implements Logging {
         applyJiraInfoToTestWithState(description);
 
         for (ExecutionResults executionResult : executionResults.values()) {
-            Response response = JiraApi.get().importResults(executionResult);
-            getLogger().debug("JIRA response code: " + response.getStatusInfo().getStatusCode());
-            getLogger().debug("JIRA response message: " + response.getStatusInfo().getReasonPhrase());
+            try {
+                Response response = JiraApi.get().importResults(executionResult);
+                getLogger().debug("JIRA response code: " + response.getStatusInfo().getStatusCode());
+                getLogger().debug("JIRA response message: " + response.getStatusInfo().getReasonPhrase());
+            } catch (IOException e) {
+                getLogger().error(e.getLocalizedMessage(), e);
+            }
         }
     }
 

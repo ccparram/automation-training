@@ -4,6 +4,8 @@ import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
+import java.io.IOException;
+
 import static com.globant.jira.config.JiraSettings.CONFIGURATION;
 
 /**
@@ -14,7 +16,7 @@ public class JiraApi {
     private JiraApi() {
     }
 
-    public static Jira get() {
+    public static Jira get() throws IOException {
         String baseUrl = CONFIGURATION.Jira().getBaseUrl();
         String username = CONFIGURATION.Jira().getUsername();
         String password = CONFIGURATION.Jira().getPassword();
