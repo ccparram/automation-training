@@ -91,22 +91,22 @@ public class BasicWebDriverListener implements WebDriverEventListener, Logging {
 
     @Override
     public void beforeAlertAccept(WebDriver webDriver) {
-        getLogger().debug("Attempting to accept alert...");
+        getLogger().debug("Attempting to accept alert dialog...");
     }
 
     @Override
     public void afterAlertAccept(WebDriver webDriver) {
-        getLogger().debug("After alert accept...");
+        getLogger().debug("Accepted alert dialog...");
     }
 
     @Override
     public void afterAlertDismiss(WebDriver webDriver) {
-        getLogger().debug("After alert dismiss...");
+        getLogger().debug("Dismissed alert dialog...");
     }
 
     @Override
     public void beforeAlertDismiss(WebDriver webDriver) {
-        getLogger().debug("Attempting to dismiss alert...");
+        getLogger().debug("Attempting to dismiss alert dialog...");
     }
 
     @Override

@@ -5,12 +5,15 @@ import com.globant.automation.trainings.timing.Timer;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 
 /**
  * @author Juan Krzemien
@@ -43,12 +46,12 @@ public class ParallelTaskExecution implements Logging {
         private ExternalService myAutoWiredService = new ExternalService();
 
         List<Result> doStuff(Thing thing) {
-            long sleepTime = (new Random().nextInt(3) + 1) * 1000;
+            long sleepTime = ((long) (new Random().nextInt(3) + 1)) * 1000;
             getLogger().info(format("Service call delayed %s seconds...", sleepTime));
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
             return myAutoWiredService.doExternalCall(thing);
         }
@@ -64,7 +67,7 @@ public class ParallelTaskExecution implements Logging {
         private List<Thing> things = someCallToStaticMethodWithThings();
 
         private List<Thing> someCallToStaticMethodWithThings() {
-            return Arrays.asList(new Thing("One"), new Thing("Two"), new Thing("Three"));
+            return asList(new Thing("One"), new Thing("Two"), new Thing("Three"));
         }
 
         List<Result> doThingsInParallelJava8() {
@@ -76,11 +79,7 @@ public class ParallelTaskExecution implements Logging {
         List<Result> doThingsInParallel() {
             final List<Future<List<Result>>> futureResults = new ArrayList<>();
             for (final Thing thing : things) {
-                futureResults.add(executor.submit(new Callable<List<Result>>() {
-                    public List<Result> call() throws Exception {
-                        return myService.doStuff(thing);
-                    }
-                }));
+                futureResults.add(executor.submit(() -> myService.doStuff(thing)));
             }
 
             final List<Result> results = new ArrayList<>();
@@ -88,7 +87,8 @@ public class ParallelTaskExecution implements Logging {
                 try {
                     results.addAll(futureResult.get());
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    getLogger().debug(e.getLocalizedMessage(), e);
+                    Thread.currentThread().interrupt();
                 }
             }
             return results;
@@ -114,7 +114,7 @@ public class ParallelTaskExecution implements Logging {
 
     private class ExternalService {
         List<Result> doExternalCall(Thing thing) {
-            return Arrays.asList(new Result(thing), new Result(thing), new Result(thing));
+            return asList(new Result(thing), new Result(thing), new Result(thing));
         }
     }
 

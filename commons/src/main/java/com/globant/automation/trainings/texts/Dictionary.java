@@ -2,15 +2,14 @@ package com.globant.automation.trainings.texts;
 
 import com.globant.automation.trainings.languages.Language;
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.runner.Context;
-import com.globant.automation.trainings.runner.TestContext;
+import com.globant.automation.trainings.tests.Context;
+import com.globant.automation.trainings.tests.TestContext;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -57,13 +56,10 @@ public enum Dictionary implements Logging {
         getLogger().debug(format("Looking up %s in dictionary...", key));
 
         // Attempt to retrieve from cache first...
-        try {
-            String fromCache = CACHE.get(language).get(key);
-            if (fromCache != null) {
-                return fromCache;
-            }
-        } catch (NullPointerException npe) {
-            getLogger().debug(format("Cache miss for key %s", key), npe);
+        if (CACHE.get(language).containsKey(key)) {
+            return CACHE.get(language).get(key);
+        } else {
+            getLogger().debug(format("Cache miss for key %s", key));
         }
 
         String translation = lookUpTranslation(key, language);
@@ -78,15 +74,15 @@ public enum Dictionary implements Logging {
     }
 
     private String lookUpTranslation(String key, Language language) {
-        Locale locale = language.toLocale();
-
-        Sheet workingSheet = workbook.getSheet(format("%s_%s", locale.getLanguage(), locale.getCountry()));
+        Sheet workingSheet = workbook.getSheetAt(language.ordinal());
 
         for (Row currentRow : workingSheet) {
 
             String rowKey = currentRow.getCell(KEY_COLUMN).getStringCellValue();
 
-            if ("key".equals(rowKey) || !rowKey.equals(key)) continue;
+            boolean wrongRow = "key".equals(rowKey) || !rowKey.equals(key);
+
+            if (wrongRow) continue;
 
             Cell cell = currentRow.getCell(VALUE_COLUMN);
             if (cell == null) {
@@ -96,7 +92,7 @@ public enum Dictionary implements Logging {
             try {
                 translation = cell.getStringCellValue();
             } catch (IllegalStateException ise) {
-                getLogger().debug("Retrieving cell as String failed, reattempting as Numeric...", ise);
+                getLogger().debug("Could not retrieve cell value as string, reattempting as Numeric value ", ise);
                 translation = String.valueOf(cell.getNumericCellValue());
             }
 

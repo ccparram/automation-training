@@ -1,7 +1,8 @@
 package com.globant.automation.trainings.webdriver.browsers;
 
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.runner.TestContext;
+import com.globant.automation.trainings.tests.TestContext;
+import com.globant.automation.trainings.utils.Environment;
 import io.github.bonigarcia.wdm.*;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.HasCapabilities;
@@ -11,7 +12,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.globant.automation.trainings.utils.Environment.is64Bits;
 import static com.globant.automation.trainings.webdriver.config.UISettings.UI;
 import static io.github.bonigarcia.wdm.Architecture.x32;
 import static io.github.bonigarcia.wdm.Architecture.x64;
@@ -81,7 +81,6 @@ public enum Browser implements Logging, HasCapabilities {
         @Override
         public Capabilities getCapabilities() {
             DesiredCapabilities capabilities = DesiredCapabilities.android();
-            capabilities.setCapability("ignoreUnimportantViews", true);
             ofNullable(TestContext.get()).ifPresent(context -> {
                 capabilities.setCapability("locale", context.getLanguage().toLocale().getCountry());
                 capabilities.setCapability("language", context.getLanguage().toLocale().getLanguage());
@@ -102,7 +101,7 @@ public enum Browser implements Logging, HasCapabilities {
         }
     };
 
-    private static final Architecture architecture = is64Bits() ? x64 : x32;
+    private static final Architecture architecture = Environment.is64Bits() ? x64 : x32;
     private static final Map<Browser, Boolean> alreadyInitialized = new ConcurrentHashMap<>();
 
     Browser() {

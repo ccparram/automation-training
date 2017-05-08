@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.webdriver.tests;
 
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.runner.TestContext;
+import com.globant.automation.trainings.tests.TestContext;
 import com.globant.automation.trainings.webdriver.webdriver.WebDriverDecorator;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -14,11 +14,11 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.globant.automation.trainings.webdriver.config.UISettings.UI;
+import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
-import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
-import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
+import static org.openqa.selenium.support.ui.ExpectedConditions.*;
 
 /**
  * This package local class contains most operation that WebDriver can perform
@@ -87,6 +87,8 @@ abstract class WebDriverOperations implements Logging {
         waitFor(visibilityOf(element)).orElseThrow(() -> new IllegalArgumentException("Element is not there!"));
         if (cleanFirst) {
             element.clear();
+            waitFor(textToBePresentInElement(element, ""));
+            element.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.DELETE); // Just in case...
         }
         element.sendKeys(text);
     }
@@ -114,7 +116,21 @@ abstract class WebDriverOperations implements Logging {
      * @param option  Text/option/value/index to select
      */
     protected void select(WebElement element, String option) {
-        waitFor(visibilityOf(element));
+        select(element, option, true);
+    }
+
+    /**
+     * Selects a text/option, value or index from a {@link WebElement} (dropdown).
+     * <p>
+     * Waits for element to be visible.
+     *
+     * @param element {@link WebElement} to select from
+     * @param option  Text/option/value/index to select
+     */
+    protected void select(WebElement element, String option, boolean waitForVisibility) {
+        if (waitForVisibility) {
+            waitFor(visibilityOf(element));
+        }
         select(new Select(element), option);
     }
 
@@ -127,7 +143,21 @@ abstract class WebDriverOperations implements Logging {
      * @param option  Text/option/value/index to select
      */
     protected void select(WebElement element, int option) {
-        waitFor(visibilityOf(element));
+        select(element, option, true);
+    }
+
+    /**
+     * Selects an index from a {@link WebElement} (dropdown).
+     * <p>
+     * Waits for element to be visible.
+     *
+     * @param element {@link WebElement} to select from
+     * @param option  Text/option/value/index to select
+     */
+    protected void select(WebElement element, int option, boolean waitForVisibility) {
+        if (waitForVisibility) {
+            waitFor(visibilityOf(element));
+        }
         select(new Select(element), option);
     }
 
@@ -143,7 +173,7 @@ abstract class WebDriverOperations implements Logging {
         try {
             select.selectByVisibleText(option);
         } catch (NoSuchElementException e) {
-            getLogger().debug(e.getLocalizedMessage(), e);
+            getLogger().info(format("%s: [%s] selection by visible text failed, re-attempting by value", e.getLocalizedMessage(), option));
             select.selectByValue(option);
         }
     }

@@ -7,17 +7,16 @@ proxy:
   noProxyFor: "*.globant.com"
 
 languages:
-#  - EN
+  - EN
   - ES
 #  - PT_BR
 
 sut:
-  activeEnvironment: DEV
-
+  activeEnvironment: QA
   environments:
     - name: DEV
-      baseUrl: http://www.nyaa.se
+      baseUrl: https://www.wikipedia.org
     - name: QA
-      baseUrl: http://www.nyaa.se
+      baseUrl: https://www.wikipedia.org
     - name: PRODUCTION
-      baseUrl: http://www.nyaa.se
+      baseUrl: https://www.wikipedia.org

@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.runners.junit;
 
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.runner.junit.ParametrizedParallelism;
+import com.globant.automation.trainings.tests.junit.ParametrizedParallelism;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import static java.lang.String.format;
 import static java.lang.System.nanoTime;
@@ -35,7 +36,7 @@ public class ParallelTests implements Logging {
     }
 
     @Parameters(name = "Capability for {0} {1}")
-    public static LinkedList<String[]> getEnvironments() throws Exception {
+    public static List<String[]> getEnvironments() throws Exception {
         return new LinkedList<String[]>() {
             {
                 add(new String[]{"chrome", "50"});

@@ -1,12 +1,16 @@
 package com.globant.automation.trainings.servicetesting.github.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
  * No getters/setters for brevity
  *
  * @author Juan Krzemien
  */
+@JsonInclude(NON_NULL)
 public class User {
 
     @JsonProperty

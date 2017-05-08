@@ -3,12 +3,11 @@ package com.globant.automation.trainings.webdriver.tests.junit;
 import com.globant.automation.trainings.annotations.IgnoreLanguages;
 import com.globant.automation.trainings.languages.Language;
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.runner.TestContext;
-import com.globant.automation.trainings.runner.junit.ThreadPoolScheduler;
+import com.globant.automation.trainings.tests.TestContext;
+import com.globant.automation.trainings.tests.junit.ThreadPoolScheduler;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 import com.globant.automation.trainings.webdriver.server.SeleniumServerStandAlone;
 import com.globant.automation.trainings.webdriver.tests.UIContext;
-import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -16,18 +15,17 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.TestClass;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static com.globant.automation.trainings.config.CommonSettings.COMMON;
-import static com.globant.automation.trainings.logging.Reporter.REPORTER;
 import static com.globant.automation.trainings.webdriver.config.UISettings.UI;
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
+import static org.junit.runner.Description.createTestDescription;
 
 /**
  * JUnit runners definitions for WebDriver based tests executions.
@@ -37,34 +35,10 @@ import static java.util.Arrays.stream;
 
 public class WebDriverRunner implements Logging {
 
-    private WebDriverRunner() {
-    }
-
     private static void stopSeleniumServerOnJvmExit() {
         if (!UI.WebDriver().isSeleniumGrid()) {
             Runtime.getRuntime().addShutdownHook(new Thread(SeleniumServerStandAlone.INSTANCE::shutdown));
         }
-    }
-
-    static List<FrameworkMethod> multiplyTestMethodByBrowsersAndLanguages(List<FrameworkMethod> methods, TestClass testClass) {
-        final Set<Browser> browsers = UI.AvailableDrivers();
-        final Set<Language> languages = COMMON.availableLanguages();
-        final List<FrameworkMethod> expandedMethods = new ArrayList<>(methods.size() * browsers.size() * languages.size());
-        IgnoreLanguages ignoreInClass = testClass.getJavaClass().getAnnotation(IgnoreLanguages.class);
-        methods.forEach(m ->
-                browsers.forEach(b ->
-                        languages.forEach(l -> {
-                            IgnoreLanguages toIgnore = ignoreInClass;
-                            if (toIgnore == null) {
-                                toIgnore = m.getAnnotation(IgnoreLanguages.class);
-                            }
-                            if (toIgnore == null || stream(toIgnore.value()).noneMatch(ignore -> ignore.equals(l))) {
-                                expandedMethods.add(new WebDriverFrameworkMethod(m, b, l));
-                            }
-                        })
-                )
-        );
-        return expandedMethods;
     }
 
     public static class Parametrized extends Parameterized {
@@ -131,12 +105,34 @@ public class WebDriverRunner implements Logging {
 
         @Override
         protected List<FrameworkMethod> getChildren() {
-            return multiplyTestMethodByBrowsersAndLanguages(super.getChildren(), getTestClass());
+            return multiplyTestMethodByBrowsersAndLanguages();
         }
 
         @Override
         protected void runChild(FrameworkMethod method, RunNotifier notifier) {
             runWebDriverTestMethod(method, notifier);
+        }
+
+        private List<FrameworkMethod> multiplyTestMethodByBrowsersAndLanguages() {
+            final List<FrameworkMethod> methods = super.getChildren();
+            final Set<Browser> browsers = UI.AvailableDrivers();
+            final Set<Language> languages = COMMON.availableLanguages();
+            final List<FrameworkMethod> expandedMethods = new ArrayList<>(methods.size() * browsers.size() * languages.size());
+            IgnoreLanguages ignoreInClass = getTestClass().getJavaClass().getAnnotation(IgnoreLanguages.class);
+            methods.forEach(m ->
+                    browsers.forEach(b ->
+                            languages.forEach(l -> {
+                                IgnoreLanguages toIgnore = ignoreInClass;
+                                if (toIgnore == null) {
+                                    toIgnore = m.getAnnotation(IgnoreLanguages.class);
+                                }
+                                if (toIgnore == null || stream(toIgnore.value()).noneMatch(ignore -> ignore.equals(l))) {
+                                    expandedMethods.add(new WebDriverFrameworkMethod(m, b, l));
+                                }
+                            })
+                    )
+            );
+            return expandedMethods;
         }
 
         private void runWebDriverTestMethod(FrameworkMethod method, RunNotifier notifier) {
@@ -149,16 +145,8 @@ public class WebDriverRunner implements Logging {
 
             try {
                 TestContext.set(UIContext.with(browser, language));
-                Ignore ignore = method.getAnnotation(Ignore.class);
-                if (ignore != null) {
-                    Description description = describeChild(method);
-                    notifier.fireTestIgnored(description);
-                    REPORTER.startTest(testName, format("REASON: %s", ignore.value()));
-                    REPORTER.skip(format("Test [%s] is marked with @Ignore. Skipping.", testName));
-                    REPORTER.endTest();
-                    return;
-                }
-                super.runChild(method, notifier);
+                final Description description = createTestDescription(getTestClass().getJavaClass(), testName);
+                runLeaf(methodBlock(method), description, notifier);
             } catch (Exception e) {
                 notifier.fireTestFailure(new Failure(getDescription(), e));
             } finally {

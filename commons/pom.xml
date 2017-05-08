@@ -42,21 +42,45 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.16-beta2</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
         </dependency>
 
         <dependency>
-            <groupId>com.mashape.unirest</groupId>
-            <artifactId>unirest-java</artifactId>
-            <version>1.4.9</version>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>2.2.0</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>3.16-beta2</version>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-jackson</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>3.1.2.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>3.1.2.Final</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson-provider</artifactId>
+            <version>3.1.2.Final</version>
         </dependency>
 
     </dependencies>

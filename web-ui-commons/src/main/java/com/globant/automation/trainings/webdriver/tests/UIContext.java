@@ -1,10 +1,9 @@
 package com.globant.automation.trainings.webdriver.tests;
 
-
 import com.globant.automation.trainings.languages.Language;
-import com.globant.automation.trainings.runner.Context;
-import com.globant.automation.trainings.runner.DefaultContext;
-import com.globant.automation.trainings.runner.TestContext;
+import com.globant.automation.trainings.tests.Context;
+import com.globant.automation.trainings.tests.DefaultContext;
+import com.globant.automation.trainings.tests.TestContext;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 import com.globant.automation.trainings.webdriver.webdriver.WebDriverDecorator;
 
@@ -12,12 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import static com.globant.automation.trainings.utils.Lazy.lazily;
 import static java.lang.String.format;
-import static java.lang.Thread.currentThread;
 import static java.time.LocalDateTime.now;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.apache.commons.io.FileUtils.copyFile;
@@ -34,7 +31,6 @@ public class UIContext extends DefaultContext {
     private static final WebDriverFactory WEB_DRIVER_FACTORY = new WebDriverFactory();
     private final Browser browser;
     private final Supplier<WebDriverDecorator> driver;
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     private UIContext(Browser browser, Language language) {
         super(language);
@@ -49,21 +45,19 @@ public class UIContext extends DefaultContext {
     public static synchronized String captureScreenShot() throws IOException {
         String base64ScreenShot = ((UIContext) TestContext.get()).getDriver().getScreenshotAs(BASE64);
         String dateTime = now().format(ofPattern("ddMMyyyy-hhmmss"));
-        File screenShotFile = Paths.get(format("reports/screenshots/screenShot%s-%s.png", dateTime, currentThread().getId())).toFile();
+        File screenShotFile = Paths.get(format("screenshots/screenShot%s.png", dateTime)).toFile();
         copyFile(FILE.convertFromBase64Png(base64ScreenShot), screenShotFile);
-        return screenShotFile.getPath().replace("reports/", "").replace("reports\\", "");
+        return format("../%s", screenShotFile.getPath());
     }
 
     @Override
     public void init() {
-
+        // Override behaviour
     }
 
     @Override
     public void destroy() {
-        if (initialized.get()) {
-            getDriver().quit();
-        }
+        getDriver().quit();
     }
 
     private WebDriverDecorator initializeDriver() {
@@ -72,8 +66,6 @@ public class UIContext extends DefaultContext {
         } catch (MalformedURLException e) {
             getLogger().error("Could not create WebDriver instance!", e);
             return null;
-        } finally {
-            initialized.set(true);
         }
     }
 

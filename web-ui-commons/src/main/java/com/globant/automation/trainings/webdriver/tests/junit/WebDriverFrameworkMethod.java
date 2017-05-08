@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.webdriver.tests.junit;
 
 import com.globant.automation.trainings.languages.Language;
-import com.globant.automation.trainings.runner.junit.ApiFrameworkMethod;
+import com.globant.automation.trainings.tests.junit.ApiFrameworkMethod;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 import org.junit.runners.model.FrameworkMethod;
 

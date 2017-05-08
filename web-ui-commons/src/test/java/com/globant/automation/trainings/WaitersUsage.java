@@ -14,14 +14,15 @@ import java.util.List;
 import static com.globant.automation.trainings.webdriver.waiting.conditions.Conditions.Browser.ContainsInUrl;
 import static com.globant.automation.trainings.webdriver.waiting.conditions.Conditions.Element.Visibility.Visible;
 import static java.lang.System.out;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Juan Krzemien
  */
 
 public class WaitersUsage extends HideNonRelatedStuff {
+
+    private static final String DONE_WAITING = "Done waiting! Since you can see this, a TimeoutException was not thrown.";
 
     private final SimpleWaiter.Waiter<WebElement> ELEMENT_WAITER = new SimpleWaiter.Waiter<>();
     private final SimpleWaiter.Waiter<List<WebElement>> ELEMENTS_WAITER = new SimpleWaiter.Waiter<>();
@@ -30,13 +31,13 @@ public class WaitersUsage extends HideNonRelatedStuff {
     @Test
     public void simpleWaiterUsage() {
         ELEMENT_WAITER.withTimeOut(5).on(anElement).until(Visible);
-        out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. So element is visible.");
+        out.println(DONE_WAITING);
     }
 
     @Test
     public void simpleWaiterUsageOnManyElements() {
         ELEMENTS_WAITER.withTimeOut(5).on(manyElements).until(Conditions.Elements.Visibility.Visible);
-        out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. So element is visible.");
+        out.println(DONE_WAITING);
     }
 
     @Test(expected = TimeoutException.class)
@@ -52,19 +53,19 @@ public class WaitersUsage extends HideNonRelatedStuff {
     @Test
     public void complexWaiterUsage1() {
         new ComplexWaiter<>(anElement).is(Visible);
-        out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. So element is visible.");
+        out.println(DONE_WAITING);
     }
 
     @Test
     public void complexWaiterUsage2() {
         new ComplexWaiter<>(anElement).and(anotherElement).are(Visible);
-        out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. So element is visible.");
+        out.println(DONE_WAITING);
     }
 
     @Test
     public void complexWaiterUsageOnManyElements() {
         new ComplexWaiter<>(manyElements).are(Conditions.Elements.Visibility.Visible);
-        out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. So element is visible.");
+        out.println(DONE_WAITING);
     }
 
     @Test(expected = TimeoutException.class)
@@ -75,14 +76,14 @@ public class WaitersUsage extends HideNonRelatedStuff {
     @Test
     public void simpleWaiterUsageTriFunctionCondition() {
         DRIVER_WAITER.withTimeOut(5).on(aDriver).until(ContainsInUrl, "about:blank");
-        out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. Url matched.");
+        out.println(DONE_WAITING);
     }
 
     @Test
     public void simpleWaiterUsageTriFunctionCondition2() {
         WebElement element = DRIVER_WAITER.withTimeOut(5).on(aDriver).until(Conditions.Locator.Exists, anId);
         assertNotNull(element);
-        out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. Element was found.");
+        out.println(DONE_WAITING);
     }
 
     @Test
@@ -90,12 +91,13 @@ public class WaitersUsage extends HideNonRelatedStuff {
         List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(5).until(Conditions.Locator.Exists, anId);
         assertNotNull(elements);
         assertEquals("There should be one element in here!", 1, elements.size());
-        out.println("Done waiting! Since you can see this, a TimeoutException was not thrown. Element was found.");
+        out.println(DONE_WAITING);
     }
 
     @Test(expected = TimeoutException.class)
     public void complexWaiterUsageTriFunctionConditionTimesOut() {
         List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).until(Conditions.Locator.Exists, anXPath);
+        assertNull(elements);
     }
 
     @Test
@@ -103,6 +105,6 @@ public class WaitersUsage extends HideNonRelatedStuff {
         List<WebElement> elements = new ComplexWaiter<>(aDriver).withTimeOut(1).withoutFailing().until(Conditions.Locator.Exists, anXPath);
         assertNotNull(elements);
         assertEquals("There should be one element in here!", 0, elements.size());
-        out.println("Done waiting! Since you can see this, a TimeoutException was not thrown due to withoutFailing().");
+        out.println(DONE_WAITING);
     }
 }

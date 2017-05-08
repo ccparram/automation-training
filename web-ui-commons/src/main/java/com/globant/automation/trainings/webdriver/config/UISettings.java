@@ -1,6 +1,5 @@
 package com.globant.automation.trainings.webdriver.config;
 
-
 import com.globant.automation.trainings.logging.Logging;
 import com.globant.automation.trainings.webdriver.browsers.Browser;
 

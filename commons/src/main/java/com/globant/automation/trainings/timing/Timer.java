@@ -21,15 +21,15 @@ import static java.lang.System.currentTimeMillis;
 public class Timer implements Logging {
 
     private final String timerName;
-    private long started;
+    private long start;
 
     public Timer(String timerName) {
         this.timerName = timerName;
-        this.started = currentTimeMillis();
+        this.start = currentTimeMillis();
     }
 
     public void timeMe() {
-        getLogger().info(format("Execution of '%s' took %d ms.", timerName, currentTimeMillis() - started));
+        getLogger().info(format("Execution of '%s' took %d ms.", timerName, currentTimeMillis() - start));
     }
 
 }

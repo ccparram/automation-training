@@ -1,13 +1,13 @@
 package com.globant.automation.trainings.webdriver.waiting;
 
 import com.globant.automation.trainings.functions.TriFunction;
+import com.google.common.base.Predicate;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.FluentWait;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -36,7 +36,7 @@ public class SimpleWaiter<T> {
 
     public void until(Predicate<T> predicate) {
         try {
-            wait.until(predicate::test);
+            wait.until(predicate::apply);
         } catch (TimeoutException toe) {
             if (shouldFail) {
                 throw toe;
@@ -84,7 +84,7 @@ public class SimpleWaiter<T> {
             return this;
         }
 
-        public Waiter<T> pollingEvery(int everyMs) {
+        Waiter<T> pollingEvery(int everyMs) {
             this.pollingEvery = everyMs;
             return this;
         }
@@ -93,7 +93,7 @@ public class SimpleWaiter<T> {
             return new SimpleWaiter<>(waitOn, timeOut, pollingEvery, shouldFail);
         }
 
-        public boolean isShouldFail() {
+        boolean isShouldFail() {
             return shouldFail;
         }
     }

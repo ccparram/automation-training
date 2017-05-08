@@ -1,7 +1,7 @@
 package com.globant.automation.trainings.webdriver.tests.junit;
 
-import com.globant.automation.trainings.runner.TestContext;
-import com.globant.automation.trainings.runner.junit.ExtentReportRule;
+import com.globant.automation.trainings.tests.TestContext;
+import com.globant.automation.trainings.tests.junit.ExtentReportRule;
 import com.globant.automation.trainings.webdriver.tests.UIContext;
 import org.junit.runner.Description;
 

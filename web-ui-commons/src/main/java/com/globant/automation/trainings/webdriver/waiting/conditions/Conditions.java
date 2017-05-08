@@ -16,10 +16,16 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 public class Conditions {
 
+    private Conditions() {
+    }
+
     // You should define this in an external config file
     private static final long DEFAULT_TIME_OUT = 30;
 
     public static class Page {
+
+        private Page() {
+        }
 
         public static final Predicate<JavascriptExecutor> Loaded = js -> (boolean) (js != null ? js.executeScript("return typeof document != 'undefined' && document.readyState == 'complete';") : false);
 
@@ -28,6 +34,8 @@ public class Conditions {
     }
 
     public static class Locator {
+        private Locator() {
+        }
 
         /**
          * Would be nice to be able to use Optional<WebElement> here in case element is not found
@@ -54,8 +62,12 @@ public class Conditions {
     }
 
     public static class Element {
+        private Element() {
+        }
 
         public static class Visibility {
+            private Visibility() {
+            }
 
             public static final Predicate<WebElement> Visible = WebElement::isDisplayed;
 
@@ -64,6 +76,8 @@ public class Conditions {
         }
 
         public static class Status {
+            private Status() {
+            }
 
             public static final Predicate<WebElement> Enabled = WebElement::isEnabled;
 
@@ -74,8 +88,12 @@ public class Conditions {
     }
 
     public static class Elements {
+        private Elements() {
+        }
 
         public static class Visibility {
+            private Visibility() {
+            }
 
             public static final Predicate<List<WebElement>> Visible = i -> i != null && i.stream().allMatch(WebElement::isDisplayed);
 
@@ -84,6 +102,8 @@ public class Conditions {
         }
 
         public static class Status {
+            private Status() {
+            }
 
             public static final Predicate<List<WebElement>> Enabled = i -> i != null && i.stream().allMatch(WebElement::isEnabled);
 
@@ -94,10 +114,12 @@ public class Conditions {
     }
 
     public static class Browser {
+        private Browser() {
+        }
 
-        public static TriFunction<WebDriver, String, Boolean> ContainsInUrl = (driver, url) -> driver.getCurrentUrl().contains(url);
+        public static final TriFunction<WebDriver, String, Boolean> ContainsInUrl = (driver, url) -> driver.getCurrentUrl().contains(url);
 
-        public static TriFunction<WebDriver, String, Boolean> ContainsInTitle = (driver, title) -> driver.getTitle().contains(title);
+        public static final TriFunction<WebDriver, String, Boolean> ContainsInTitle = (driver, title) -> driver.getTitle().contains(title);
 
     }
 }

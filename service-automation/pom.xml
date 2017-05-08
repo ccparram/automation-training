@@ -48,36 +48,14 @@
             <version>1.4.193</version>
         </dependency>
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>retrofit</artifactId>
-            <version>2.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>converter-jackson</artifactId>
-            <version>2.1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.globant.automation.trainings</groupId>
             <artifactId>commons</artifactId>
             <version>1.0</version>
         </dependency>
-
         <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>3.1.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
-            <version>3.1.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson-provider</artifactId>
-            <version>3.1.0.Final</version>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
         </dependency>
     </dependencies>
 </project>

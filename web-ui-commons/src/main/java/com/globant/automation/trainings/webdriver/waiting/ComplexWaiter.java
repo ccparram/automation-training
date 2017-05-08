@@ -2,6 +2,7 @@ package com.globant.automation.trainings.webdriver.waiting;
 
 
 import com.globant.automation.trainings.functions.TriFunction;
+import com.globant.automation.trainings.logging.Logging;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.openqa.selenium.TimeoutException;
@@ -16,8 +17,9 @@ import static java.util.stream.Collectors.toList;
 /**
  * @author Juan Krzemien
  */
-public class ComplexWaiter<T> {
+public class ComplexWaiter<T> implements Logging {
 
+    private static final String WHILE_WAITING_ON = "%s while waiting on %s";
     private final SimpleWaiter.Waiter<T> simpleWaiter = new SimpleWaiter.Waiter<>();
     private final List<T> thingsToWaitOn = new CopyOnWriteArrayList<>();
 
@@ -60,21 +62,21 @@ public class ComplexWaiter<T> {
                         try {
                             return simpleWaiter.on(t).until(condition);
                         } catch (TimeoutException toe) {
-                            messages.append(format("%s while waiting on %s", toe.getMessage(), t.toString())).append("\n");
+                            getLogger().debug(toe.getLocalizedMessage(), toe);
+                            messages.append(format(WHILE_WAITING_ON, toe.getMessage(), t.toString())).append("\n");
                             return null;
                         }
                     })
                     .filter(Objects::nonNull)
                     .collect(toList());
-            if (results.size() != thingsToWaitOn.size()) {
-                if (simpleWaiter.isShouldFail()) {
-                    throw new TimeoutException(messages.toString());
-                }
+            if (results.size() != thingsToWaitOn.size() && simpleWaiter.isShouldFail()) {
+                throw new TimeoutException(messages.toString());
             }
             return results;
         } finally {
             thingsToWaitOn.clear();
         }
+
     }
 
     public void are(Predicate<T> condition) {
@@ -86,19 +88,19 @@ public class ComplexWaiter<T> {
                             simpleWaiter.on(t).until(condition);
                             return true;
                         } catch (TimeoutException toe) {
-                            messages.append(format("%s while waiting on %s", toe.getMessage(), t.toString())).append("\n");
+                            getLogger().debug(toe.getLocalizedMessage(), toe);
+                            messages.append(format(WHILE_WAITING_ON, toe.getMessage(), t.toString())).append("\n");
                             return false;
                         }
                     })
                     .count();
-            if (processed != thingsToWaitOn.size()) {
-                if (simpleWaiter.isShouldFail()) {
-                    throw new TimeoutException(messages.toString());
-                }
+            if (processed != thingsToWaitOn.size() && simpleWaiter.isShouldFail()) {
+                throw new TimeoutException(messages.toString());
             }
         } finally {
             thingsToWaitOn.clear();
         }
+
     }
 
     public <K, R> List<R> until(TriFunction<T, K, R> function, K argument) {
@@ -109,16 +111,15 @@ public class ComplexWaiter<T> {
                         try {
                             return simpleWaiter.on(t).until((Function<? super T, R>) k -> function.apply(t, argument));
                         } catch (TimeoutException toe) {
-                            messages.append(format("%s while waiting on %s", toe.getMessage(), t.toString())).append("\n");
+                            getLogger().debug(toe.getLocalizedMessage(), toe);
+                            messages.append(format(WHILE_WAITING_ON, toe.getMessage(), t.toString())).append("\n");
                             return null;
                         }
                     })
                     .filter(Objects::nonNull)
                     .collect(toList());
-            if (results.size() != thingsToWaitOn.size()) {
-                if (simpleWaiter.isShouldFail()) {
-                    throw new TimeoutException(messages.toString());
-                }
+            if (results.size() != thingsToWaitOn.size() && simpleWaiter.isShouldFail()) {
+                throw new TimeoutException(messages.toString());
             }
             return results;
         } finally {

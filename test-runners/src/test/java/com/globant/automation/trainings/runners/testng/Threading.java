@@ -27,38 +27,39 @@ import static org.testng.Assert.assertEquals;
 @Listeners({TestListener.class})
 public class Threading implements Logging {
 
+    private static final String ERR_MESSAGE = "A is not what I set!";
     private boolean a;
 
     public Threading() {
-        err.println(format("IN CONSTRUCTOR: Class instance: %s Thread ID: %s Thread Name: %s ", this.hashCode(), currentThread().getId(), currentThread().getName()));
+        getLogger().info(format("IN CONSTRUCTOR: Class instance: %s Thread ID: %s Thread Name: %s ", this.hashCode(), currentThread().getId(), currentThread().getName()));
     }
 
     @Test
     public void test1() {
         boolean b = new Random().nextBoolean();
         a = b;
-        assertEquals(a, b, "A is not what I set!");
+        assertEquals(a, b, ERR_MESSAGE);
     }
 
     @Test
     public void test2() {
         boolean b = new Random().nextBoolean();
         a = b;
-        assertEquals(a, b, "A is not what I set!");
+        assertEquals(a, b, ERR_MESSAGE);
     }
 
     @Test
     public void test3() {
         boolean b = new Random().nextBoolean();
         a = b;
-        assertEquals(a, b, "A is not what I set!");
+        assertEquals(a, b, ERR_MESSAGE);
     }
 
     @Test
     public void test4() {
         boolean b = new Random().nextBoolean();
         a = b;
-        assertEquals(a, b, "A is not what I set!");
+        assertEquals(a, b, ERR_MESSAGE);
     }
 
 }

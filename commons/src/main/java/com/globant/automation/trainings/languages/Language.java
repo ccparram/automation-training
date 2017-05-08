@@ -7,7 +7,7 @@ import java.util.Locale;
  */
 public enum Language {
 
-    EN("en-US"), ES("es-AR"), PT_BR("pt-BR");
+    EN("en-US"), ES("es-AR"), PT_BR("pt-BR"), PT("pt-PT"), PL("pl-PL"), DE("de-DE");
 
     private final Locale locale;
 

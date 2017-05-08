@@ -55,15 +55,14 @@ class WebDriverFactory implements Logging {
         capabilities.merge(browser.getCapabilities());
         capabilities.merge(fromConfigCapabilities);
         if (browser == ANDROID) {
-            ofNullable(capabilities.getCapability("app")).ifPresent(app -> {
-                ofNullable(currentThread().getContextClassLoader().getResource((String) app)).ifPresent(appPath -> {
-                    try {
-                        capabilities.setCapability("app", Paths.get(appPath.toURI()).toFile().getAbsolutePath());
-                    } catch (URISyntaxException e) {
-                        getLogger().error("Could not determine app absolute path", e);
-                    }
-                });
-            });
+            ofNullable(capabilities.getCapability("app")).ifPresent(app ->
+                    ofNullable(currentThread().getContextClassLoader().getResource((String) app)).ifPresent(appPath -> {
+                        try {
+                            capabilities.setCapability("app", Paths.get(appPath.toURI()).toFile().getAbsolutePath());
+                        } catch (URISyntaxException e) {
+                            getLogger().error("Could not determine app absolute path", e);
+                        }
+                    }));
         }
         return setProxySettings(capabilities);
     }

@@ -1,6 +1,6 @@
 package com.globant.automation.trainings.webdriver.tests;
 
-import com.globant.automation.trainings.runner.TestContext;
+import com.globant.automation.trainings.tests.TestContext;
 import com.globant.automation.trainings.webdriver.webdriver.WebDriverDecorator;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MultiTouchAction;

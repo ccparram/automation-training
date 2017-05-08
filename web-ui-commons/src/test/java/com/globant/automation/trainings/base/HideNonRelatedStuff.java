@@ -25,12 +25,16 @@ public abstract class HideNonRelatedStuff {
 
     protected final By anId = By.id("anId");
     protected final By anXPath = By.xpath("anXPath");
+
     @Mock
     protected WebElement anElement;
+
     @Mock
     protected WebElement anotherElement;
+
     @Mock
     protected WebDriver aDriver;
+
     protected List<WebElement> manyElements;
 
     @Before

@@ -1,8 +1,7 @@
 package com.globant.automation.trainings.webdriver.tests.junit;
 
 import com.globant.automation.trainings.logging.Logging;
-import com.globant.automation.trainings.runner.junit.ExtentReportRule;
-import org.junit.Rule;
+import com.globant.automation.trainings.webdriver.tests.AbstractUIBaseTest;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runners.Parameterized.UseParametersRunnerFactory;
@@ -18,13 +17,7 @@ import org.junit.runners.parameterized.TestWithParameters;
  */
 @RunWith(WebDriverRunner.ParametrizedParallel.class)
 @UseParametersRunnerFactory(value = ParameterizedWebDriverTest.InjectPageObjectsParametersRunnerFactory.class)
-public abstract class ParameterizedWebDriverTest {
-
-    @Rule
-    public PomInjectorRule pomInjectorRule = new PomInjectorRule();
-
-    @Rule
-    public ExtentReportRule extendedReportListener = new ExtentReportRule();
+public abstract class ParameterizedWebDriverTest extends AbstractUIBaseTest {
 
     public static class InjectPageObjectsParametersRunnerFactory implements ParametersRunnerFactory, Logging {
 

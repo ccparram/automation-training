@@ -7,9 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class WebDriver {
 
-    static final WebDriver DEFAULT = new WebDriver();
+    public static final WebDriver DEFAULT = new WebDriver();
     private static final int DEFAULT_TIMEOUT = 30;
     private static final int DEFAULT_POOLING_INTERVAL = 500;
+
     @JsonProperty
     private int explicitTimeOut = DEFAULT_TIMEOUT;
 

@@ -59,7 +59,7 @@ public enum SeleniumServerStandAlone implements Logging {
             server.stop();
         } catch (RuntimeException ignored) {
             // Depending on when shutdown() is called, JVM may be already killing the thread
-            getLogger().debug(ignored.getLocalizedMessage(), ignored);
+            getLogger().debug("Selenium Server already being killed. Ignore.", ignored);
         }
         getLogger().info("Done");
     }
